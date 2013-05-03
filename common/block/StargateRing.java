@@ -1,12 +1,12 @@
 package jw.spacedistortion.common.block;
 
-import jw.taw.common.CommonProxy;
+import jw.spacedistortion.common.CommonProxy;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 
 public class StargateRing extends Block {
-	public StargateRing(int id, Material texture) {
-		super(id, texture);
+	public StargateRing(int id, int texture, Material material) {
+		super(id, texture, material);
 	}
 	
 	@Override
