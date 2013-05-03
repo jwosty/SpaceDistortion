@@ -26,6 +26,7 @@ public class SpaceDistortion {
 	
 	@Init
 	public void init(FMLInitializationEvent event) {
+		proxy.registerRenderers();
 	}
 	
 	@PostInit
