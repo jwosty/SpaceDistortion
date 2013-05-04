@@ -21,9 +21,11 @@ public class StargateController extends Block {
 	
 	@Override
 	public int getBlockTextureFromSide(int side) {
+		int offset;
 		switch (side) {
-			case 3:		return 1;
-			default:	return 0;
+			case 3:		offset = 1; break;
+			default:	offset = 0; break;
 		}
+		return blockIndexInTexture + offset;
 	}
 }
