@@ -32,6 +32,7 @@ public class BlockEventHorizon extends SDBlock {
 	// Returns true if the given side of this block type should be rendered, if the adjacent block is at the given coordinates
 	@Override
 	public boolean shouldSideBeRendered(IBlockAccess blockAccess, int x, int y, int z, int side) {
-		return blockAccess.getBlockId(x, y, z) != this.blockID;
+		int bid = blockAccess.getBlockId(x, y, z);
+		return !(bid == this.blockID || bid == SDBlock.stargateRing.blockID);
 	}
 }
