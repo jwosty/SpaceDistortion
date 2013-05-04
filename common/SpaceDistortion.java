@@ -1,5 +1,6 @@
 package jw.spacedistortion.common;
 
+import jw.spacedistortion.common.block.Blocks;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.Init;
 import cpw.mods.fml.common.Mod.Instance;
@@ -27,6 +28,7 @@ public class SpaceDistortion {
 	@Init
 	public void init(FMLInitializationEvent event) {
 		proxy.registerRenderers();
+		Blocks.addBlocks();
 	}
 	
 	@PostInit
