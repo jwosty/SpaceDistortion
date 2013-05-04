@@ -15,12 +15,17 @@ public class SDBlock extends Block {
 	public static Block stargateController = (new BlockStargateController(1601, 1, Material.rock))
 			.setHardness(3.0f).setStepSound(Block.soundStoneFootstep)
 			.setBlockName("stargateController").setCreativeTab(CreativeTabs.tabBlock);
+	public static Block eventHorizon = (new BlockEventHorizon(1602, 16, Material.portal))
+			.setHardness(-1.0f).setStepSound(Block.soundGlassFootstep)
+			.setBlockName("eventHorizon").setLightValue(0.75f);
 	
 	public static void addBlocks() {
 		GameRegistry.registerBlock(stargateRing, "stargateRing");
 		LanguageRegistry.addName(stargateRing, "Stargate Ring");
 		GameRegistry.registerBlock(stargateController, "stargateController");
 		LanguageRegistry.addName(stargateController, "Stargate Controller");
+		// Don't need to set a tooltip name as this can't be obtained in the inventory without commands
+		GameRegistry.registerBlock(eventHorizon, "eventHorizon");
 	}
 
 	public SDBlock(int id, int texture, Material material) {

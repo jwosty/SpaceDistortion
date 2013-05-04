@@ -7,7 +7,7 @@ public class BlockEventHorizon extends SDBlock {
 	private int blockIndexInTexture;
 	
 	public BlockEventHorizon(int id, int _blockIndexInTexture, Material material) {
-		super(id, material);
+		super(id, _blockIndexInTexture, material);
 		blockIndexInTexture = _blockIndexInTexture;
 	}
 }
