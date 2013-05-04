@@ -2,6 +2,7 @@ package jw.spacedistortion.common.block;
 
 import net.minecraft.block.material.Material;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 public class BlockEventHorizon extends SDBlock {
@@ -26,5 +27,11 @@ public class BlockEventHorizon extends SDBlock {
 	@Override
 	public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int x, int y, int z) {
 		return null;
+	}
+	
+	// Returns true if the given side of this block type should be rendered, if the adjacent block is at the given coordinates
+	@Override
+	public boolean shouldSideBeRendered(IBlockAccess blockAccess, int x, int y, int z, int side) {
+		return blockAccess.getBlockId(x, y, z) != this.blockID;
 	}
 }
