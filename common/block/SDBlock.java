@@ -12,12 +12,12 @@ public class SDBlock extends Block {
 	public static Block stargateRing = (new SDBlock(1600, 0, Material.rock))
 			.setHardness(3.0f).setStepSound(Block.soundStoneFootstep)
 			.setBlockName("stargateRing").setCreativeTab(CreativeTabs.tabBlock);
-	public static Block stargateController = (new BlockStargateController(1601, 1, Material.rock))
+	public static Block stargateController = (new BlockStargateController(1601, 1))
 			.setHardness(3.0f).setStepSound(Block.soundStoneFootstep)
 			.setBlockName("stargateController").setCreativeTab(CreativeTabs.tabBlock);
-	public static Block eventHorizon = (new BlockEventHorizon(1602, 16, Material.portal))
+	public static Block eventHorizon = (new BlockEventHorizon(1602, 16))
 			.setHardness(-1.0f).setStepSound(Block.soundGlassFootstep)
-			.setBlockName("eventHorizon").setLightValue(0.75f);
+			.setBlockName("eventHorizon").setLightValue(0.875f);
 	
 	public static void addBlocks() {
 		GameRegistry.registerBlock(stargateRing, "stargateRing");

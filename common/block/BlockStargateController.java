@@ -8,8 +8,8 @@ public class BlockStargateController extends SDBlock {
 	private int blockIndexInTexture;
 	private int textureTop = 2;
 	
-	public BlockStargateController(int id, int _blockIndexInTexture, Material material) {
-		super(id, material);
+	public BlockStargateController(int id, int _blockIndexInTexture) {
+		super(id, Material.rock);
 		blockIndexInTexture = _blockIndexInTexture;
 	}
 	
