@@ -12,7 +12,7 @@ public class SDBlock extends Block {
 	public static Block stargateRing = (new SDBlock(1600, 0, Material.rock))
 			.setHardness(3.0f).setStepSound(Block.soundStoneFootstep)
 			.setBlockName("stargateRing").setCreativeTab(CreativeTabs.tabBlock);
-	public static Block stargateController = (new StargateController(1601, 1, Material.rock))
+	public static Block stargateController = (new BlockStargateController(1601, 1, Material.rock))
 			.setHardness(3.0f).setStepSound(Block.soundStoneFootstep)
 			.setBlockName("stargateController").setCreativeTab(CreativeTabs.tabBlock);
 	
