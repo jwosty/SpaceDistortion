@@ -1,10 +1,9 @@
 package jw.spacedistortion.common.block;
 
 import jw.spacedistortion.common.CommonProxy;
-import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 
-public class StargateController extends Block {
+public class StargateController extends SDBlock {
 	// The coordinate at which the textures for this block starts
 	private int blockIndexInTexture;
 	private int textureTop = 2;
@@ -12,11 +11,6 @@ public class StargateController extends Block {
 	public StargateController(int id, int _blockIndexInTexture, Material material) {
 		super(id, material);
 		blockIndexInTexture = _blockIndexInTexture;
-	}
-	
-	@Override
-	public String getTextureFile() {
-		return CommonProxy.TEXTURES_PNG;
 	}
 	
 	@Override
