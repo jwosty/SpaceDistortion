@@ -19,7 +19,7 @@ public class BlockEventHorizonRenderer implements ISimpleBlockRenderingHandler {
 
 	@Override
 	public boolean shouldRender3DInInventory() {
-		return false;
+		return true;
 	}
 
 	@Override
