@@ -1,9 +1,6 @@
 package jw.spacedistortion.common;
 
-import jw.spacedistortion.client.texturefx.TextureEventHorizonFX;
 import jw.spacedistortion.common.block.SDBlock;
-import net.minecraft.client.Minecraft;
-import net.minecraft.src.BaseMod;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.Init;
 import cpw.mods.fml.common.Mod.Instance;
