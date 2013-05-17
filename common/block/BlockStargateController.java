@@ -14,19 +14,20 @@ public class BlockStargateController extends SDBlock {
 	}
 	
 	// Returns the position of the first neighboring block found that is a stargate ring
-	public int[] getRelativeStargateBlocks(World world, int x, int y, int z) {
+	// Coordinates in returns are not relative to the given coordinates
+	public int[] getStargateBlocks(World world, int x, int y, int z) {
 		int[] blockPosition = null;
-		int[][] offsets = {
+		int[][] neighbors = {
 				{-1, 0, 0}, {1, 0, 0},
 				{0, -1, 0}, {0, 1, 0},
 				{0, 0, -1}, {0, 0, 1}
 		};
 		search:
-		for (int i = 0; i < offsets.length; i++) {
-			int[] offset = offsets[i];
-			int bx = offset[0];
-			int by = offset[1];
-			int bz = offset[2];
+		for (int i = 0; i < neighbors.length; i++) {
+			int[] neighbor = neighbors[i];
+			int bx = neighbor[0] + x;
+			int by = neighbor[1] + y;
+			int bz = neighbor[2] + z;
 			if (world.getBlockId(bx, by, bz) != 0) {
 				blockPosition = new int[]{bx, by, bz};
 				break search;				
@@ -37,9 +38,12 @@ public class BlockStargateController extends SDBlock {
 
 	@Override
 	public void onBlockAdded(World world, int x, int y, int z) {
-		int[] stargateBlockPos = this.getRelativeStargateBlocks(world, x, y, z);
+		int[] stargateBlockPos = this.getStargateBlocks(world, x, y, z);
 		if (stargateBlockPos != null) {
-			world.setBlock(stargateBlockPos[0], stargateBlockPos[1], stargateBlockPos[2], SDBlock.eventHorizon.blockID);
+			int bx = stargateBlockPos[0];
+			int by = stargateBlockPos[1];
+			int bz = stargateBlockPos[2];
+			world.setBlock(bx, by, bz, SDBlock.eventHorizon.blockID);
 		}
 	}
 	
