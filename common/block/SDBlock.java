@@ -59,6 +59,11 @@ public class SDBlock extends Block {
 		return blockPosition;
 	}
 	
+	// Returns all blocks in a structure if this block is part of it
+	public int[] detectStructure(World world, int x, int y, int z, String arrangement) {
+		return new int[]{};
+	}
+	
 	@Override
 	public String getTextureFile() {
 		return CommonProxy.TEXTURES_PNG;
