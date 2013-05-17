@@ -4,6 +4,7 @@ import jw.spacedistortion.common.CommonProxy;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.world.World;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 
@@ -34,6 +35,28 @@ public class SDBlock extends Block {
 	
 	public SDBlock(int id, Material material) {
 		super(id, material);
+	}
+	
+	// Returns 6 neighboring blocks on each of the faces (no corners here)
+	public int[] getNeighboringBlocks(World world, int x, int y, int z) {
+		int[] blockPosition = null;
+		int[][] neighbors = {
+				{-1, 0, 0}, {1, 0, 0},
+				{0, -1, 0}, {0, 1, 0},
+				{0, 0, -1}, {0, 0, 1}
+		};
+		search:
+		for (int i = 0; i < neighbors.length; i++) {
+			int[] neighbor = neighbors[i];
+			int bx = neighbor[0] + x;
+			int by = neighbor[1] + y;
+			int bz = neighbor[2] + z;
+			if (world.getBlockId(bx, by, bz) != 0) {
+				blockPosition = new int[]{bx, by, bz};
+				break search;				
+			}
+		}
+		return blockPosition;
 	}
 	
 	@Override

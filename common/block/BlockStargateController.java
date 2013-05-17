@@ -15,30 +15,14 @@ public class BlockStargateController extends SDBlock {
 	
 	// Returns the position of the first neighboring block found that is a stargate ring
 	// Coordinates in returns are not relative to the given coordinates
+	// Does nothing yet
 	public int[] getStargateBlocks(World world, int x, int y, int z) {
-		int[] blockPosition = null;
-		int[][] neighbors = {
-				{-1, 0, 0}, {1, 0, 0},
-				{0, -1, 0}, {0, 1, 0},
-				{0, 0, -1}, {0, 0, 1}
-		};
-		search:
-		for (int i = 0; i < neighbors.length; i++) {
-			int[] neighbor = neighbors[i];
-			int bx = neighbor[0] + x;
-			int by = neighbor[1] + y;
-			int bz = neighbor[2] + z;
-			if (world.getBlockId(bx, by, bz) != 0) {
-				blockPosition = new int[]{bx, by, bz};
-				break search;				
-			}
-		}
-		return blockPosition;
+		return new int[]{};
 	}
 
 	@Override
 	public void onBlockAdded(World world, int x, int y, int z) {
-		int[] stargateBlockPos = this.getStargateBlocks(world, x, y, z);
+		int[] stargateBlockPos = this.getNeighboringBlocks(world, x, y, z);
 		if (stargateBlockPos != null) {
 			int bx = stargateBlockPos[0];
 			int by = stargateBlockPos[1];
