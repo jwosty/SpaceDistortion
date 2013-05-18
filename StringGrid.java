@@ -24,7 +24,6 @@ public class StringGrid {
 
 	// Retrieves the character at the given coordinates
 	public char get(int x, int y) {
-		// For now, assume that every row is the same length
 		try {
 			return strings[x].charAt(y);
 		} catch (java.lang.StringIndexOutOfBoundsException e) {
