@@ -3,10 +3,12 @@ package jw.spacedistortion;
 public class StringGrid {
 	private String[] strings;
 	public int width;
+	public int height;
 	
 	public StringGrid(String... strings) {
 		this.strings = strings;
 		this.width = this.findWidth();
+		this.height = strings.length;
 	}
 	
 	private int findWidth() {
