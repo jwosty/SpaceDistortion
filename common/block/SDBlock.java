@@ -60,11 +60,11 @@ public class SDBlock extends Block {
 	}
 	
 	// Returns all blocks in a structure if this block is part of it
-	public int[] detectStructure(World world, int x, int y, int z, String... arrangement) {
+	public int[] detectStructure(World world, int x, int y, int z, String... template) {
 		int width = 0;
-		int height = arrangement.length;
-		for (int i = 0; i < arrangement.length; i++) {
-			int rowW = arrangement[i].length();
+		int height = template.length;
+		for (int i = 0; i < template.length; i++) {
+			int rowW = template[i].length();
 			if (width < rowW) {
 				width = rowW;
 			}
