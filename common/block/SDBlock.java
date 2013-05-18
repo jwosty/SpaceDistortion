@@ -1,5 +1,6 @@
 package jw.spacedistortion.common.block;
 
+import jw.spacedistortion.StringGrid;
 import jw.spacedistortion.common.CommonProxy;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -9,7 +10,6 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 
 public class SDBlock extends Block {
-
 	public static Block stargateRing = (new SDBlock(1600, 0, Material.rock))
 			.setHardness(3.0f).setStepSound(Block.soundStoneFootstep)
 			.setBlockName("stargateRing").setCreativeTab(CreativeTabs.tabBlock);
@@ -60,13 +60,10 @@ public class SDBlock extends Block {
 	}
 	
 	// Returns all blocks in a structure if this block is part of it
-	public int[] detectStructure(World world, int x, int y, int z, String... template) {
-		int width = 0;
-		int height = template.length;
-		for (int i = 0; i < template.length; i++) {
-			int rowW = template[i].length();
-			if (width < rowW) {
-				width = rowW;
+	public int[] detectStructure(World world, int xOrigin, int yOrigin, int zOrigin, StringGrid template) {
+		for (int x = 0; x < template.width; x++) {
+			for (int y = 0; y < template.height; y++) {
+				
 			}
 		}
 	}
