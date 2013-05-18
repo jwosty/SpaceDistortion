@@ -21,4 +21,10 @@ public class StringGrid {
 		}
 		return w;
 	}
+	
+	// Retrieves the character at the given coordinates
+	public char get(int x, int y) {
+		// For now, assume that every row is the same length
+		return strings[x].charAt(y);
+	}
 }
