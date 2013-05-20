@@ -61,11 +61,30 @@ public class SDBlock extends Block {
 	
 	// Returns all blocks in a structure if this block is part of it
 	public int[] detectStructure(World world, int xOrigin, int yOrigin, int zOrigin, StringGrid template) {
-		for (int x = 0; x < template.width; x++) {
-			for (int y = 0; y < template.height; y++) {
+		int[] blocks;
+		// For now, assume its on the xy plane
+		// Move the template over each possible position
+		match:
+		for (int xOffset = 0; xOffset < template.width; xOffset++) {
+			for (int yOffset = 0; yOffset < template.height; yOffset++) {
+				// Test the template with this offset.
+				// Do nothing for now; will call matchStructure
+			}
+		}
+		return new int[]{};
+	}
+	
+	// Try to match a structure using a StringGrid and the given position
+	// TODO: Implement other axes (pl. axis)
+	private int[] matchStructure(World world, int xOrigin, int yOrigin, int zOrigin, StringGrid template) {
+		int[] blocks = new int[template.width * template.height];
+		match:
+		for (int xOffset = 0; xOffset < template.width; xOffset++) {
+			for (int yOffset = 0; yOffset < template.height; yOffset++) {
 				
 			}
 		}
+		return blocks;
 	}
 	
 	@Override
