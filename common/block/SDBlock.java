@@ -10,7 +10,7 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 
 public class SDBlock extends Block {
-	public static Block stargateRing = (new SDBlock(1600, 0, Material.rock))
+	public static Block stargateRing = (new BlockStargateRing(1600, 0))
 			.setHardness(3.0f).setStepSound(Block.soundStoneFootstep)
 			.setBlockName("stargateRing").setCreativeTab(CreativeTabs.tabBlock);
 	public static Block stargateController = (new BlockStargateController(1601, 1))
@@ -64,7 +64,6 @@ public class SDBlock extends Block {
 		int[] blocks;
 		// For now, assume its on the xy plane
 		// Move the template over each possible position
-		match:
 		for (int xOffset = 0; xOffset < template.width; xOffset++) {
 			for (int yOffset = 0; yOffset < template.height; yOffset++) {
 				// Test the template with this offset.
@@ -75,9 +74,9 @@ public class SDBlock extends Block {
 	}
 	
 	// Find a structure using a StringGrid and the given position. If no structure is found at the location
-	// provided, return will be null
+	// provided, return value will be null
 	// TODO: Implement other axes (pl. axis)
-	public boolean[][] detectLocatedStructure(World world, int x, int y, int z, StringGrid template) {
+	public boolean[][] detectStructureAtLocation(World world, int x, int y, int z, StringGrid template) {
 		// To keep track of the found blocks, if any
 		boolean[][] blocks = new boolean[template.width][template.height];
 		match:
