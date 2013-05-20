@@ -74,10 +74,10 @@ public class SDBlock extends Block {
 		return new int[]{};
 	}
 	
-	// Try to match a structure using a StringGrid and the given position. If the match fails, blocks will
-	// be null
+	// Find a structure using a StringGrid and the given position. If no structure is found at the location
+	// provided, return will be null
 	// TODO: Implement other axes (pl. axis)
-	private boolean[][] matchStructure(World world, int x, int y, int z, StringGrid template) {
+	public boolean[][] detectLocatedStructure(World world, int x, int y, int z, StringGrid template) {
 		// To keep track of the found blocks, if any
 		boolean[][] blocks = new boolean[template.width][template.height];
 		match:
@@ -92,6 +92,7 @@ public class SDBlock extends Block {
 					} else {
 						// This match evidently didn't work, so fail
 						blocks = null;
+						break match;
 					}
 				} // No 'else' clause as blocks not part of the structure don't matter
 			}
