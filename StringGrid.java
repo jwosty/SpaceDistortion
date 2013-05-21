@@ -24,6 +24,12 @@ public class StringGrid {
 
 	// Retrieves the character at the given coordinates
 	public char get(int x, int y) {
-		return strings[y].charAt(x);
+		try {
+			return strings[y].charAt(x);
+		} catch (java.lang.StringIndexOutOfBoundsException e) {
+			return ' ';
+		} catch (java.lang.ArrayIndexOutOfBoundsException e) {
+			return ' ';
+		}
 	}
 }

@@ -78,16 +78,18 @@ public class SDBlock extends Block {
 	// TODO: Implement other axes (pl. axis)
 	public boolean[][] detectStructureAtLocation(World world, int x, int y, int z, StringGrid template) {
 		// To keep track of the found blocks, if any
-		boolean[][] blocks = new boolean[template.width][template.height];
+		boolean[][] blocks = new boolean[template.height][template.width];
+		System.out.println("Starting match");
 		match:
-		for (int xOffset = 0; xOffset < template.width; xOffset++) {
-			for (int yOffset = 0; yOffset < template.height; yOffset++) {
+		for (int yOffset = 0; yOffset < template.height; yOffset++) {
+			for (int xOffset = 0; xOffset < template.width; xOffset++) {
 				int id = world.getBlockId(x + xOffset, y + yOffset, z);
 				if (template.get(xOffset, yOffset) != ' ') {
+					System.out.print(template.get(xOffset, yOffset));
 					// Expecting this block
 					if (id == this.blockID) {
 						// We matched a block on the structure, so add it to the list
-						blocks[xOffset][yOffset] = true;
+						blocks[yOffset][xOffset] = true;
 					} else {
 						// This match evidently didn't work, so fail
 						blocks = null;
@@ -95,7 +97,10 @@ public class SDBlock extends Block {
 					}
 				} // No 'else' clause as blocks not part of the structure don't matter
 			}
+			System.out.println();
 		}
+		System.out.println();
+		System.out.println("Finished match\n\n");
 		return blocks;
 	}
 	
