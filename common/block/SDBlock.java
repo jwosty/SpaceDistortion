@@ -72,7 +72,7 @@ public class SDBlock extends Block {
 			if (id != 0) {
 				// We found a neighbor, so add it to the list
 				blocks.add(new Integer[] { bx, by, bz, id });
-				break search;
+				//break search;
 			}
 		}
 		return blocks;
@@ -127,7 +127,6 @@ public class SDBlock extends Block {
 			int xTemplateOffset, int yTemplateOffset) {
 		// To keep track of the found blocks, if any
 		boolean[][] blocks = new boolean[template.height][template.width];
-		System.out.println("Starting match");
 		match: for (int gridY = 0; gridY < template.height; gridY++) {
 			for (int gridX = 0; gridX < template.width; gridX++) {
 				// Get the correct block
@@ -135,7 +134,6 @@ public class SDBlock extends Block {
 						plane);
 				// Test it
 				if (template.get(gridX, gridY) != ' ') {
-					System.out.print(template.get(gridX, gridY));
 					// Expecting this block
 					if (id == this.blockID) {
 						// We matched a block on the structure, so add it to the
@@ -149,10 +147,7 @@ public class SDBlock extends Block {
 				} // No 'else' clause as blocks not part of the structure don't
 					// matter
 			}
-			System.out.println();
 		}
-		System.out.println();
-		System.out.println("Finished match\n\n");
 		return blocks;
 	}
 	

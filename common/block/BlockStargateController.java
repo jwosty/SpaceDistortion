@@ -30,15 +30,17 @@ public class BlockStargateController extends SDBlock {
 	// Coordinates in returns are not relative to the given coordinates
 	// Does nothing yet
 	public boolean[][] getStargateBlocks(World world, int xOrigin, int yOrigin, int zOrigin) {
-		boolean[][] blocks = null;
 		List<Integer[]> neighbors = this.getNeighboringBlocks(world, xOrigin, yOrigin, zOrigin);
 		for (int i = 0; i < neighbors.size(); i++) {
 			Integer[] blockInfo = neighbors.get(i);
 			if (blockInfo[3] == SDBlock.stargateRing.blockID) {
-				blocks = ((SDBlock) SDBlock.stargateRing).detectStructure(world, stargateRingShape, blockInfo[0], blockInfo[1], blockInfo[2]);
+				boolean[][] blocks = ((SDBlock) SDBlock.stargateRing).detectStructure(world, stargateRingShape, blockInfo[0], blockInfo[1], blockInfo[2]);
+				if (blocks != null) {
+					return blocks;
+				}
 			}
 		}
-		return blocks;
+		return null;
 	}
 
 	@Override
