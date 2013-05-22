@@ -83,7 +83,7 @@ public class SDBlock extends Block {
 		match:
 		for (int yOffset = 0; yOffset < template.height; yOffset++) {
 			for (int xOffset = 0; xOffset < template.width; xOffset++) {
-				int id = world.getBlockId(x + xOffset, y + yOffset, z);
+				int id = world.getBlockId(x - xOffset, y - yOffset, z);
 				if (template.get(xOffset, yOffset) != ' ') {
 					System.out.print(template.get(xOffset, yOffset));
 					// Expecting this block
