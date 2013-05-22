@@ -65,21 +65,24 @@ public class SDBlock extends Block {
 		boolean[][] blocks = null;
 		// For now, assume its on the xy plane
 		// Move the template over each possible position
-		match: for (int xOffset = 0; xOffset < template.width; xOffset++) {
-			for (int yOffset = 0; yOffset < template.height; yOffset++) {
-				if (template.get(xOffset, yOffset) != ' ') {
-					// Test the template with this offset.
-					blocks = this.detectStructureAtLocation(world, template,
-							xOrigin, yOrigin, zOrigin, -1, xOffset, yOffset);
-					if (blocks != null) {
-						break match;
+		match: for (int axis = -1; axis < 2; axis++) {
+			for (int xOffset = 0; xOffset < template.width; xOffset++) {
+				for (int yOffset = 0; yOffset < template.height; yOffset++) {
+					if (template.get(xOffset, yOffset) != ' ') {
+						// Test the template with this offset.
+						blocks = this.detectStructureAtLocation(world,
+								template, xOrigin, yOrigin, zOrigin, axis,
+								xOffset, yOffset);
+						if (blocks != null) {
+							break match;
+						}
 					}
 				}
 			}
 		}
 		return blocks;
 	}
-	
+
 	// Find a structure using a StringGrid and the given position. If no structure is found at the location
 	// provided, return value will be null
 	/**
