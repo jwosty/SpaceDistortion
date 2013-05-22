@@ -76,7 +76,7 @@ public class SDBlock extends Block {
 	// Find a structure using a StringGrid and the given position. If no structure is found at the location
 	// provided, return value will be null
 	// TODO: Implement other axes (pl. axis)
-	public boolean[][] detectStructureAtLocation(World world, int x, int y, int z, StringGrid template) {
+	public boolean[][] detectStructureAtLocation(World world, StringGrid template, int x, int y, int z) {
 		// To keep track of the found blocks, if any
 		boolean[][] blocks = new boolean[template.height][template.width];
 		System.out.println("Starting match");

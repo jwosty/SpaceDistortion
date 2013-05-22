@@ -11,15 +11,15 @@ public class BlockStargateRing extends SDBlock {
 	}
 	
 	public void onBlockAdded(World world, int x, int y, int z) {
-		if (this.detectStructureAtLocation(world, x, y, z,
-				new StringGrid(
-						"  XXX",
-						" X   X",
-						"X     X",
-						"X     X",
-						"X     X",
-						" X   X",
-						"  XXX")
+		if (this.detectStructureAtLocation(world, new StringGrid(
+				"  XXX",
+				" X   X",
+				"X     X",
+				"X     X",
+				"X     X",
+				" X   X",
+				"  XXX"), x, y,
+				z
 				) != null) {
 			world.setBlock(x, y, z, Block.blockEmerald.blockID);
 		}
