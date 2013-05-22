@@ -97,7 +97,7 @@ public class SDBlock extends Block {
 		match: for (int gridY = 0; gridY < template.height; gridY++) {
 			for (int gridX = 0; gridX < template.width; gridX++) {
 				// Get the correct block
-				int id = this.getBlockInStructure(world, x, y, z, gridX + xTemplateOffset, gridY + yTemplateOffset,
+				int id = this.getBlockInStructure(world, x, y, z, gridX - xTemplateOffset, -gridY + yTemplateOffset,
 						plane);
 				// Test it
 				if (template.get(gridX, gridY) != ' ') {
