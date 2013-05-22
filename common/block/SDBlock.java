@@ -83,17 +83,19 @@ public class SDBlock extends Block {
 	 * @param y The y ...
 	 * @param z The z ...
 	 * @param plane The plane the structure lies on (-1 = x-y, 0 = x-z, 1 = y-z)
+	 * @param flip If true, the structure is mirrored
 	 * @return
 	 */
-	public boolean[][] detectStructureAtLocation(World world, StringGrid template, int x, int y, int z, int plane) {
+	public boolean[][] detectStructureAtLocation(World world, StringGrid template, int x, int y, int z, int plane, boolean flip) {
 		// To keep track of the found blocks, if any
 		boolean[][] blocks = new boolean[template.height][template.width];
 		System.out.println("Starting match");
 		match:
 		for (int gridY = 0; gridY < template.height; gridY++) {
 			for (int gridX = 0; gridX < template.width; gridX++) {
-				int id = this.getBlockInStructure(world, x, y, z, gridX, gridY, plane);
-				//world.getBlockId(x - gridX, y - gridY, z);
+				// Get the correct block
+				int id = this.getBlockInStructure(world, x, y, z, gridX, gridY, plane, flip);
+				// Test it
 				if (template.get(gridX, gridY) != ' ') {
 					System.out.print(template.get(gridX, gridY));
 					// Expecting this block
@@ -114,10 +116,15 @@ public class SDBlock extends Block {
 		return blocks;
 	}
 	
-	private int getBlockInStructure(World world, int x, int y, int z, int gridX, int gridY, int plane) {
+	private int getBlockInStructure(World world, int x, int y, int z, int gridX, int gridY, int plane, boolean flip) {
 		int bx;
 		int by;
 		int bz;
+		if (flip) {
+			// Same effect as subtracting the variable, so we don't need any fancy code later
+			gridX = -gridX;
+			gridY = -gridY;
+		}
 		if (plane == -1) {
 			bx = x + gridX;
 			by = y + gridY;
