@@ -1,5 +1,8 @@
 package jw.spacedistortion.common.block;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import jw.spacedistortion.StringGrid;
 import jw.spacedistortion.common.CommonProxy;
 import net.minecraft.block.Block;
@@ -13,19 +16,21 @@ public class SDBlock extends Block {
 	public static Block stargateRing = (new BlockStargateRing(1600, 0))
 			.setHardness(3.0f).setStepSound(Block.soundStoneFootstep)
 			.setBlockName("stargateRing").setCreativeTab(CreativeTabs.tabBlock);
-	public static Block stargateController = (new BlockStargateController(1601, 1))
-			.setHardness(3.0f).setStepSound(Block.soundStoneFootstep)
-			.setBlockName("stargateController").setCreativeTab(CreativeTabs.tabBlock);
+	public static Block stargateController = (new BlockStargateController(1601,
+			1)).setHardness(3.0f).setStepSound(Block.soundStoneFootstep)
+			.setBlockName("stargateController")
+			.setCreativeTab(CreativeTabs.tabBlock);
 	public static Block eventHorizon = (new BlockEventHorizon(1602, 16))
 			.setHardness(-1.0f).setStepSound(Block.soundGlassFootstep)
 			.setBlockName("eventHorizon").setLightValue(0.875f);
-	
+
 	public static void addBlocks() {
 		GameRegistry.registerBlock(stargateRing, "stargateRing");
 		LanguageRegistry.addName(stargateRing, "Stargate Ring");
 		GameRegistry.registerBlock(stargateController, "stargateController");
 		LanguageRegistry.addName(stargateController, "Stargate Controller");
-		// Don't need to set a tooltip name as this can't be obtained in the inventory without commands
+		// Don't need to set a tooltip name as this can't be obtained in the
+		// inventory without commands
 		GameRegistry.registerBlock(eventHorizon, "eventHorizon");
 	}
 
@@ -38,25 +43,39 @@ public class SDBlock extends Block {
 	}
 	
 	// Returns 6 neighboring blocks on each of the faces (no corners here)
-	public int[] getNeighboringBlocks(World world, int x, int y, int z) {
-		int[] blockPosition = null;
-		int[][] neighbors = {
-				{-1, 0, 0}, {1, 0, 0},
+	/**
+	 * @param world
+	 *            The world in which to find the blocks
+	 * @param x
+	 *            The x coordinate
+	 * @param y
+	 *            The y coordinate
+	 * @param z
+	 *            The z coordinate
+	 * @return A list of blocks in the format of a list where the first 3
+	 *         elements are the x, y, and z and the last is the block id
+	 */
+	public List<Integer[]> getNeighboringBlocks(World world, int x, int y, int z) {
+		List<Integer[]> blocks = new ArrayList<Integer[]>();
+		int[][] neighbors = { { -1, 0, 0 }, { 1, 0, 0 },
 				{0, -1, 0}, {0, 1, 0},
 				{0, 0, -1}, {0, 0, 1}
 		};
 		search:
 		for (int i = 0; i < neighbors.length; i++) {
+			// Get information about the block
 			int[] neighbor = neighbors[i];
 			int bx = neighbor[0] + x;
 			int by = neighbor[1] + y;
 			int bz = neighbor[2] + z;
-			if (world.getBlockId(bx, by, bz) != 0) {
-				blockPosition = new int[]{bx, by, bz};
-				break search;				
+			int id = world.getBlockId(bx, by, bz);
+			if (id != 0) {
+				// We found a neighbor, so add it to the list
+				blocks.add(new Integer[] { bx, by, bz, id });
+				break search;
 			}
 		}
-		return blockPosition;
+		return blocks;
 	}
 	
 	// Returns all blocks in a structure if this block is part of it
@@ -83,16 +102,24 @@ public class SDBlock extends Block {
 		return blocks;
 	}
 
-	// Find a structure using a StringGrid and the given position. If no structure is found at the location
+	// Find a structure using a StringGrid and the given position. If no
+	// structure is found at the location
 	// provided, return value will be null
 	/**
-	 * @param world The world to detect the structure in
-	 * @param template The structure to detect
-	 * @param x The x coordinate of the top-left corner of the structure
-	 * @param y The y ...
-	 * @param z The z ...
-	 * @param plane The plane the structure lies on (-1 = x-y, 0 = x-z, 1 = y-z)
-	 * @param xFlip If true, the structure is mirrored
+	 * @param world
+	 *            The world to detect the structure in
+	 * @param template
+	 *            The structure to detect
+	 * @param x
+	 *            The x coordinate of the top-left corner of the structure
+	 * @param y
+	 *            The y ...
+	 * @param z
+	 *            The z ...
+	 * @param plane
+	 *            The plane the structure lies on (-1 = x-y, 0 = x-z, 1 = y-z)
+	 * @param xFlip
+	 *            If true, the structure is mirrored
 	 * @return
 	 */
 	public boolean[][] detectStructureAtLocation(World world,
