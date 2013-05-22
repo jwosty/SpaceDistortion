@@ -76,20 +76,30 @@ public class SDBlock extends Block {
 	// Find a structure using a StringGrid and the given position. If no structure is found at the location
 	// provided, return value will be null
 	// TODO: Implement other axes (pl. axis)
-	public boolean[][] detectStructureAtLocation(World world, StringGrid template, int x, int y, int z) {
+	/**
+	 * @param world The world to detect the structure in
+	 * @param template The structure to detect
+	 * @param x The x coordinate of the top-left corner of the structure
+	 * @param y The y ...
+	 * @param z The z ...
+	 * @param plane The plane the structure lies on (-1 = x-y, 0 = x-z, 1 = y-z)
+	 * @return
+	 */
+	public boolean[][] detectStructureAtLocation(World world, StringGrid template, int x, int y, int z, int plane) {
 		// To keep track of the found blocks, if any
 		boolean[][] blocks = new boolean[template.height][template.width];
 		System.out.println("Starting match");
 		match:
-		for (int yOffset = 0; yOffset < template.height; yOffset++) {
-			for (int xOffset = 0; xOffset < template.width; xOffset++) {
-				int id = world.getBlockId(x - xOffset, y - yOffset, z);
-				if (template.get(xOffset, yOffset) != ' ') {
-					System.out.print(template.get(xOffset, yOffset));
+		for (int gridY = 0; gridY < template.height; gridY++) {
+			for (int gridX = 0; gridX < template.width; gridX++) {
+				int id = this.getBlockInStructure(world, x, y, z, gridX, gridY, plane);
+				//world.getBlockId(x - gridX, y - gridY, z);
+				if (template.get(gridX, gridY) != ' ') {
+					System.out.print(template.get(gridX, gridY));
 					// Expecting this block
 					if (id == this.blockID) {
 						// We matched a block on the structure, so add it to the list
-						blocks[yOffset][xOffset] = true;
+						blocks[gridY][gridX] = true;
 					} else {
 						// This match evidently didn't work, so fail
 						blocks = null;
@@ -102,6 +112,28 @@ public class SDBlock extends Block {
 		System.out.println();
 		System.out.println("Finished match\n\n");
 		return blocks;
+	}
+	
+	private int getBlockInStructure(World world, int x, int y, int z, int gridX, int gridY, int plane) {
+		int bx;
+		int by;
+		int bz;
+		if (plane == -1) {
+			bx = x + gridX;
+			by = y + gridY;
+			bz = z;
+		} else if (plane == 0) {
+			bx = x + gridX;
+			by = y;
+			bz = z + gridY;
+		} else if (plane == 1) {
+			bx = x;
+			by = y + gridX;
+			bz = z + gridY;
+		} else {
+			throw new IllegalArgumentException("Bad orientation value of " + plane);
+		}
+		return world.getBlockId(bx, by, bz);
 	}
 	
 	@Override
