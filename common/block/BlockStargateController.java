@@ -1,9 +1,22 @@
 package jw.spacedistortion.common.block;
 
+import java.util.List;
+
+import jw.spacedistortion.StringGrid;
+import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.world.World;
 
 public class BlockStargateController extends SDBlock {
+	public static StringGrid stargateRingShape = new StringGrid(
+			"  XXX",
+			" X   X",
+			"X     X",
+			"X     X",
+			"X     X",
+			" X   X",
+			"  XXX");
+	
 	// The coordinate at which the textures for this block starts
 	private int blockIndexInTexture;
 	private int textureTop = 2;
@@ -16,18 +29,23 @@ public class BlockStargateController extends SDBlock {
 	// Returns the position of the first neighboring block found that is a stargate ring
 	// Coordinates in returns are not relative to the given coordinates
 	// Does nothing yet
-	public int[] getStargateBlocks(World world, int x, int y, int z) {
-		return new int[]{};
+	public boolean[][] getStargateBlocks(World world, int xOrigin, int yOrigin, int zOrigin) {
+		boolean[][] blocks = null;
+		List<Integer[]> neighbors = this.getNeighboringBlocks(world, xOrigin, yOrigin, zOrigin);
+		for (int i = 0; i < neighbors.size(); i++) {
+			Integer[] blockInfo = neighbors.get(i);
+			if (blockInfo[3] == SDBlock.stargateRing.blockID) {
+				blocks = ((SDBlock) SDBlock.stargateRing).detectStructure(world, stargateRingShape, blockInfo[0], blockInfo[1], blockInfo[2]);
+			}
+		}
+		return blocks;
 	}
 
 	@Override
 	public void onBlockAdded(World world, int x, int y, int z) {
-		int[] stargateBlockPos = this.getNeighboringBlocks(world, x, y, z);
-		if (stargateBlockPos != null) {
-			int bx = stargateBlockPos[0];
-			int by = stargateBlockPos[1];
-			int bz = stargateBlockPos[2];
-			world.setBlock(bx, by, bz, SDBlock.eventHorizon.blockID);
+		boolean[][] stargateRing = this.getStargateBlocks(world, x, y, z);
+		if (stargateRing != null) {
+			world.setBlock(x, y, z, Block.blockLapis.blockID);
 		}
 	}
 	
