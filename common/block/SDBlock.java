@@ -60,17 +60,19 @@ public class SDBlock extends Block {
 	}
 	
 	// Returns all blocks in a structure if this block is part of it
-	public int[] detectStructure(World world, int xOrigin, int yOrigin, int zOrigin, StringGrid template) {
+	public int[] detectStructure(World world, StringGrid template, int xOrigin,
+			int yOrigin, int zOrigin) {
 		int[] blocks;
 		// For now, assume its on the xy plane
 		// Move the template over each possible position
 		for (int xOffset = 0; xOffset < template.width; xOffset++) {
 			for (int yOffset = 0; yOffset < template.height; yOffset++) {
 				// Test the template with this offset.
-				// Do nothing for now; will call matchStructure
+				this.detectStructureAtLocation(world, template, xOrigin,
+						yOrigin, zOrigin, -1, 0, 0);
 			}
 		}
-		return new int[]{};
+		return new int[] {};
 	}
 	
 	// Find a structure using a StringGrid and the given position. If no structure is found at the location
@@ -86,28 +88,32 @@ public class SDBlock extends Block {
 	 * @param xFlip If true, the structure is mirrored
 	 * @return
 	 */
-	public boolean[][] detectStructureAtLocation(World world, StringGrid template, int x, int y, int z, int plane) {
+	public boolean[][] detectStructureAtLocation(World world,
+			StringGrid template, int x, int y, int z, int plane,
+			int xTemplateOffset, int yTemplateOffset) {
 		// To keep track of the found blocks, if any
 		boolean[][] blocks = new boolean[template.height][template.width];
 		System.out.println("Starting match");
-		match:
-		for (int gridY = 0; gridY < template.height; gridY++) {
+		match: for (int gridY = 0; gridY < template.height; gridY++) {
 			for (int gridX = 0; gridX < template.width; gridX++) {
 				// Get the correct block
-				int id = this.getBlockInStructure(world, x, y, z, gridX, gridY, plane);
+				int id = this.getBlockInStructure(world, x, y, z, gridX + xTemplateOffset, gridY + yTemplateOffset,
+						plane);
 				// Test it
 				if (template.get(gridX, gridY) != ' ') {
 					System.out.print(template.get(gridX, gridY));
 					// Expecting this block
 					if (id == this.blockID) {
-						// We matched a block on the structure, so add it to the list
+						// We matched a block on the structure, so add it to the
+						// list
 						blocks[gridY][gridX] = true;
 					} else {
 						// This match evidently didn't work, so fail
 						blocks = null;
 						break match;
 					}
-				} // No 'else' clause as blocks not part of the structure don't matter
+				} // No 'else' clause as blocks not part of the structure don't
+					// matter
 			}
 			System.out.println();
 		}
@@ -116,7 +122,8 @@ public class SDBlock extends Block {
 		return blocks;
 	}
 	
-	private int getBlockInStructure(World world, int x, int y, int z, int gridX, int gridY, int plane) {
+	private int getBlockInStructure(World world, int x, int y, int z,
+			int gridX, int gridY, int plane) {
 		int bx;
 		int by;
 		int bz;
@@ -130,10 +137,11 @@ public class SDBlock extends Block {
 			bz = z + gridY;
 		} else if (plane == 1) {
 			bx = x;
-			by = y + gridX;
-			bz = z + gridY;
+			by = y + gridY;
+			bz = z + gridX;
 		} else {
-			throw new IllegalArgumentException("Bad orientation value of " + plane);
+			throw new IllegalArgumentException("Bad orientation value of "
+					+ plane);
 		}
 		return world.getBlockId(bx, by, bz);
 	}
