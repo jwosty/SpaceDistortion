@@ -77,7 +77,6 @@ public class SDBlock extends Block {
 	
 	// Find a structure using a StringGrid and the given position. If no structure is found at the location
 	// provided, return value will be null
-	// TODO: Implement other axes (pl. axis)
 	/**
 	 * @param world The world to detect the structure in
 	 * @param template The structure to detect
