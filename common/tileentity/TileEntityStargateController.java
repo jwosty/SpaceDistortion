@@ -13,7 +13,7 @@ public class TileEntityStargateController extends TileEntity {
 	public int zDest = 0;
 	
 	public TileEntityStargateController() {
-		System.out.println("Created stargate controller tile entity");
+		
 	}
 	
 	@Override

@@ -8,6 +8,7 @@ import jw.spacedistortion.common.tileentity.TileEntityStargateController;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
@@ -32,8 +33,27 @@ public class BlockStargateController extends BlockContainer {
 	
 	@Override
 	public TileEntity createNewTileEntity(World world) {
-		System.out.println("Creating stargate controller tile entity...");
 		return new TileEntityStargateController();
+	}
+	
+	@Override
+	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int par1, float par2, float par3, float par4) {
+		TileEntityStargateController tileEntity = (TileEntityStargateController)world.getBlockTileEntity(x, y, z);
+		if (tileEntity != null) {
+			world.setBlock(tileEntity.xDest, tileEntity.yDest, tileEntity.zDest, Block.oreCoal.blockID);
+		}
+		return true;
+	}
+	
+	@Override
+	public void onBlockAdded(World world, int x, int y, int z) {
+		TileEntityStargateController tileEntity = (TileEntityStargateController)world.getBlockTileEntity(x, y, z);
+		if (tileEntity != null) {
+			tileEntity.xDest = x;
+			tileEntity.yDest = y + 1;
+			tileEntity.zDest = z;
+			
+		}
 	}
 	
 	// Returns the position of the first neighboring block found that is a stargate ring
@@ -53,14 +73,7 @@ public class BlockStargateController extends BlockContainer {
 		}
 		return null;
 	}
-
-	@Override
-	public void onBlockAdded(World world, int x, int y, int z) {
-		//boolean[][] stargateRing = this.getStargateBlocks(world, x, y, z);
-		//if (stargateRing != null) {
-			//world.setBlock(x, y, z, Block.blockLapis.blockID);
-		//}
-	}
+	
 	
 	@Override
 	public int getBlockTextureFromSide(int side) {
