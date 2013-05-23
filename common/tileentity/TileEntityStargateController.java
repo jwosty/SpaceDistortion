@@ -19,6 +19,7 @@ public class TileEntityStargateController extends TileEntity {
 		data.setIntArray("destCoords", new int[]{xDest, yDest, zDest});
 	}
 	
+	@Override
 	public void readFromNBT(NBTTagCompound data) {
 		super.readFromNBT(data);
 		this.isActivated = data.getBoolean("isActivated");
