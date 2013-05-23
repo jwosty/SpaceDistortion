@@ -61,7 +61,6 @@ public class SDBlock extends Block {
 				{0, -1, 0}, {0, 1, 0},
 				{0, 0, -1}, {0, 0, 1}
 		};
-		search:
 		for (int i = 0; i < neighbors.length; i++) {
 			// Get information about the block
 			int[] neighbor = neighbors[i];
@@ -72,7 +71,6 @@ public class SDBlock extends Block {
 			if (id != 0) {
 				// We found a neighbor, so add it to the list
 				blocks.add(new Integer[] { bx, by, bz, id });
-				//break search;
 			}
 		}
 		return blocks;
