@@ -11,6 +11,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 
 public class BlockStargateController extends BlockContainer {
 	public static StringGrid stargateRingShape = new StringGrid(
@@ -29,6 +30,24 @@ public class BlockStargateController extends BlockContainer {
 	public BlockStargateController(int id, int _blockIndexInTexture) {
 		super(id, Material.rock);
 		blockIndexInTexture = _blockIndexInTexture;
+	}
+	
+	// Returns the coordinates of the dominate (first found) stargate controller
+	// in the given chunk; null if none is found
+	public static int[] getDominantController(World world, int chunkX,
+			int chunkY) {
+		Chunk chunk = world.getChunkFromChunkCoords(chunkX, chunkY);
+		for (int x = 0; x < 16; x++) {
+			for (int z = 0; z < 16; z++) {
+				for (int y = 0; y < 256; y++) {
+					int block = chunk.getBlockID(x, y, z);
+					if (block == SDBlock.stargateController.blockID) {
+						return new int[] { x, y, z };
+					}
+				}
+			}
+		}
+		return null;
 	}
 	
 	@Override
