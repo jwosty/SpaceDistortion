@@ -2,6 +2,7 @@ package jw.spacedistortion.common.tileentity;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 
 public class TileEntityStargateController extends TileEntity {
 	public boolean isActivated = false;
@@ -10,6 +11,10 @@ public class TileEntityStargateController extends TileEntity {
 	public int xDest = 0;
 	public int yDest = 0;
 	public int zDest = 0;
+	
+	public TileEntityStargateController() {
+		System.out.println("Created stargate controller tile entity");
+	}
 	
 	@Override
 	public void writeToNBT(NBTTagCompound data) {
