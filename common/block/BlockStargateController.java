@@ -35,15 +35,23 @@ public class BlockStargateController extends BlockContainer {
 	// Returns the coordinates of the dominate (first found) stargate controller
 	// in the given chunk; null if none is found
 	public static int[] getDominantController(World world, int chunkX,
-			int chunkY) {
-		Chunk chunk = world.getChunkFromChunkCoords(chunkX, chunkY);
+			int chunkZ) {
+		System.out.println("Searching for Stargate at chunk (" + chunkX + ", " + chunkZ + ")");
+		Chunk chunk = world.getChunkFromChunkCoords(chunkX, chunkZ);
 		for (int x = 0; x < 16; x++) {
 			for (int z = 0; z < 16; z++) {
 				for (int y = 0; y < 256; y++) {
 					int block = chunk.getBlockID(x, y, z);
-					if (block == SDBlock.stargateController.blockID) {
-						return new int[] { x, y, z };
+					int rx = (chunkX << 4) + x;
+					int rz = (chunkZ << 4) + z;
+					//System.out.println("Found Stargate");
+					if (block == Block.blockGold.blockID) {
+						System.out.println("Found gold at (" + rx + ", " + y + ", " + rz + ")");
+						return new int[] { rx, y, rz };
 					}
+					//if (block == SDBlock.stargateController.blockID) {
+					//	return new int[] { rx, y, rz };
+					//}
 				}
 			}
 		}
@@ -66,8 +74,7 @@ public class BlockStargateController extends BlockContainer {
 				// tileEntity.zDest, Block.oreCoal.blockID);
 				System.out.println("Teleporting to (" + tileEntity.xDest + ", "
 						+ tileEntity.yDest + ", " + tileEntity.zDest + ")");
-				// player.setPosition(tileEntity.xDest, tileEntity.yDest,
-				// tileEntity.zDest);
+				player.setPosition(tileEntity.xDest, tileEntity.yDest, tileEntity.zDest);
 			}
 		}
 		return true;
@@ -79,12 +86,12 @@ public class BlockStargateController extends BlockContainer {
 				.getBlockTileEntity(x, y, z);
 		if (tileEntity != null) {
 			int[] targetCoords = BlockStargateController.getDominantController(
-					world, x >> 4 + 1, z >> 4);
+					world, x >> 4, z >> 4);
 			if (targetCoords != null) {
-				System.out.println("Found a stargate");
 				tileEntity.xDest = targetCoords[0];
 				tileEntity.yDest = targetCoords[1];
 				tileEntity.zDest = targetCoords[2];
+				System.out.println("Found a stargate at (" + tileEntity.xDest + ", " + tileEntity.yDest + ", " + tileEntity.zDest + ")");
 			} else {
 				System.out
 						.println("No stargate found; setting destination to ("
