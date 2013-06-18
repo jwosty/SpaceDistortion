@@ -57,21 +57,42 @@ public class BlockStargateController extends BlockContainer {
 	
 	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int par1, float par2, float par3, float par4) {
-		TileEntityStargateController tileEntity = (TileEntityStargateController)world.getBlockTileEntity(x, y, z);
-		if (tileEntity != null) {
-			world.setBlock(tileEntity.xDest, tileEntity.yDest, tileEntity.zDest, Block.oreCoal.blockID);
+		if (!world.isRemote) {
+			System.out.println("Block was activated");
+			TileEntityStargateController tileEntity = (TileEntityStargateController) world
+					.getBlockTileEntity(x, y, z);
+			if (tileEntity != null) {
+				// world.setBlock(tileEntity.xDest, tileEntity.yDest,
+				// tileEntity.zDest, Block.oreCoal.blockID);
+				System.out.println("Teleporting to (" + tileEntity.xDest + ", "
+						+ tileEntity.yDest + ", " + tileEntity.zDest + ")");
+				// player.setPosition(tileEntity.xDest, tileEntity.yDest,
+				// tileEntity.zDest);
+			}
 		}
 		return true;
 	}
 	
 	@Override
 	public void onBlockAdded(World world, int x, int y, int z) {
-		TileEntityStargateController tileEntity = (TileEntityStargateController)world.getBlockTileEntity(x, y, z);
+		TileEntityStargateController tileEntity = (TileEntityStargateController) world
+				.getBlockTileEntity(x, y, z);
 		if (tileEntity != null) {
-			tileEntity.xDest = x;
-			tileEntity.yDest = y + 1;
-			tileEntity.zDest = z;
-			
+			int[] targetCoords = BlockStargateController.getDominantController(
+					world, x >> 4 + 1, z >> 4);
+			if (targetCoords != null) {
+				System.out.println("Found a stargate");
+				tileEntity.xDest = targetCoords[0];
+				tileEntity.yDest = targetCoords[1];
+				tileEntity.zDest = targetCoords[2];
+			} else {
+				System.out
+						.println("No stargate found; setting destination to ("
+								+ x + ", " + y + ", " + z + ")");
+				tileEntity.xDest = x;
+				tileEntity.yDest = y;
+				tileEntity.zDest = z;
+			}
 		}
 	}
 	
