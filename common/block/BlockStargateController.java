@@ -67,15 +67,15 @@ public class BlockStargateController extends Block {
 	// Returns the position of the first neighboring block found that is a stargate ring
 	// Coordinates in returns are not relative to the given coordinates
 	// Does nothing yet
-	public boolean[][] getStargateBlocks(World world, int xOrigin, int yOrigin, int zOrigin) {
+	public DetectStructureResults getStargateBlocks(World world, int xOrigin, int yOrigin, int zOrigin) {
 		// Hmm, a bit of an odd workaround... Make that method static? :/
 		List<Integer[]> neighbors = ((SDBlock)SDBlock.stargateRing).getNeighboringBlocks(world, xOrigin, yOrigin, zOrigin);
 		for (int i = 0; i < neighbors.size(); i++) {
 			Integer[] blockInfo = neighbors.get(i);
 			if (blockInfo[3] == SDBlock.stargateRing.blockID) {
-				boolean[][] blocks = ((SDBlock) SDBlock.stargateRing).detectStructure(world, stargateRingShape, blockInfo[0], blockInfo[1], blockInfo[2]);
-				if (blocks != null) {
-					return blocks;
+				DetectStructureResults results = ((SDBlock) SDBlock.stargateRing).detectStructure(world, stargateRingShape, blockInfo[0], blockInfo[1], blockInfo[2]);
+				if (results != null) {
+					return results;
 				}
 			}
 		}
