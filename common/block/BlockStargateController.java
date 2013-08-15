@@ -44,14 +44,10 @@ public class BlockStargateController extends BlockContainer {
 					int block = chunk.getBlockID(x, y, z);
 					int rx = (chunkX << 4) + x;
 					int rz = (chunkZ << 4) + z;
-					//System.out.println("Found Stargate");
-					if (block == Block.blockGold.blockID) {
-						System.out.println("Found gold at (" + rx + ", " + y + ", " + rz + ")");
+					//}
+					if (block == SDBlock.stargateController.blockID) {
 						return new int[] { rx, y, rz };
 					}
-					//if (block == SDBlock.stargateController.blockID) {
-					//	return new int[] { rx, y, rz };
-					//}
 				}
 			}
 		}
@@ -65,42 +61,12 @@ public class BlockStargateController extends BlockContainer {
 	
 	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int par1, float par2, float par3, float par4) {
-		if (!world.isRemote) {
-			System.out.println("Block was activated");
-			TileEntityStargateController tileEntity = (TileEntityStargateController) world
-					.getBlockTileEntity(x, y, z);
-			if (tileEntity != null) {
-				// world.setBlock(tileEntity.xDest, tileEntity.yDest,
-				// tileEntity.zDest, Block.oreCoal.blockID);
-				System.out.println("Teleporting to (" + tileEntity.xDest + ", "
-						+ tileEntity.yDest + ", " + tileEntity.zDest + ")");
-				player.setPosition(tileEntity.xDest, tileEntity.yDest, tileEntity.zDest);
-			}
+		int[] coords = this.getDominantController(world, x >> 4, z >> 4);
+		if (coords != null) {
+			System.out.println("Found a stargate at (" + coords[0] + ", " + coords[1] + ", " + coords[2] + ")");
+			player.setPosition(coords[0] + 0.5, coords[1] + 1.0, coords[2] + 0.5);
 		}
 		return true;
-	}
-	
-	@Override
-	public void onBlockAdded(World world, int x, int y, int z) {
-		TileEntityStargateController tileEntity = (TileEntityStargateController) world
-				.getBlockTileEntity(x, y, z);
-		if (tileEntity != null) {
-			int[] targetCoords = BlockStargateController.getDominantController(
-					world, x >> 4, z >> 4);
-			if (targetCoords != null) {
-				tileEntity.xDest = targetCoords[0];
-				tileEntity.yDest = targetCoords[1];
-				tileEntity.zDest = targetCoords[2];
-				System.out.println("Found a stargate at (" + tileEntity.xDest + ", " + tileEntity.yDest + ", " + tileEntity.zDest + ")");
-			} else {
-				System.out
-						.println("No stargate found; setting destination to ("
-								+ x + ", " + y + ", " + z + ")");
-				tileEntity.xDest = x;
-				tileEntity.yDest = y;
-				tileEntity.zDest = z;
-			}
-		}
 	}
 	
 	// Returns the position of the first neighboring block found that is a stargate ring

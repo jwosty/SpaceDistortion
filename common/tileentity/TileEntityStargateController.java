@@ -8,9 +8,9 @@ public class TileEntityStargateController extends TileEntity {
 	public boolean isActivated = false;
 	public boolean isOutgoing = false;
 	// Coordinates of the destination stargate controller
-	public int xDest = 0;
-	public int yDest = 0;
-	public int zDest = 0;
+	public int xDest;
+	public int yDest;
+	public int zDest;
 	
 	public TileEntityStargateController() {
 		
