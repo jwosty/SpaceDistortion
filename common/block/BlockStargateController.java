@@ -13,7 +13,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 
-public class BlockStargateController extends BlockContainer {
+public class BlockStargateController extends Block {
 	public static StringGrid stargateRingShape = new StringGrid(
 			"  XXX",
 			" X   X",
@@ -52,11 +52,6 @@ public class BlockStargateController extends BlockContainer {
 			}
 		}
 		return null;
-	}
-	
-	@Override
-	public TileEntity createNewTileEntity(World world) {
-		return new TileEntityStargateController();
 	}
 	
 	@Override
