@@ -48,27 +48,6 @@ public class GuiDHD extends GuiScreen {
 	@Override
 	public void drawScreen(int par1, int par2, float par3) {
 		this.drawDefaultBackground();
-		
-		GL11.glColor4f(1, 1, 1, 1);
-		GL11.glDisable(GL11.GL_LIGHTING);
-		GL11.glEnable(GL11.GL_BLEND);
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, mc.renderEngine.getTexture(CommonProxy.GLYPHS_PNG));
-		this.drawTexturedModalRectWithScale(panelX, panelY, 0, 0, panelWidth, panelHeight, panelScale);
-		
 		super.drawScreen(par1, par2, par3);
-	}
-	
-	public void drawTexturedModalRectWithScale(int screenX, int screenY, int u, int v, int textureWidth, int textureHeight, int scale) {
-		float var7 = 0.00390625F * scale;
-		float var8 = 0.00390625F * scale;
-		int width = textureWidth / scale;
-		int height = textureHeight / scale;
-		Tessellator var9 = Tessellator.instance;
-		var9.startDrawingQuads();
-		var9.addVertexWithUV((double) (screenX + 0), (double) (screenY + height), (double) this.zLevel, (double) ((float) (u + 0) * var7), (double) ((float) (v + height) * var8));
-		var9.addVertexWithUV((double) (screenX + width), (double) (screenY + height), (double) this.zLevel, (double) ((float) (u + width) * var7), (double) ((float) (v + height) * var8));
-		var9.addVertexWithUV((double) (screenX + width), (double) (screenY + 0), (double) this.zLevel, (double) ((float) (u + width) * var7), (double) ((float) (v + 0) * var8));
-		var9.addVertexWithUV((double) (screenX + 0), (double) (screenY + 0), (double) this.zLevel, (double) ((float) (u + 0) * var7), (double) ((float) (v + 0) * var8));
-		var9.draw();
 	}
 }
