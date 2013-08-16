@@ -29,7 +29,7 @@ public class GuiDHDButton extends GuiButton {
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, mc.renderEngine.getTexture(CommonProxy.GLYPHS_PNG));
 			int scale = 1;
 			this.drawTexturedModalRectWithScale(this.xPosition, this.yPosition,
-					this.glyphID * GlyphWidth, this.glyphID / (GlyphSheetWidth / GlyphWidth) * GlyphHeight,
+					this.glyphID % (GlyphSheetWidth / GlyphWidth) * GlyphWidth, this.glyphID / (GlyphSheetWidth / GlyphWidth) * GlyphHeight,
 					GlyphWidth, GlyphHeight, scale);
 		}
 	}

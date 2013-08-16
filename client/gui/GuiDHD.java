@@ -16,12 +16,6 @@ import net.minecraftforge.event.ForgeSubscribe;
  * Class written using GuiEditSign as a template
  */
 public class GuiDHD extends GuiScreen {
-	public int panelWidth = 256;
-	public int panelHeight = 256;
-	public int panelScale = 2;
-	public int panelX;
-	public int panelY;
-	
 	@Override
 	public boolean doesGuiPauseGame() {
 		return false;
@@ -30,9 +24,17 @@ public class GuiDHD extends GuiScreen {
 	@Override
 	public void initGui() {
 		this.controlList.clear();
-		this.panelX = 0;
-		this.panelY = 0;
-		this.controlList.add(new GuiDHDButton(panelX, panelY, (byte)0));
+		for(int glyphID = 0; glyphID < 39; glyphID++) {
+			//int panelX = (this.width - GuiDHDButton.GlyphSheetWidth) / 2;
+			//int panelY = (this.width - GuiDHDButton.GlyphSheetHeight) / 2;
+			int gsw = GuiDHDButton.GlyphSheetWidth;
+			int gsh = GuiDHDButton.GlyphSheetHeight;
+			int gw = GuiDHDButton.GlyphWidth;
+			int gh = GuiDHDButton.GlyphHeight;
+			int x = glyphID % (gsw / gw) * gw;
+			int y = glyphID / (gsw / gw) * gh;
+			this.controlList.add(new GuiDHDButton(x, y, (byte)glyphID));
+		}
 	}
 	
 	@Override
