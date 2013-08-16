@@ -71,11 +71,13 @@ public class BlockStargateController extends Block {
 	}
 	
 	public void warpPlayerTo(long address) {
-		int x = (int)(address % 1000000);
-		address = address / 1000000;
-		int y = (int)(address % 1000000);
-		address = address / 1000000;
 		int dimension = (int)(address % 10);
+		address = address / 100;
+		int z = (int)(address % 1000000);
+		address = address /     1000000;
+		int x = (int)(address % 1000000);
+		System.out.println("Dimension = " + dimension + ", x = " + x + ", z = " + z);
+		Minecraft.getMinecraft().thePlayer.setPositionAndUpdate(x * 16, 60, z * 16);
 	}
 	
 	// Returns the position of the first neighboring block found that is a stargate ring

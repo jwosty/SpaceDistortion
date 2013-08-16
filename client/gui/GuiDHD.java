@@ -23,10 +23,10 @@ public class GuiDHD extends GuiScreen {
 	 */
 	public int currentCoordinate = 0;
 	/**
-	 * Represents the address that the player has entered thus so far: the first
-	 * 2 decimal places specified the dimension, the next 6 are the destination
-	 * chunk's y coordinate, and the last 6 are the destination chunk's x
-	 * coordinate
+	 * Represents the coordinates the player has entered thus so far: the first
+	 * 6 decimal places are the destination chunk's x coordinate, the next 6 are
+	 * the destination chunk's y coordinate, and the last 2 places specify the
+	 * dimension
 	 */
 	public long address = 0;
 	private BlockStargateController controller;
@@ -89,18 +89,17 @@ public class GuiDHD extends GuiScreen {
 	public void actionPerformed(GuiButton guiButton) {
 		if (guiButton.enabled && guiButton instanceof GuiDHDButton) {
 			GuiDHDButton b = (GuiDHDButton) guiButton;
-			// First, apply the FX: enable the button and make it glow orange
+			// First, apply the FX: make the button glow orange
 			b.isActivated = true;
 			// Encode the selected coordinate into the address
-			// address[currentCoordinate] = b.glyphID;
-			address += b.glyphID * Math.pow(100, currentCoordinate);
-			System.out.println(address);
+			address += b.glyphID * Math.pow(100, 6 - currentCoordinate);
 			// Set the appropriate display button's glyph and show it
 			GuiDHDButton display = (GuiDHDButton) this.controlList
 					.get(currentCoordinate);
 			display.glyphID = b.glyphID;
 			currentCoordinate++;
 			if (currentCoordinate == 7) {
+				System.out.println(address);
 				this.controller.warpPlayerTo(this.address);
 				this.mc.displayGuiScreen((GuiScreen) null);
 			}
