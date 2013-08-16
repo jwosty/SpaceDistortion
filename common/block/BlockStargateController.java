@@ -77,7 +77,7 @@ public class BlockStargateController extends Block {
 		address = address /     1000000;
 		int x = (int)(address % 1000000);
 		System.out.println("Dimension = " + dimension + ", x = " + x + ", z = " + z);
-		Minecraft.getMinecraft().thePlayer.setPositionAndUpdate(x * 16, 60, z * 16);
+		//Minecraft.getMinecraft().thePlayer.setPositionAndUpdate(x * 16, 60, z * 16);
 	}
 	
 	// Returns the position of the first neighboring block found that is a stargate ring

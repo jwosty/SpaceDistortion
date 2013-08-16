@@ -91,8 +91,9 @@ public class GuiDHD extends GuiScreen {
 			GuiDHDButton b = (GuiDHDButton) guiButton;
 			// First, apply the FX: make the button glow orange
 			b.isActivated = true;
-			// Encode the selected coordinate into the address
-			address += b.glyphID * Math.pow(100, 6 - currentCoordinate);
+			// Encode the selected coordinate into the address (note that
+			// the glyph is pretty much a base 39 number)
+			address += b.glyphID * Math.pow(39, 6 - currentCoordinate);
 			// Set the appropriate display button's glyph and show it
 			GuiDHDButton display = (GuiDHDButton) this.controlList
 					.get(currentCoordinate);
