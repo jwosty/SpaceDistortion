@@ -20,7 +20,10 @@ public class GuiDHD extends GuiScreen {
 	@Override
 	public void initGui() {
 		this.controlList.clear();
-		this.controlList.add(new GuiButton(0, this.width / 2 - 100, (this.height / 4) * 3, "Done"));
+		//this.controlList.add(new GuiButton(0, this.width / 2 - 100, (this.height / 4) * 3, "Done"));
+		int x = (this.width / 2) - (GuiDHDButton.GlyphWidth / 2);
+		int y = (this.height / 2) - (GuiDHDButton.GlyphHeight / 2);
+		this.controlList.add(new GuiDHDButton(0, 0));
 	}
 	
 	@Override

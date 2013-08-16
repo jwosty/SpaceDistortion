@@ -60,8 +60,8 @@ public class BlockStargateController extends Block {
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int par1, float par2, float par3, float par4) {
 		int[] coords = this.getDominantController(world, x >> 4, z >> 4);
 		if (coords != null) {
-			System.out.println("Found a stargate at (" + coords[0] + ", " + coords[1] + ", " + coords[2] + ")");
-			player.setPosition(coords[0] + 0.5, coords[1] + 1.0, coords[2] + 0.5);
+			//System.out.println("Found a stargate at (" + coords[0] + ", " + coords[1] + ", " + coords[2] + ")");
+			//player.setPosition(coords[0] + 0.5, coords[1] + 1.0, coords[2] + 0.5);
 		}
 		if (world.isRemote)	{
 			Minecraft.getMinecraft().displayGuiScreen(new GuiDHD());
