@@ -25,20 +25,28 @@ public class GuiDHD extends GuiScreen {
 	public void initGui() {
 		this.controlList.clear();
 		
+		// "Shortcuts" for frequently accessed constants
+		int gsw = GuiDHDButton.GlyphSheetWidth;
+		int gsh = GuiDHDButton.GlyphSheetHeight;
+		int gw = GuiDHDButton.GlyphWidth;
+		int gh = GuiDHDButton.GlyphHeight;
+		
+		// Calculate the top corner of the DHD panel
+		int panelX = (this.width - gsw) / 2;
+		int panelY = (this.height - gsh) / 2;
+		
+		// Create the address display at the top of the DHD
+		for (int c = 0; c < 7; c++) {
+			
+		}
+		
 		// Create the buttons
 		for(int glyphID = 0; glyphID < 39; glyphID++) {
-			// "Shortcuts" for frequently accessed constants
-			int gsw = GuiDHDButton.GlyphSheetWidth;
-			int gsh = GuiDHDButton.GlyphSheetHeight;
-			int gw = GuiDHDButton.GlyphWidth;
-			int gh = GuiDHDButton.GlyphHeight;
-			// Calculate the top corner of the DHD buttons panel
-			int panelX = (this.width - gsw) / 2;
-			int panelY = (this.height - gsh) / 2;
 			// Calculate the x and y position of the glyph (in the order of
-			// appearance on the sprite sheet)
+			// appearance on the sprite sheet), offsetting the y by 1 glyph
+			// in order to display the button panel lower
 			int x = panelX + (glyphID % (gsw / gw) * gw);
-			int y = panelY + (glyphID / (gsw / gw) * gh);
+			int y = panelY + (glyphID / (gsw / gw) * gh) + gh;
 			// Finally, add the button
 			this.controlList.add(new GuiDHDButton(x, y, (byte) glyphID));
 		}
@@ -46,7 +54,7 @@ public class GuiDHD extends GuiScreen {
 	
 	@Override
 	public void actionPerformed(GuiButton guiButton) {
-		if (guiButton.enabled && guiButton.id == 0 && guiButton instanceof GuiDHDButton) {
+		if (guiButton.enabled && guiButton instanceof GuiDHDButton) {
 			GuiDHDButton b = (GuiDHDButton)guiButton;
 			b.isActivated = true;
 		}
