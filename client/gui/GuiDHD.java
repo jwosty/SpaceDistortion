@@ -28,6 +28,14 @@ public class GuiDHD extends GuiScreen {
 	 * the original show)
 	 */
 	public byte[] address = new byte[7];
+	
+	// The x and y position of the DHD panel top corner
+	public int getPanelX() {
+		return (this.width - GuiDHDButton.GlyphSheetWidth) / 2;
+	}
+	public int getPanelY() {
+		return ((this.height - GuiDHDButton.GlyphSheetHeight) / 2) - GuiDHDButton.GlyphHeight;
+	}
 
 	@Override
 	public boolean doesGuiPauseGame() {
@@ -44,16 +52,12 @@ public class GuiDHD extends GuiScreen {
 		int gw = GuiDHDButton.GlyphWidth;
 		int gh = GuiDHDButton.GlyphHeight;
 
-		// Calculate the top corner of the DHD panel
-		int panelX = (this.width - gsw) / 2;
-		int panelY = (this.height - gsh) / 2;
-
 		// Create the address display at the top of the DHD
 		for (int c = 0; c < 7; c++) {
 			// Use a button for simplicity instead of a whole new Gui element
 			// for this, setting the glyph to the empty slot so it doesn't draw
 			// yet (b.drawButton doesn't seem to allow one to change it later)
-			GuiDHDButton b = new GuiDHDButton(panelX + (gw * c), panelY - gh,
+			GuiDHDButton b = new GuiDHDButton(this.getPanelX() + (gw * c), this.getPanelY(),
 					(byte) 39);
 			b.isActivated = true;
 			b.enabled = false;
@@ -66,8 +70,8 @@ public class GuiDHD extends GuiScreen {
 			// Calculate the x and y position of the glyph (in the order of
 			// appearance on the sprite sheet), offsetting the y by 1 glyph
 			// in order to display the button panel lower
-			int x = panelX + (glyphID % (gsw / gw) * gw);
-			int y = panelY + (glyphID / (gsw / gw) * gh) + gh;
+			int x = this.getPanelX() + (glyphID % (gsw / gw) * gw);
+			int y = this.getPanelY() + (glyphID / (gsw / gw) * gh) + (gh * 2);
 			// Finally, add the button
 			this.controlList.add(new GuiDHDButton(x, y, (byte) glyphID));
 		}
@@ -92,6 +96,9 @@ public class GuiDHD extends GuiScreen {
 	@Override
 	public void drawScreen(int par1, int par2, float par3) {
 		this.drawDefaultBackground();
+		GL11.glDisable(GL11.GL_LIGHTING);
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, mc.renderEngine.getTexture(CommonProxy.DHD_PNG));
+		this.drawTexturedModalRect(this.getPanelX(), this.getPanelY(), 0, 0, 256, 256);
 		super.drawScreen(par1, par2, par3);
 	}
 }
