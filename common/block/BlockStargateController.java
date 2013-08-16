@@ -3,7 +3,7 @@ package jw.spacedistortion.common.block;
 import java.util.List;
 
 import jw.spacedistortion.StringGrid;
-import jw.spacedistortion.client.gui.GuiDialStargate;
+import jw.spacedistortion.client.gui.GuiDHD;
 import jw.spacedistortion.common.CommonProxy;
 import jw.spacedistortion.common.tileentity.TileEntityStargateController;
 import net.minecraft.block.Block;
@@ -64,7 +64,7 @@ public class BlockStargateController extends Block {
 			player.setPosition(coords[0] + 0.5, coords[1] + 1.0, coords[2] + 0.5);
 		}
 		if (world.isRemote)	{
-			Minecraft.getMinecraft().displayGuiScreen(new GuiDialStargate());
+			Minecraft.getMinecraft().displayGuiScreen(new GuiDHD());
 		}
 		return true;
 	}
