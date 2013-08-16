@@ -18,21 +18,21 @@ import net.minecraftforge.event.ForgeSubscribe;
 public class GuiDHD extends GuiScreen {
 	@Override
 	public boolean doesGuiPauseGame() {
-		return false;
+		return true;
 	}
 	
 	@Override
 	public void initGui() {
 		this.controlList.clear();
 		for(int glyphID = 0; glyphID < 39; glyphID++) {
-			//int panelX = (this.width - GuiDHDButton.GlyphSheetWidth) / 2;
-			//int panelY = (this.width - GuiDHDButton.GlyphSheetHeight) / 2;
 			int gsw = GuiDHDButton.GlyphSheetWidth;
 			int gsh = GuiDHDButton.GlyphSheetHeight;
+			int panelX = (this.width - gsw) / 2;
+			int panelY = (this.height - gsh) / 2;
 			int gw = GuiDHDButton.GlyphWidth;
 			int gh = GuiDHDButton.GlyphHeight;
-			int x = glyphID % (gsw / gw) * gw;
-			int y = glyphID / (gsw / gw) * gh;
+			int x = panelX + (glyphID % (gsw / gw) * gw);
+			int y = panelY + (glyphID / (gsw / gw) * gh);
 			this.controlList.add(new GuiDHDButton(x, y, (byte)glyphID));
 		}
 	}

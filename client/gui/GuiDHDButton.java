@@ -12,7 +12,7 @@ public class GuiDHDButton extends GuiButton {
 	public static int GlyphWidth = 32;
 	public static int GlyphHeight = 32;
 	public static int GlyphSheetWidth = 256;
-	public static int GlyphSheetHeight = 256;
+	public static int GlyphSheetHeight = 160;
 	public byte glyphID;
 	
 	public GuiDHDButton(int x, int y, byte glyphID) {
