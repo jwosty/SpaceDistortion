@@ -33,7 +33,7 @@ public class GuiDHD extends GuiScreen {
 		//this.controlList.add(new GuiButton(0, this.width / 2 - 100, (this.height / 4) * 3, "Done"));
 		this.panelX = 0;//(this.width / 2) - (panelWidth / 2 / panelScale);
 		this.panelY = 0;//(this.height / 2) - (panelHeight / 2 / panelScale);
-		this.controlList.add(new GuiDHDButton(panelX, panelY));
+		this.controlList.add(new GuiDHDButton(panelX, panelY, (byte)38));
 	}
 	
 	@Override
