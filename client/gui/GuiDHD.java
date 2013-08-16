@@ -39,10 +39,9 @@ public class GuiDHD extends GuiScreen {
 	
 	@Override
 	public void actionPerformed(GuiButton guiButton) {
-		if (guiButton.enabled) {
-			if (guiButton.id == 0) {
-				this.mc.displayGuiScreen((GuiScreen)null);
-			}
+		if (guiButton.enabled && guiButton.id == 0 && guiButton instanceof GuiDHDButton) {
+			GuiDHDButton b = (GuiDHDButton)guiButton;
+			b.isActivated = !b.isActivated;
 		}
 	}
 	
