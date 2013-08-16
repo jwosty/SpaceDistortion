@@ -24,16 +24,23 @@ public class GuiDHD extends GuiScreen {
 	@Override
 	public void initGui() {
 		this.controlList.clear();
+		
+		// Create the buttons
 		for(int glyphID = 0; glyphID < 39; glyphID++) {
+			// "Shortcuts" for frequently accessed constants
 			int gsw = GuiDHDButton.GlyphSheetWidth;
 			int gsh = GuiDHDButton.GlyphSheetHeight;
-			int panelX = (this.width - gsw) / 2;
-			int panelY = (this.height - gsh) / 2;
 			int gw = GuiDHDButton.GlyphWidth;
 			int gh = GuiDHDButton.GlyphHeight;
+			// Calculate the top corner of the DHD buttons panel
+			int panelX = (this.width - gsw) / 2;
+			int panelY = (this.height - gsh) / 2;
+			// Calculate the x and y position of the glyph (in the order of
+			// appearance on the sprite sheet)
 			int x = panelX + (glyphID % (gsw / gw) * gw);
 			int y = panelY + (glyphID / (gsw / gw) * gh);
-			this.controlList.add(new GuiDHDButton(x, y, (byte)glyphID));
+			// Finally, add the button
+			this.controlList.add(new GuiDHDButton(x, y, (byte) glyphID));
 		}
 	}
 	
@@ -41,7 +48,7 @@ public class GuiDHD extends GuiScreen {
 	public void actionPerformed(GuiButton guiButton) {
 		if (guiButton.enabled && guiButton.id == 0 && guiButton instanceof GuiDHDButton) {
 			GuiDHDButton b = (GuiDHDButton)guiButton;
-			b.isActivated = !b.isActivated;
+			b.isActivated = true;
 		}
 	}
 	
