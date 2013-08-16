@@ -11,6 +11,7 @@ import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
@@ -64,9 +65,17 @@ public class BlockStargateController extends Block {
 			//player.setPosition(coords[0] + 0.5, coords[1] + 1.0, coords[2] + 0.5);
 		}
 		if (world.isRemote)	{
-			Minecraft.getMinecraft().displayGuiScreen(new GuiDHD());
+			Minecraft.getMinecraft().displayGuiScreen(new GuiDHD(this));
 		}
 		return true;
+	}
+	
+	public void warpPlayerTo(long address) {
+		int x = (int)(address % 1000000);
+		address = address / 1000000;
+		int y = (int)(address % 1000000);
+		address = address / 1000000;
+		int dimension = (int)(address % 10);
 	}
 	
 	// Returns the position of the first neighboring block found that is a stargate ring
@@ -86,7 +95,6 @@ public class BlockStargateController extends Block {
 		}
 		return null;
 	}
-	
 	
 	@Override
 	public int getBlockTextureFromSide(int side) {

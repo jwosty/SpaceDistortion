@@ -1,6 +1,7 @@
 package jw.spacedistortion.client.gui;
 
 import jw.spacedistortion.common.CommonProxy;
+import jw.spacedistortion.common.block.BlockStargateController;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
@@ -24,9 +25,15 @@ public class GuiDHD extends GuiScreen {
 	/**
 	 * Represents the address that the player has entered thus so far: the first
 	 * 2 decimal places specified the dimension, the next 6 are the destination
-	 * chunk's y coordinates, and the last 6 are the destination chunk's x position
+	 * chunk's y coordinate, and the last 6 are the destination chunk's x
+	 * coordinate
 	 */
 	public long address = 0;
+	private BlockStargateController controller;
+
+	public GuiDHD(BlockStargateController controller) {
+		this.controller = controller;
+	}
 
 	// The x and y position of the DHD panel top corner
 	public int getPanelX() {
@@ -93,6 +100,10 @@ public class GuiDHD extends GuiScreen {
 					.get(currentCoordinate);
 			display.glyphID = b.glyphID;
 			currentCoordinate++;
+			if (currentCoordinate == 7) {
+				this.controller.warpPlayerTo(this.address);
+				this.mc.displayGuiScreen((GuiScreen) null);
+			}
 		}
 	}
 
