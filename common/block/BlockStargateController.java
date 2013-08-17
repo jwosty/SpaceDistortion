@@ -128,7 +128,22 @@ public class BlockStargateController extends Block {
 	 * nothing if the controller doesn't exist or isn't adjacent to a stargate)
 	 */
 	public void activateStargate(int x, int y, int z) {
-		
+		World world = Minecraft.getMinecraft().theWorld;
+		// If there's no controller block, don't continue
+		if (world.getBlockId(x, y, z) != this.blockID) {
+			return;
+		}
+		DetectStructureResults stargate = this.getStargateBlocks(Minecraft.getMinecraft().theWorld, x, y, z);
+		if (stargate.blocks == null) {
+			return;
+		}
+		for (int templateX = 0; templateX <= stargateEventHorizonShape.width; templateX++) {
+			for (int templateY = 0; templateY <= stargateEventHorizonShape.height; templateY++) {
+				if (stargateEventHorizonShape.get(templateX, templateY) == 'X') {
+					
+				}
+			}
+		}
 	}
 
 	/**
