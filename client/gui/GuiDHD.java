@@ -2,6 +2,7 @@ package jw.spacedistortion.client.gui;
 
 import jw.spacedistortion.common.CommonProxy;
 import jw.spacedistortion.common.block.BlockStargateController;
+import jw.spacedistortion.common.block.SDBlock;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
@@ -29,10 +30,14 @@ public class GuiDHD extends GuiScreen {
 	 * dimension
 	 */
 	public byte[] address = new byte[7];
-	private BlockStargateController controller;
-
-	public GuiDHD(BlockStargateController controller) {
-		this.controller = controller;
+	private int dhdX;
+	private int dhdY;
+	private int dhdZ;
+	
+	public GuiDHD(int dhdX, int dhdY, int dhdZ) {
+		this.dhdX = dhdX;
+		this.dhdY = dhdY;
+		this.dhdZ = dhdZ;
 	}
 
 	// The x and y position of the DHD panel top corner
@@ -101,7 +106,7 @@ public class GuiDHD extends GuiScreen {
 			currentCoordinate++;
 			if (currentCoordinate == 7) {
 				//System.out.println(address);
-				this.controller.addressReceived(this.address);
+				((BlockStargateController)SDBlock.stargateController).addressReceived(address, this.dhdX, this.dhdY, this.dhdZ);
 				this.mc.displayGuiScreen((GuiScreen) null);
 			}
 		}

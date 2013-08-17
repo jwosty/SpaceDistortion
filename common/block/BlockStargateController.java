@@ -79,13 +79,13 @@ public class BlockStargateController extends Block {
 		// 0.5);
 		// }
 		if (world.isRemote) {
-			Minecraft.getMinecraft().displayGuiScreen(new GuiDHD(this));
+			Minecraft.getMinecraft().displayGuiScreen(new GuiDHD(x, y, z));
 		}
 		return true;
 	}
 	
 
-	public void addressReceived(byte[] address) {
+	public void addressReceived(byte[] address, int dhdX, int dhdY, int dhdZ) {
 		for (int i = 0; i < 7; i++) {
 			if (i < 6) {
 				System.out.print(address[i] + " ");
@@ -111,24 +111,23 @@ public class BlockStargateController extends Block {
 			chunkZ = -chunkZ;
 		}
 		System.out.println("chunkX = " + chunkX + ", chunkZ = " + chunkZ + ", dimension = " + dimension);
-
-		int[] controllerCoords = this.getDominantController(
-				Minecraft.getMinecraft().theWorld, chunkX, chunkZ);
-		if (controllerCoords == null) {
-			Minecraft.getMinecraft().thePlayer
-					.sendChatToPlayer("Cheveron 7 will not lock!");
-		} else {
-			Minecraft.getMinecraft().thePlayer
-					.sendChatToPlayer("Cheveron 7 locked! Target stargate located at ("
-							+ controllerCoords[0]
-							+ ", "
-							+ controllerCoords[1]
-							+ ", " + controllerCoords[2] + ")");
-			Minecraft.getMinecraft().thePlayer.setPositionAndUpdate(
-					controllerCoords[0], controllerCoords[1] + 1,
-					controllerCoords[2]);
-		}
-
+		
+//		int[] controllerCoords = this.getDominantController(
+//				Minecraft.getMinecraft().theWorld, chunkX, chunkZ);
+//		if (controllerCoords == null) {
+//			Minecraft.getMinecraft().thePlayer
+//					.sendChatToPlayer("Cheveron 7 will not lock!");
+//		} else {
+//			Minecraft.getMinecraft().thePlayer
+//					.sendChatToPlayer("Cheveron 7 locked! Target stargate located at ("
+//							+ controllerCoords[0]
+//							+ ", "
+//							+ controllerCoords[1]
+//							+ ", " + controllerCoords[2] + ")");
+//			Minecraft.getMinecraft().thePlayer.setPositionAndUpdate(
+//					controllerCoords[0], controllerCoords[1] + 1,
+//					controllerCoords[2]);
+//		}
 	}
 
 	
