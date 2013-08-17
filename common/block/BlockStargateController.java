@@ -69,35 +69,56 @@ public class BlockStargateController extends Block {
 	}
 
 	public void warpPlayerTo(byte[] address) {
-		for (int i = 0; i < address.length; i++) {
-			System.out.print(address[i] + " ");
+		for (int i = 0; i < 7; i++) {
+			if (i < 6) {
+				System.out.print(address[i] + " ");
+			} else {
+				System.out.print("(" + Integer.toBinaryString(address[i]) + ")\n");
+			}
 		}
-		System.out.println("");
+		// Building base 39 numbers using powers of 3
 		int chunkX = (int) ((address[0] * 1521) + (address[1] * 39) + address[2]);
 		int chunkZ = (int) ((address[3] * 1521) + (address[4] * 39) + address[2]);
-		int dimension = (int) address[6];
-		System.out.println("dimension = " + dimension + ", chunkX = " + chunkX
-				+ ", chunkZ = " + chunkZ);
-		// Minecraft.getMinecraft().thePlayer.setPositionAndUpdate(x * 16, 60, z
-		// * 16);
-		/*
-		 * int[] controllerCoords = this.getDominantController(
-		 * Minecraft.getMinecraft().theWorld, chunkX, chunkZ); if
-		 * (controllerCoords == null) { Minecraft.getMinecraft().thePlayer
-		 * .sendChatToPlayer("Cheveron 7 will not lock!"); } else {
-		 * Minecraft.getMinecraft().thePlayer
-		 * .sendChatToPlayer("Cheveron 7 locked! Target stargate located at (" +
-		 * controllerCoords[0] + ", " + controllerCoords[1] + ", " +
-		 * controllerCoords[2] + ")");
-		 * Minecraft.getMinecraft().thePlayer.setPositionAndUpdate(
-		 * controllerCoords[0], controllerCoords[1] + 1, controllerCoords[2]); }
-		 */
+		int last = (int) address[6];
+		// The dimension is stored in the last 2 bits of the last number/symbol (the
+		// mask is 0b11)
+		int dimension = last & 3;
+		// The sign of the x coordinate is the 4rd to last bit (the mask is 0b1000)
+		int xSign = last & 8;
+		// The sign of the z coordinate is the 3th to last bit (the mask is 0b100)
+		int zSign = last & 4;
+		if (xSign == 0) {
+			chunkX = -chunkX;
+		}
+		if (zSign == 0) {
+			chunkZ = -chunkZ;
+		}
+		System.out.println("chunkX = " + chunkX + ", chunkZ = " + chunkZ + ", dimension = " + dimension);
+
+//		int[] controllerCoords = this.getDominantController(
+//				Minecraft.getMinecraft().theWorld, chunkX, chunkZ);
+//		if (controllerCoords == null) {
+//			Minecraft.getMinecraft().thePlayer
+//					.sendChatToPlayer("Cheveron 7 will not lock!");
+//		} else {
+//			Minecraft.getMinecraft().thePlayer
+//					.sendChatToPlayer("Cheveron 7 locked! Target stargate located at ("
+//							+ controllerCoords[0]
+//							+ ", "
+//							+ controllerCoords[1]
+//							+ ", " + controllerCoords[2] + ")");
+//			Minecraft.getMinecraft().thePlayer.setPositionAndUpdate(
+//					controllerCoords[0], controllerCoords[1] + 1,
+//					controllerCoords[2]);
+//		}
+
 	}
 
-	// Returns the position of the first neighboring block found that is a
-	// stargate ring
-	// Coordinates in returns are not relative to the given coordinates
-	// Does nothing yet
+	/**
+	 * Returns the position of the first neighboring block found that is a
+	 * stargate ring Coordinates in returns are not relative to the given
+	 * coordinates Does nothing yet
+	 **/
 	public DetectStructureResults getStargateBlocks(World world, int xOrigin,
 			int yOrigin, int zOrigin) {
 		// Hmm, a bit of an odd workaround... Make that method static? :/

@@ -100,7 +100,7 @@ public class GuiDHD extends GuiScreen {
 			display.glyphID = b.glyphID;
 			currentCoordinate++;
 			if (currentCoordinate == 7) {
-				System.out.println(address);
+				//System.out.println(address);
 				this.controller.warpPlayerTo(this.address);
 				this.mc.displayGuiScreen((GuiScreen) null);
 			}
