@@ -131,7 +131,7 @@ public class SDBlock extends Block {
 				// Get the correct block
 				int[] coords = this.getBlockInStructure(world, x, y, z, gridX
 						- xTemplateOffset, -gridY + yTemplateOffset, plane);
-				int id = world.getBlockId(coords[0], coords[2], coords[3]);
+				int id = world.getBlockId(coords[0], coords[1], coords[2]);
 				// Test it
 				if (template.get(gridX, gridY) != ' ') {
 					// Expecting this block
