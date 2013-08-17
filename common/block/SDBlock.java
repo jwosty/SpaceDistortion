@@ -151,7 +151,7 @@ public class SDBlock extends Block {
 		return blocks;
 	}
 
-	private int[] getBlockInStructure(World world, int x, int y, int z,
+	protected int[] getBlockInStructure(World world, int x, int y, int z,
 			int gridX, int gridY, int plane) {
 		int bx;
 		int by;
