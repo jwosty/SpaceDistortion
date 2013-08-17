@@ -16,7 +16,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 
-public class BlockStargateController extends Block {
+public class BlockStargateController extends SDBlock {
 	public static StringGrid stargateRingShape = new StringGrid("  XXX  ",
 			" X   X ", "X     X", "X     X", "X     X", " X   X ", "  XXX  ");
 	public static StringGrid stargateEventHorizonShape = new StringGrid(
@@ -34,7 +34,7 @@ public class BlockStargateController extends Block {
 
 	// Returns the coordinates of the dominate (first found) stargate controller
 	// in the given chunk; null if none is found
-	public static int[] getDominantController(World world, int chunkX,
+public static int[] getDominantController(World world, int chunkX,
 			int chunkZ) {
 		System.out.println("Searching for Stargate at chunk (" + chunkX + ", "
 				+ chunkZ + ")");
