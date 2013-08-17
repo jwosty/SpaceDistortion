@@ -17,10 +17,21 @@ import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 
 public class BlockStargateController extends SDBlock {
-	public static StringGrid stargateRingShape = new StringGrid("  XXX  ",
-			" X   X ", "X     X", "X     X", "X     X", " X   X ", "  XXX  ");
+	public static StringGrid stargateRingShape = new StringGrid(
+			"  XXX  ",
+			" X   X ",
+			"X     X",
+			"X     X",
+			"X     X",
+			" X   X ",
+			"  XXX  ");
 	public static StringGrid stargateEventHorizonShape = new StringGrid(
-			"       ", "  XXX  ", " XXXXX ", " XXXXX ", " XXXXX ", "  XXX  ",
+			"       ",
+			"  XXX  ",
+			" XXXXX ",
+			" XXXXX ",
+			" XXXXX ",
+			"  XXX  ",
 			"       ");
 
 	// The coordinate at which the textures for this block starts
