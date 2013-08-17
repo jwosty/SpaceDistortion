@@ -129,8 +129,9 @@ public class SDBlock extends Block {
 		match: for (int gridY = 0; gridY < template.height; gridY++) {
 			for (int gridX = 0; gridX < template.width; gridX++) {
 				// Get the correct block
-				int id = this.getBlockInStructure(world, x, y, z, gridX
+				int[] coords = this.getBlockInStructure(world, x, y, z, gridX
 						- xTemplateOffset, -gridY + yTemplateOffset, plane);
+				int id = world.getBlockId(coords[0], coords[2], coords[3]);
 				// Test it
 				if (template.get(gridX, gridY) != ' ') {
 					// Expecting this block
@@ -150,7 +151,7 @@ public class SDBlock extends Block {
 		return blocks;
 	}
 
-	private int getBlockInStructure(World world, int x, int y, int z,
+	private int[] getBlockInStructure(World world, int x, int y, int z,
 			int gridX, int gridY, int plane) {
 		int bx;
 		int by;
@@ -171,7 +172,7 @@ public class SDBlock extends Block {
 			throw new IllegalArgumentException("Bad orientation value of "
 					+ plane);
 		}
-		return world.getBlockId(bx, by, bz);
+		return new int[] { bx, by, bz };
 	}
 
 	@Override
