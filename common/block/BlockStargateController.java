@@ -95,22 +95,22 @@ public class BlockStargateController extends Block {
 		}
 		System.out.println("chunkX = " + chunkX + ", chunkZ = " + chunkZ + ", dimension = " + dimension);
 
-//		int[] controllerCoords = this.getDominantController(
-//				Minecraft.getMinecraft().theWorld, chunkX, chunkZ);
-//		if (controllerCoords == null) {
-//			Minecraft.getMinecraft().thePlayer
-//					.sendChatToPlayer("Cheveron 7 will not lock!");
-//		} else {
-//			Minecraft.getMinecraft().thePlayer
-//					.sendChatToPlayer("Cheveron 7 locked! Target stargate located at ("
-//							+ controllerCoords[0]
-//							+ ", "
-//							+ controllerCoords[1]
-//							+ ", " + controllerCoords[2] + ")");
-//			Minecraft.getMinecraft().thePlayer.setPositionAndUpdate(
-//					controllerCoords[0], controllerCoords[1] + 1,
-//					controllerCoords[2]);
-//		}
+		int[] controllerCoords = this.getDominantController(
+				Minecraft.getMinecraft().theWorld, chunkX, chunkZ);
+		if (controllerCoords == null) {
+			Minecraft.getMinecraft().thePlayer
+					.sendChatToPlayer("Cheveron 7 will not lock!");
+		} else {
+			Minecraft.getMinecraft().thePlayer
+					.sendChatToPlayer("Cheveron 7 locked! Target stargate located at ("
+							+ controllerCoords[0]
+							+ ", "
+							+ controllerCoords[1]
+							+ ", " + controllerCoords[2] + ")");
+			Minecraft.getMinecraft().thePlayer.setPositionAndUpdate(
+					controllerCoords[0], controllerCoords[1] + 1,
+					controllerCoords[2]);
+		}
 
 	}
 
