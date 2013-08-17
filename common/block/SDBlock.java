@@ -37,11 +37,11 @@ public class SDBlock extends Block {
 	public SDBlock(int id, int texture, Material material) {
 		super(id, texture, material);
 	}
-	
+
 	public SDBlock(int id, Material material) {
 		super(id, material);
 	}
-	
+
 	// Returns 6 neighboring blocks on each of the faces (no corners here)
 	/**
 	 * @param world
@@ -57,10 +57,8 @@ public class SDBlock extends Block {
 	 */
 	public List<Integer[]> getNeighboringBlocks(World world, int x, int y, int z) {
 		List<Integer[]> blocks = new ArrayList<Integer[]>();
-		int[][] neighbors = { { -1, 0, 0 }, { 1, 0, 0 },
-				{0, -1, 0}, {0, 1, 0},
-				{0, 0, -1}, {0, 0, 1}
-		};
+		int[][] neighbors = { { -1, 0, 0 }, { 1, 0, 0 }, { 0, -1, 0 },
+				{ 0, 1, 0 }, { 0, 0, -1 }, { 0, 0, 1 } };
 		for (int i = 0; i < neighbors.length; i++) {
 			// Get information about the block
 			int[] neighbor = neighbors[i];
@@ -75,12 +73,12 @@ public class SDBlock extends Block {
 		}
 		return blocks;
 	}
-	
+
 	// Returns all blocks in a structure if this block is part of it
-	public DetectStructureResults detectStructure(World world, StringGrid template,
-			int xOrigin, int yOrigin, int zOrigin) {
+	public DetectStructureResults detectStructure(World world,
+			StringGrid template, int xOrigin, int yOrigin, int zOrigin) {
 		DetectStructureResults results = null;
-		//boolean[][] blocks = null;
+		// boolean[][] blocks = null;
 		// For now, assume its on the xy plane
 		// Move the template over each possible position
 		match: for (int axis = -1; axis < 2; axis++) {
@@ -88,11 +86,12 @@ public class SDBlock extends Block {
 				for (int yOffset = 0; yOffset < template.height; yOffset++) {
 					if (template.get(xOffset, yOffset) != ' ') {
 						// Test the template with this offset.
-						boolean[][] blocks = this.detectStructureAtLocation(world,
-								template, xOrigin, yOrigin, zOrigin, axis,
-								xOffset, yOffset);
+						boolean[][] blocks = this.detectStructureAtLocation(
+								world, template, xOrigin, yOrigin, zOrigin,
+								axis, xOffset, yOffset);
 						if (blocks != null) {
-							results = new DetectStructureResults(blocks, axis, xOffset, yOffset);
+							results = new DetectStructureResults(blocks, axis,
+									xOffset, yOffset);
 							break match;
 						}
 					}
@@ -102,10 +101,10 @@ public class SDBlock extends Block {
 		return results;
 	}
 
-	// Find a structure using a StringGrid and the given position. If no
-	// structure is found at the location
-	// provided, return value will be null
 	/**
+	 * Find a structure using a StringGrid and the given position. If no
+	 * structure is found at the location provided, return value will be null
+	 * 
 	 * @param world
 	 *            The world to detect the structure in
 	 * @param template
@@ -130,8 +129,8 @@ public class SDBlock extends Block {
 		match: for (int gridY = 0; gridY < template.height; gridY++) {
 			for (int gridX = 0; gridX < template.width; gridX++) {
 				// Get the correct block
-				int id = this.getBlockInStructure(world, x, y, z, gridX - xTemplateOffset, -gridY + yTemplateOffset,
-						plane);
+				int id = this.getBlockInStructure(world, x, y, z, gridX
+						- xTemplateOffset, -gridY + yTemplateOffset, plane);
 				// Test it
 				if (template.get(gridX, gridY) != ' ') {
 					// Expecting this block
@@ -150,7 +149,7 @@ public class SDBlock extends Block {
 		}
 		return blocks;
 	}
-	
+
 	private int getBlockInStructure(World world, int x, int y, int z,
 			int gridX, int gridY, int plane) {
 		int bx;
@@ -174,7 +173,7 @@ public class SDBlock extends Block {
 		}
 		return world.getBlockId(bx, by, bz);
 	}
-	
+
 	@Override
 	public String getTextureFile() {
 		return CommonProxy.TEXTURES_PNG;
