@@ -25,6 +25,13 @@ public class BlockStargateController extends SDBlock {
 			"X     X",
 			" X   X ",
 			"  XXX  ");
+	/*
+	public static StringGrid stargateRingShape = new StringGrid(
+			"XXXX",
+			"X  X",
+			"X  X",
+			"XXXX");
+	*/
 	public static StringGrid stargateEventHorizonShape = new StringGrid(
 			"       ",
 			"  XXX  ",
@@ -142,16 +149,26 @@ public static int[] getDominantController(World world, int chunkX,
 		World world = Minecraft.getMinecraft().theWorld;
 		// If there's no controller block, don't continue
 		if (world.getBlockId(x, y, z) != this.blockID) {
+			System.out.println("No controller");
 			return;
 		}
 		DetectStructureResults stargate = this.getStargateBlocks(Minecraft.getMinecraft().theWorld, x, y, z);
-		if (stargate.blocks == null) {
+		if (stargate == null) {
+			System.out.println("No stargate");
 			return;
 		}
+		Integer[] firstNeighbor = this.getNeighboringBlocks(world, x, y, z).get(0);
+		int xOffset = x - firstNeighbor[0];
+		int zOffset = z - firstNeighbor[2];
+		int yOffset = y - firstNeighbor[1];
+		int[] coords = this.getBlockInStructure(world, x, y, z, -stargate.xOffset, stargate.yOffset, stargate.plane);
+		world.setBlock(coords[0] - yOffset, coords[2] - zOffset, coords[1] - xOffset, Block.stone.blockID);
 		for (int templateX = 0; templateX <= stargateEventHorizonShape.width; templateX++) {
 			for (int templateY = 0; templateY <= stargateEventHorizonShape.height; templateY++) {
 				if (stargateEventHorizonShape.get(templateX, templateY) == 'X') {
-					
+					//int[] coords = this.getBlockInStructure(world, x, y, z,
+					//		templateX, templateY, stargate.plane);
+					//world.setBlock(coords[0], coords[1], coords[2], Block.dirt.blockID);
 				}
 			}
 		}
@@ -164,9 +181,7 @@ public static int[] getDominantController(World world, int chunkX,
 	 **/
 	public DetectStructureResults getStargateBlocks(World world, int xOrigin,
 			int yOrigin, int zOrigin) {
-		// Hmm, a bit of an odd workaround... Make that method static? :/
-		List<Integer[]> neighbors = ((SDBlock) SDBlock.stargateRing)
-				.getNeighboringBlocks(world, xOrigin, yOrigin, zOrigin);
+		List<Integer[]> neighbors = this.getNeighboringBlocks(world, xOrigin, yOrigin, zOrigin);
 		for (int i = 0; i < neighbors.size(); i++) {
 			Integer[] blockInfo = neighbors.get(i);
 			if (blockInfo[3] == SDBlock.stargateRing.blockID) {
