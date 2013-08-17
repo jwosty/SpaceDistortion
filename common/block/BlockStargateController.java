@@ -130,7 +130,6 @@ public class BlockStargateController extends Block {
 		}
 
 	}
-	
 
 	/**
 	 * Returns the position of the first neighboring block found that is a
@@ -156,8 +155,8 @@ public class BlockStargateController extends Block {
 		return null;
 	}
 
-	@Override
 	
+	@Override
 	public int getBlockTextureFromSide(int side) {
 		int offset;
 		if (side == 1) {
@@ -167,9 +166,9 @@ public class BlockStargateController extends Block {
 		}
 		return blockIndexInTexture + offset;
 	}
+	
 
 	@Override
-	
 	public String getTextureFile() {
 		return CommonProxy.TEXTURES_PNG;
 	}
