@@ -101,7 +101,7 @@ public class GuiDHD extends GuiScreen {
 			currentCoordinate++;
 			if (currentCoordinate == 7) {
 				//System.out.println(address);
-				this.controller.warpPlayerTo(this.address);
+				this.controller.addressReceived(this.address);
 				this.mc.displayGuiScreen((GuiScreen) null);
 			}
 		}

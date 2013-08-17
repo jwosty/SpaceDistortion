@@ -85,7 +85,7 @@ public class BlockStargateController extends Block {
 	}
 	
 
-	public void warpPlayerTo(byte[] address) {
+	public void addressReceived(byte[] address) {
 		for (int i = 0; i < 7; i++) {
 			if (i < 6) {
 				System.out.print(address[i] + " ");
@@ -131,6 +131,7 @@ public class BlockStargateController extends Block {
 
 	}
 
+	
 	/**
 	 * Returns the position of the first neighboring block found that is a
 	 * stargate ring Coordinates in returns are not relative to the given
