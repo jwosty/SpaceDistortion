@@ -158,17 +158,15 @@ public static int[] getDominantController(World world, int chunkX,
 			return;
 		}
 		Integer[] firstNeighbor = this.getNeighboringBlocks(world, x, y, z).get(0);
-		int xOffset = x - firstNeighbor[0];
-		int zOffset = z - firstNeighbor[2];
-		int yOffset = y - firstNeighbor[1];
-		int[] coords = this.getBlockInStructure(world, x, y, z, -stargate.xOffset, stargate.yOffset, stargate.plane);
-		world.setBlock(coords[0] - yOffset, coords[2] - zOffset, coords[1] - xOffset, Block.stone.blockID);
+		// This is the top-left corner of the stargate ring
+		int[] origin = this.getBlockInStructure(world, firstNeighbor[0], firstNeighbor[1], firstNeighbor[2], -stargate.xOffset, stargate.yOffset, stargate.plane);
+		// Fill the center of the ring with EventHorizon blocks
 		for (int templateX = 0; templateX <= stargateEventHorizonShape.width; templateX++) {
 			for (int templateY = 0; templateY <= stargateEventHorizonShape.height; templateY++) {
 				if (stargateEventHorizonShape.get(templateX, templateY) == 'X') {
-					//int[] coords = this.getBlockInStructure(world, x, y, z,
-					//		templateX, templateY, stargate.plane);
-					//world.setBlock(coords[0], coords[1], coords[2], Block.dirt.blockID);
+					int[] coords = this.getBlockInStructure(world, origin[0], origin[1], origin[2],
+							templateX, -templateY, stargate.plane);
+					world.setBlock(coords[0], coords[1], coords[2], SDBlock.eventHorizon.blockID);
 				}
 			}
 		}
