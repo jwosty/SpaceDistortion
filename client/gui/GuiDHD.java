@@ -25,10 +25,10 @@ public class GuiDHD extends GuiScreen {
 	/**
 	 * Represents the coordinates the player has entered thus so far: the first
 	 * 6 decimal places are the destination chunk's x coordinate, the next 6 are
-	 * the destination chunk's y coordinate, and the last 2 places specify the
+	 * the destination chunk's z coordinate, and the last 2 places specify the
 	 * dimension
 	 */
-	public long address = 0;
+	public byte[] address = new byte[7];
 	private BlockStargateController controller;
 
 	public GuiDHD(BlockStargateController controller) {
@@ -93,7 +93,7 @@ public class GuiDHD extends GuiScreen {
 			b.isActivated = true;
 			// Encode the selected coordinate into the address (note that
 			// the glyph is pretty much a base 39 number)
-			address += b.glyphID * Math.pow(39, 6 - currentCoordinate);
+			address[currentCoordinate] = b.glyphID;
 			// Set the appropriate display button's glyph and show it
 			GuiDHDButton display = (GuiDHDButton) this.controlList
 					.get(currentCoordinate);
