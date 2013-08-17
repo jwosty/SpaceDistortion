@@ -18,13 +18,21 @@ import net.minecraft.world.chunk.Chunk;
 
 public class BlockStargateController extends Block {
 	public static StringGrid stargateRingShape = new StringGrid(
-			"  XXX",
-			" X   X",
+			"  XXX  ",
+			" X   X ",
 			"X     X",
 			"X     X",
 			"X     X",
-			" X   X",
-			"  XXX");
+			" X   X ",
+			"  XXX  ");
+	public static StringGrid stargateEventHorizonShape = new StringGrid(
+			"       ",
+			"  XXX  ",
+			" XXXXX ",
+			" XXXXX ",
+			" XXXXX ",
+			"  XXX  ",
+			"       ");
 
 	// The coordinate at which the textures for this block starts
 	private int blockIndexInTexture;
@@ -34,6 +42,7 @@ public class BlockStargateController extends Block {
 		super(id, Material.rock);
 		blockIndexInTexture = _blockIndexInTexture;
 	}
+	
 
 	// Returns the coordinates of the dominate (first found) stargate controller
 	// in the given chunk; null if none is found
@@ -57,6 +66,7 @@ public class BlockStargateController extends Block {
 		}
 		return null;
 	}
+	
 
 	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z,
@@ -73,6 +83,7 @@ public class BlockStargateController extends Block {
 		}
 		return true;
 	}
+	
 
 	public void warpPlayerTo(byte[] address) {
 		for (int i = 0; i < 7; i++) {
@@ -119,6 +130,7 @@ public class BlockStargateController extends Block {
 		}
 
 	}
+	
 
 	/**
 	 * Returns the position of the first neighboring block found that is a
@@ -145,6 +157,7 @@ public class BlockStargateController extends Block {
 	}
 
 	@Override
+	
 	public int getBlockTextureFromSide(int side) {
 		int offset;
 		if (side == 1) {
@@ -156,6 +169,7 @@ public class BlockStargateController extends Block {
 	}
 
 	@Override
+	
 	public String getTextureFile() {
 		return CommonProxy.TEXTURES_PNG;
 	}
