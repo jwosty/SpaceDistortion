@@ -155,16 +155,18 @@ public class BlockStargateController extends SDBlock {
 		// This is the top-left corner of the stargate ring
 		int[] origin = this.getBlockInStructure(world, firstNeighbor[0], firstNeighbor[1], firstNeighbor[2], -stargate.xOffset, stargate.yOffset, stargate.plane);
 		// Fill the center of the ring with EventHorizon blocks
+		world.editingBlocks = true;
 		for (int templateX = 0; templateX <= stargateEventHorizonShape.width; templateX++) {
 			for (int templateY = 0; templateY <= stargateEventHorizonShape.height; templateY++) {
 				if (stargateEventHorizonShape.get(templateX, templateY) == 'X') {
 					int[] coords = this.getBlockInStructure(world, origin[0], origin[1], origin[2],
 							templateX, -templateY, stargate.plane);
-					world.setBlock(coords[0], coords[1], coords[2], SDBlock.eventHorizon.blockID);
-					world.setBlockTileEntity(coords[0], coords[1], coords[2], new TileEntityEventHorizon(templateX, templateY));
+					world.setBlockWithNotify(coords[0], coords[1], coords[2], SDBlock.dirt.blockID);
+					//world.setBlockTileEntity(coords[0], coords[1], coords[2], new TileEntityEventHorizon(templateX, templateY));
 				}
 			}
 		}
+		world.editingBlocks = false;
 	}
 
 	/**
