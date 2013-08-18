@@ -178,9 +178,9 @@ public class BlockStargateController extends SDBlock {
 		for (int i = 0; i < neighbors.size(); i++) {
 			Integer[] blockInfo = neighbors.get(i);
 			if (blockInfo[3] == SDBlock.stargateRing.blockID) {
-				DetectStructureResults results = ((SDBlock) SDBlock.stargateRing)
-						.detectStructure(world, stargateRingShape,
-								blockInfo[0], blockInfo[1], blockInfo[2]);
+				DetectStructureResults results = SDBlock.detectStructure(world,
+						stargateRingShape, blockInfo[0], blockInfo[1],
+						blockInfo[2], SDBlock.stargateRing.blockID);
 				if (results != null) {
 					return results;
 				}

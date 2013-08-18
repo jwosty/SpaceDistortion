@@ -55,7 +55,7 @@ public class SDBlock extends Block {
 	 * @return A list of blocks in the format of a list where the first 3
 	 *         elements are the x, y, and z and the last is the block id
 	 */
-	public List<Integer[]> getNeighboringBlocks(World world, int x, int y, int z) {
+	public static List<Integer[]> getNeighboringBlocks(World world, int x, int y, int z) {
 		List<Integer[]> blocks = new ArrayList<Integer[]>();
 		int[][] neighbors = { { -1, 0, 0 }, { 1, 0, 0 }, { 0, -1, 0 },
 				{ 0, 1, 0 }, { 0, 0, -1 }, { 0, 0, 1 } };
@@ -75,8 +75,8 @@ public class SDBlock extends Block {
 	}
 
 	// Returns all blocks in a structure if this block is part of it
-	public DetectStructureResults detectStructure(World world,
-			StringGrid template, int xOrigin, int yOrigin, int zOrigin) {
+	public static DetectStructureResults detectStructure(World world,
+			StringGrid template, int xOrigin, int yOrigin, int zOrigin, int blockID) {
 		DetectStructureResults results = null;
 		// boolean[][] blocks = null;
 		// For now, assume its on the xy plane
@@ -86,9 +86,9 @@ public class SDBlock extends Block {
 				for (int yOffset = 0; yOffset < template.height; yOffset++) {
 					if (template.get(xOffset, yOffset) != ' ') {
 						// Test the template with this offset.
-						boolean[][] blocks = this.detectStructureAtLocation(
+						boolean[][] blocks = SDBlock.detectStructureAtLocation(
 								world, template, xOrigin, yOrigin, zOrigin,
-								axis, xOffset, yOffset);
+								axis, xOffset, yOffset, blockID);
 						if (blocks != null) {
 							results = new DetectStructureResults(blocks, axis,
 									xOffset, yOffset);
@@ -121,21 +121,21 @@ public class SDBlock extends Block {
 	 *            If true, the structure is mirrored
 	 * @return
 	 */
-	public boolean[][] detectStructureAtLocation(World world,
+	public static boolean[][] detectStructureAtLocation(World world,
 			StringGrid template, int x, int y, int z, int plane,
-			int xTemplateOffset, int yTemplateOffset) {
+			int xTemplateOffset, int yTemplateOffset, int blockID) {
 		// To keep track of the found blocks, if any
 		boolean[][] blocks = new boolean[template.height][template.width];
 		match: for (int gridY = 0; gridY < template.height; gridY++) {
 			for (int gridX = 0; gridX < template.width; gridX++) {
 				// Get the correct block
-				int[] coords = this.getBlockInStructure(world, x, y, z, gridX
+				int[] coords = SDBlock.getBlockInStructure(world, x, y, z, gridX
 						- xTemplateOffset, -gridY + yTemplateOffset, plane);
 				int id = world.getBlockId(coords[0], coords[1], coords[2]);
 				// Test it
 				if (template.get(gridX, gridY) != ' ') {
 					// Expecting this block
-					if (id == this.blockID) {
+					if (id == blockID) {
 						// We matched a block on the structure, so add it to the
 						// list
 						blocks[gridY][gridX] = true;
@@ -151,7 +151,7 @@ public class SDBlock extends Block {
 		return blocks;
 	}
 
-	protected int[] getBlockInStructure(World world, int x, int y, int z,
+	public static int[] getBlockInStructure(World world, int x, int y, int z,
 			int gridX, int gridY, int plane) {
 		int bx;
 		int by;
