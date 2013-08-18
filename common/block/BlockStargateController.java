@@ -26,13 +26,6 @@ public class BlockStargateController extends SDBlock {
 			"X     X",
 			" X   X ",
 			"  XXX  ");
-	/*
-	public static StringGrid stargateRingShape = new StringGrid(
-			"XXXX",
-			"X  X",
-			"X  X",
-			"XXXX");
-	*/
 	public static StringGrid stargateEventHorizonShape = new StringGrid(
 			"       ",
 			"  XXX  ",
@@ -53,7 +46,7 @@ public class BlockStargateController extends SDBlock {
 
 	// Returns the coordinates of the dominate (first found) stargate controller
 	// in the given chunk; null if none is found
-public static int[] getDominantController(World world, int chunkX,
+	public static int[] getDominantController(World world, int chunkX,
 			int chunkZ) {
 		System.out.println("Searching for Stargate at chunk (" + chunkX + ", "
 				+ chunkZ + ")");
