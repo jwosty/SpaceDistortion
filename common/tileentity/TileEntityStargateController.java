@@ -22,6 +22,7 @@ public class TileEntityStargateController extends TileEntity {
 		data.setBoolean("isActivated", isActivated);
 		data.setBoolean("isOutgoing", isOutgoing);
 		data.setIntArray("destCoords", new int[]{xDest, yDest, zDest});
+		System.out.println("x = " + this.xDest + ", y = " + this.yDest + ", z = " + this.zDest);
 	}
 	
 	@Override
@@ -32,6 +33,7 @@ public class TileEntityStargateController extends TileEntity {
 		int[] destCoords = data.getIntArray("destCoords");
 		xDest = destCoords[0];
 		yDest = destCoords[1];
-		yDest = destCoords[2];
+		zDest = destCoords[2];
+		System.out.println("x = " + this.xDest + ", y = " + this.yDest + ", z = " + this.zDest);
 	}
 }

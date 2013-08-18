@@ -5,6 +5,7 @@ import java.util.List;
 import jw.spacedistortion.StringGrid;
 import jw.spacedistortion.client.gui.GuiDHD;
 import jw.spacedistortion.common.CommonProxy;
+import jw.spacedistortion.common.tileentity.TileEntityEventHorizon;
 import jw.spacedistortion.common.tileentity.TileEntityStargateController;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
@@ -167,6 +168,7 @@ public static int[] getDominantController(World world, int chunkX,
 					int[] coords = this.getBlockInStructure(world, origin[0], origin[1], origin[2],
 							templateX, -templateY, stargate.plane);
 					world.setBlock(coords[0], coords[1], coords[2], SDBlock.eventHorizon.blockID);
+					world.setBlockTileEntity(coords[0], coords[1], coords[2], new TileEntityEventHorizon(templateX, templateY));
 				}
 			}
 		}
