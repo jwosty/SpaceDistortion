@@ -11,8 +11,11 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.ItemStack;
+import net.minecraft.network.packet.Packet15Place;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
@@ -159,10 +162,15 @@ public class BlockStargateController extends SDBlock {
 		for (int templateX = 0; templateX <= stargateEventHorizonShape.width; templateX++) {
 			for (int templateY = 0; templateY <= stargateEventHorizonShape.height; templateY++) {
 				if (stargateEventHorizonShape.get(templateX, templateY) == 'X') {
-					int[] coords = this.getBlockInStructure(world, origin[0], origin[1], origin[2],
-							templateX, -templateY, stargate.plane);
-					world.setBlockWithNotify(coords[0], coords[1], coords[2], SDBlock.dirt.blockID);
-					//world.setBlockTileEntity(coords[0], coords[1], coords[2], new TileEntityEventHorizon(templateX, templateY));
+					int[] coords = this.getBlockInStructure(world, origin[0],
+							origin[1], origin[2], templateX, -templateY,
+							stargate.plane);
+					((EntityClientPlayerMP) Minecraft.getMinecraft().thePlayer).sendQueue
+							.addToSendQueue(new Packet15Place(coords[0],
+									coords[1], coords[2], 0, new ItemStack(Block.stone, 64), 0, 0, 0));
+					world.setBlockWithNotify(coords[0], coords[1], coords[2], SDBlock.stone.blockID);
+					// world.setBlockTileEntity(coords[0], coords[1], coords[2],
+					// new TileEntityEventHorizon(templateX, templateY));
 				}
 			}
 		}
