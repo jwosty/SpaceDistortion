@@ -13,15 +13,16 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 
 public class SDBlock extends Block {
-	public static Block stargateRing = (new BlockStargateRing(1600, 0))
-			.setHardness(3.0f).setStepSound(Block.soundStoneFootstep)
+	public static BlockStargateRing stargateRing = (BlockStargateRing) (new BlockStargateRing(
+			1600, 0)).setHardness(3.0f).setStepSound(Block.soundStoneFootstep)
 			.setBlockName("stargateRing").setCreativeTab(CreativeTabs.tabBlock);
-	public static Block stargateController = (new BlockStargateController(1601,
-			1)).setHardness(3.0f).setStepSound(Block.soundStoneFootstep)
+	public static BlockStargateController stargateController = (BlockStargateController) (new BlockStargateController(
+			1601, 1)).setHardness(3.0f).setStepSound(Block.soundStoneFootstep)
 			.setBlockName("stargateController")
 			.setCreativeTab(CreativeTabs.tabBlock);
-	public static Block eventHorizon = (new BlockEventHorizon(1602, 16))
-			.setHardness(-1.0f).setStepSound(Block.soundGlassFootstep)
+	public static BlockEventHorizon eventHorizon = (BlockEventHorizon) (new BlockEventHorizon(
+			1602, 16)).setHardness(-1.0f)
+			.setStepSound(Block.soundGlassFootstep)
 			.setBlockName("eventHorizon").setLightValue(0.875f);
 
 	public static void addBlocks() {
