@@ -83,6 +83,7 @@ public class BlockStargateController extends SDBlock {
 		return true;
 	}
 
+	@SideOnly(Side.CLIENT)
 	public void addressReceived(byte[] address, int dhdX, int dhdY, int dhdZ) {
 		for (int i = 0; i < 7; i++) {
 			if (i < 6) {
