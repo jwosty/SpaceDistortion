@@ -1,24 +1,21 @@
 package jw.spacedistortion.common.block;
 
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
 import java.util.List;
 
 import jw.spacedistortion.StringGrid;
 import jw.spacedistortion.client.gui.GuiDHD;
 import jw.spacedistortion.common.CommonProxy;
-import jw.spacedistortion.common.tileentity.TileEntityEventHorizon;
-import jw.spacedistortion.common.tileentity.TileEntityStargateController;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.packet.Packet15Place;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
+import cpw.mods.fml.common.network.PacketDispatcher;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockStargateController extends SDBlock {
 	public static StringGrid stargateRingShape = new StringGrid(
@@ -118,7 +115,27 @@ public class BlockStargateController extends SDBlock {
 		System.out.println("chunkX = " + chunkX + ", chunkZ = " + chunkZ
 				+ ", dimension = " + dimension);
 		
-		this.activateStargate(dhdX, dhdY, dhdZ);
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		DataOutputStream outputStream = new DataOutputStream(bos);
+		try {
+			// X, y, and z coordinates
+			outputStream.writeInt(dhdX);
+			outputStream.writeInt(dhdY);
+			outputStream.writeInt(dhdZ);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		
+		// Copy the data to the packet
+		Packet250CustomPayload packet = new Packet250CustomPayload();
+		packet.channel = "OutgoingWormhole";
+		packet.data = bos.toByteArray();
+		packet.length = bos.size();
+		
+		// Send the data over the wire
+		PacketDispatcher.sendPacketToServer(packet);
+		
+		//this.activateStargate(dhdX, dhdY, dhdZ);
 		
 		// int[] controllerCoords = this.getDominantController(
 		// Minecraft.getMinecraft().theWorld, chunkX, chunkZ);
@@ -137,12 +154,21 @@ public class BlockStargateController extends SDBlock {
 		// controllerCoords[2]);
 		// }
 	}
-
+	
 	/**
-	 * Activate the stargate attached to the given controller coordinates (does
-	 * nothing if the controller doesn't exist or isn't adjacent to a stargate)
+	 * Ask the server to activate the stargate attatched to the controller at
+	 * the given coordinates
 	 */
-	public void activateStargate(int x, int y, int z) {
+	@SideOnly(Side.CLIENT)
+	public void clientActivateStargate(int x, int y, int z) {
+		
+	}
+	
+	/**
+	 * Activate the stargate attached to the given controller coordinates 
+	 */
+	@SideOnly(Side.SERVER)
+	public void serverActivateStargate(int x, int y, int z) {
 		World world = Minecraft.getMinecraft().theWorld;
 		// If there's no controller block, don't continue
 		if (world.getBlockId(x, y, z) != this.blockID) {
@@ -158,23 +184,20 @@ public class BlockStargateController extends SDBlock {
 		// This is the top-left corner of the stargate ring
 		int[] origin = this.getBlockInStructure(world, firstNeighbor[0], firstNeighbor[1], firstNeighbor[2], -stargate.xOffset, stargate.yOffset, stargate.plane);
 		// Fill the center of the ring with EventHorizon blocks
-		world.editingBlocks = true;
 		for (int templateX = 0; templateX <= stargateEventHorizonShape.width; templateX++) {
 			for (int templateY = 0; templateY <= stargateEventHorizonShape.height; templateY++) {
 				if (stargateEventHorizonShape.get(templateX, templateY) == 'X') {
 					int[] coords = this.getBlockInStructure(world, origin[0],
 							origin[1], origin[2], templateX, -templateY,
 							stargate.plane);
-					((EntityClientPlayerMP) Minecraft.getMinecraft().thePlayer).sendQueue
-							.addToSendQueue(new Packet15Place(coords[0],
-									coords[1], coords[2], 0, new ItemStack(Block.stone, 64), 0, 0, 0));
+					//((EntityClientPlayerMP) Minecraft.getMinecraft().thePlayer).sendQueue
+					//		.addToSendQueue(new Packet15Place(coords[0],
+					//				coords[1], coords[2], 0, new ItemStack(Block.stone, 64), 0, 0, 0));
 					world.setBlockWithNotify(coords[0], coords[1], coords[2], SDBlock.stone.blockID);
-					// world.setBlockTileEntity(coords[0], coords[1], coords[2],
-					// new TileEntityEventHorizon(templateX, templateY));
+					// world.setBlockTileEntity(coords[0], coords[1], coords[2], new TileEntityEventHorizon(templateX, templateY));
 				}
 			}
 		}
-		world.editingBlocks = false;
 	}
 
 	/**
