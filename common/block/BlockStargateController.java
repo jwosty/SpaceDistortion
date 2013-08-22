@@ -9,11 +9,12 @@ import jw.spacedistortion.client.gui.GuiDHD;
 import jw.spacedistortion.common.CommonProxy;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
-import cpw.mods.fml.common.network.PacketDispatcher;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -116,6 +117,8 @@ public class BlockStargateController extends SDBlock {
 		System.out.println("chunkX = " + chunkX + ", chunkZ = " + chunkZ
 				+ ", dimension = " + dimension);
 		
+		Side side = Minecraft.getMinecraft().theWorld.isRemote ? Side.CLIENT : Side.SERVER;//Side side = FMLCommonHandler.instance().getSide();
+		
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		DataOutputStream outputStream = new DataOutputStream(bos);
 		try {
@@ -134,9 +137,10 @@ public class BlockStargateController extends SDBlock {
 		packet.length = bos.size();
 		
 		// Send the data over the wire
-		PacketDispatcher.sendPacketToServer(packet);
+		//PacketDispatcher.sendPacketToServer(packet);
+		Minecraft.getMinecraft().thePlayer.sendQueue.addToSendQueue(packet);
 		
-		//this.activateStargate(dhdX, dhdY, dhdZ);
+		//this.serverActivateStargate(dhdX, dhdY, dhdZ);
 		
 		// int[] controllerCoords = this.getDominantController(
 		// Minecraft.getMinecraft().theWorld, chunkX, chunkZ);
@@ -157,19 +161,10 @@ public class BlockStargateController extends SDBlock {
 	}
 	
 	/**
-	 * Ask the server to activate the stargate attatched to the controller at
-	 * the given coordinates
-	 */
-	@SideOnly(Side.CLIENT)
-	public void clientActivateStargate(int x, int y, int z) {
-		
-	}
-	
-	/**
 	 * Activate the stargate attached to the given controller coordinates 
 	 */
-	@SideOnly(Side.SERVER)
 	public void serverActivateStargate(int x, int y, int z) {
+		Side side = FMLCommonHandler.instance().getEffectiveSide();
 		World world = Minecraft.getMinecraft().theWorld;
 		// If there's no controller block, don't continue
 		if (world.getBlockId(x, y, z) != this.blockID) {
@@ -185,6 +180,7 @@ public class BlockStargateController extends SDBlock {
 		// This is the top-left corner of the stargate ring
 		int[] origin = this.getBlockInStructure(world, firstNeighbor[0], firstNeighbor[1], firstNeighbor[2], -stargate.xOffset, stargate.yOffset, stargate.plane);
 		// Fill the center of the ring with EventHorizon blocks
+		world.editingBlocks = true;
 		for (int templateX = 0; templateX <= stargateEventHorizonShape.width; templateX++) {
 			for (int templateY = 0; templateY <= stargateEventHorizonShape.height; templateY++) {
 				if (stargateEventHorizonShape.get(templateX, templateY) == 'X') {
@@ -194,11 +190,12 @@ public class BlockStargateController extends SDBlock {
 					//((EntityClientPlayerMP) Minecraft.getMinecraft().thePlayer).sendQueue
 					//		.addToSendQueue(new Packet15Place(coords[0],
 					//				coords[1], coords[2], 0, new ItemStack(Block.stone, 64), 0, 0, 0));
-					world.setBlockWithNotify(coords[0], coords[1], coords[2], SDBlock.stone.blockID);
+					world.setBlock(coords[0], coords[1], coords[2], SDBlock.stone.blockID);
 					// world.setBlockTileEntity(coords[0], coords[1], coords[2], new TileEntityEventHorizon(templateX, templateY));
 				}
 			}
 		}
+		world.editingBlocks = false;
 	}
 
 	/**
