@@ -25,7 +25,7 @@ public class SDBlock extends Block {
 			.setStepSound(Block.soundGlassFootstep)
 			.setBlockName("eventHorizon").setLightValue(0.875f);
 
-	public static void addBlocks() {
+	public static void registerBlocks() {
 		GameRegistry.registerBlock(stargateRing, "stargateRing");
 		LanguageRegistry.addName(stargateRing, "Stargate Ring");
 		GameRegistry.registerBlock(stargateController, "stargateController");
