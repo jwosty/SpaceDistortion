@@ -9,6 +9,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.world.World;
+import net.minecraftforge.common.Configuration;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 
@@ -24,7 +25,11 @@ public class SDBlock extends Block {
 			1602, 16)).setHardness(-1.0f)
 			.setStepSound(Block.soundGlassFootstep)
 			.setBlockName("eventHorizon").setLightValue(0.875f);
-
+	
+	public static void configureBlocks(Configuration config) {
+		
+	}
+	
 	public static void registerBlocks() {
 		GameRegistry.registerBlock(stargateRing, "stargateRing");
 		LanguageRegistry.addName(stargateRing, "Stargate Ring");
@@ -34,7 +39,7 @@ public class SDBlock extends Block {
 		// inventory without commands
 		GameRegistry.registerBlock(eventHorizon, "eventHorizon");
 	}
-
+	
 	public SDBlock(int id, int texture, Material material) {
 		super(id, texture, material);
 	}
