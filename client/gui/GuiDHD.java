@@ -3,16 +3,10 @@ package jw.spacedistortion.client.gui;
 import jw.spacedistortion.common.CommonProxy;
 import jw.spacedistortion.common.block.BlockStargateController;
 import jw.spacedistortion.common.block.SDBlock;
-
-import org.lwjgl.input.Keyboard;
-import org.lwjgl.opengl.GL11;
-
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraftforge.event.EventPriority;
-import net.minecraftforge.event.ForgeSubscribe;
+
+import org.lwjgl.opengl.GL11;
 
 /*
  * Class written using GuiEditSign as a template

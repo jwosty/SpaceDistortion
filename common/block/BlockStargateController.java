@@ -9,7 +9,6 @@ import jw.spacedistortion.client.gui.GuiDHD;
 import jw.spacedistortion.common.CommonProxy;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.world.World;

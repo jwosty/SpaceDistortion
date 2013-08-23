@@ -1,12 +1,10 @@
 package jw.spacedistortion.client.gui;
 
 import jw.spacedistortion.common.CommonProxy;
-
-import org.lwjgl.opengl.GL11;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.renderer.Tessellator;
+
+import org.lwjgl.opengl.GL11;
 
 public class GuiDHDButton extends GuiButton {
 	public static int GlyphWidth = 32;

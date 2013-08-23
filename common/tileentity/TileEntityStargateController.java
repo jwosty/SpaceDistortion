@@ -2,7 +2,6 @@ package jw.spacedistortion.common.tileentity;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
 
 public class TileEntityStargateController extends TileEntity {
 	public boolean isActivated = false;
