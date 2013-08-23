@@ -1,11 +1,10 @@
 package jw.spacedistortion.common;
 
 import jw.spacedistortion.common.block.SDBlock;
+import net.minecraftforge.common.Configuration;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
-import cpw.mods.fml.common.Mod.Init;
 import cpw.mods.fml.common.Mod.Instance;
-import cpw.mods.fml.common.Mod.PostInit;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
@@ -26,6 +25,9 @@ public class SpaceDistortion {
 	public void preInit(FMLPreInitializationEvent event) {
 		proxy.registerRenderers();
 		SDBlock.addBlocks();
+		Configuration config = new Configuration(event.getSuggestedConfigurationFile());
+		config.load();
+		config.save();
 	}
 	
 	@EventHandler
