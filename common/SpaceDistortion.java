@@ -27,6 +27,8 @@ public class SpaceDistortion {
 		SDBlock.registerBlocks();
 		Configuration config = new Configuration(event.getSuggestedConfigurationFile());
 		config.load();
+		SDBlock.configureBlocks(config);
+		SDBlock.registerBlocks();
 		config.save();
 	}
 	

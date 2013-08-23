@@ -14,24 +14,41 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 
 public class SDBlock extends Block {
-	public static BlockStargateRing stargateRing = (BlockStargateRing) (new BlockStargateRing(
-			1600, 0)).setHardness(3.0f).setStepSound(Block.soundStoneFootstep)
-			.setBlockName("stargateRing").setCreativeTab(CreativeTabs.tabBlock);
-	public static BlockStargateController stargateController = (BlockStargateController) (new BlockStargateController(
-			1601, 1)).setHardness(3.0f).setStepSound(Block.soundStoneFootstep)
-			.setBlockName("stargateController")
-			.setCreativeTab(CreativeTabs.tabBlock);
-	public static BlockEventHorizon eventHorizon = (BlockEventHorizon) (new BlockEventHorizon(
-			1602, 16)).setHardness(-1.0f)
-			.setStepSound(Block.soundGlassFootstep)
-			.setBlockName("eventHorizon").setLightValue(0.875f);
-	
+	public static BlockStargateRing stargateRing;// = (BlockStargateRing) (new
+													// BlockStargateRing(
+	// 1600, 0)).setHardness(3.0f).setStepSound(Block.soundStoneFootstep)
+	// .setBlockName("stargateRing").setCreativeTab(CreativeTabs.tabBlock);
+	public static BlockStargateController stargateController;// =
+																// (BlockStargateController)
+																// (new
+																// BlockStargateController(
+	// 1601, 1)).setHardness(3.0f).setStepSound(Block.soundStoneFootstep)
+	// .setBlockName("stargateController")
+	// .setCreativeTab(CreativeTabs.tabBlock);
+	public static BlockEventHorizon eventHorizon;// = (BlockEventHorizon) (new
+													// BlockEventHorizon(
+
+	// 1602, 16)).setHardness(-1.0f)
+	// .setStepSound(Block.soundGlassFootstep)
+	// .setBlockName("eventHorizon").setLightValue(0.875f);
+
+	/**
+	 * Create the block objects based on configuration information
+	 * @param config The configuration file to use
+	 */
 	public static void configureBlocks(Configuration config) {
-		
+		stargateRing = (BlockStargateRing) new BlockStargateRing(config.get(
+				"Blocks", "Stargate Ring", 1600).getInt(), 0)
+				.setUnlocalizedName("stargateRing")
+				.setCreativeTab(CreativeTabs.tabBlock)
+				.setStepSound(Block.soundStoneFootstep);
 	}
 	
+	/**
+	 * Registers all blocks in the mod and the names for the blocks
+	 */
 	public static void registerBlocks() {
-		GameRegistry.registerBlock(stargateRing, "stargateRing");
+		GameRegistry.registerBlock(stargateRing, stargateRing.getUnlocalizedName());
 		LanguageRegistry.addName(stargateRing, "Stargate Ring");
 		GameRegistry.registerBlock(stargateController, "stargateController");
 		LanguageRegistry.addName(stargateController, "Stargate Controller");
@@ -39,7 +56,7 @@ public class SDBlock extends Block {
 		// inventory without commands
 		GameRegistry.registerBlock(eventHorizon, "eventHorizon");
 	}
-	
+
 	public SDBlock(int id, int texture, Material material) {
 		super(id, texture, material);
 	}
@@ -61,7 +78,8 @@ public class SDBlock extends Block {
 	 * @return A list of blocks in the format of a list where the first 3
 	 *         elements are the x, y, and z and the last is the block id
 	 */
-	public static List<Integer[]> getNeighboringBlocks(World world, int x, int y, int z) {
+	public static List<Integer[]> getNeighboringBlocks(World world, int x,
+			int y, int z) {
 		List<Integer[]> blocks = new ArrayList<Integer[]>();
 		int[][] neighbors = { { -1, 0, 0 }, { 1, 0, 0 }, { 0, -1, 0 },
 				{ 0, 1, 0 }, { 0, 0, -1 }, { 0, 0, 1 } };
@@ -82,7 +100,8 @@ public class SDBlock extends Block {
 
 	// Returns all blocks in a structure if this block is part of it
 	public static DetectStructureResults detectStructure(World world,
-			StringGrid template, int xOrigin, int yOrigin, int zOrigin, int blockID) {
+			StringGrid template, int xOrigin, int yOrigin, int zOrigin,
+			int blockID) {
 		DetectStructureResults results = null;
 		// boolean[][] blocks = null;
 		// For now, assume its on the xy plane
@@ -135,8 +154,9 @@ public class SDBlock extends Block {
 		match: for (int gridY = 0; gridY < template.height; gridY++) {
 			for (int gridX = 0; gridX < template.width; gridX++) {
 				// Get the correct block
-				int[] coords = SDBlock.getBlockInStructure(world, x, y, z, gridX
-						- xTemplateOffset, -gridY + yTemplateOffset, plane);
+				int[] coords = SDBlock.getBlockInStructure(world, x, y, z,
+						gridX - xTemplateOffset, -gridY + yTemplateOffset,
+						plane);
 				int id = world.getBlockId(coords[0], coords[1], coords[2]);
 				// Test it
 				if (template.get(gridX, gridY) != ' ') {
