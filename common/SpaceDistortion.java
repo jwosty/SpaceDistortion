@@ -2,10 +2,10 @@ package jw.spacedistortion.common;
 
 import jw.spacedistortion.common.block.SDBlock;
 import cpw.mods.fml.common.Mod;
+import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Init;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.Mod.PostInit;
-import cpw.mods.fml.common.Mod.PreInit;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
@@ -22,19 +22,15 @@ public class SpaceDistortion {
 	@SidedProxy(clientSide="jw.spacedistortion.client.ClientProxy", serverSide="jw.spacedistortion.common.CommonProxy")
 	public static CommonProxy proxy;
 	
-	@PreInit
+	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
-		// Stub method
-	}
-	
-	@Init
-	public void init(FMLInitializationEvent event) {
-		SDBlock.addBlocks();
 		proxy.registerRenderers();
+		SDBlock.addBlocks();
 	}
 	
-	@PostInit
-	public void postInit(FMLPostInitializationEvent event) {
-		// Stub method
-	}
+	@EventHandler
+	public void init(FMLInitializationEvent event) {}
+	
+	@EventHandler
+	public void postInit(FMLPostInitializationEvent event) {}
 }
