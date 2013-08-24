@@ -24,7 +24,6 @@ public class SpaceDistortion {
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
 		proxy.registerRenderers();
-		SDBlock.registerBlocks();
 		Configuration config = new Configuration(event.getSuggestedConfigurationFile());
 		config.load();
 		SDBlock.configureBlocks(config);
