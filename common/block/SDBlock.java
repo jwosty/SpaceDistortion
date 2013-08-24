@@ -47,12 +47,24 @@ public class SDBlock extends Block {
 				.setStepSound(Block.soundStoneFootstep);
 	}
 	
+	/**
+	 * For use in registerIcons, but doesn't actually register the icon and just
+	 * returns the icon name
+	 * 
+	 * @param side The side of the block
+	 * @param metadata Block metadata
+	 * @return The icon name (for use in registerIcon)
+	 */
+	public String getIconName() {
+		return CommonProxy.MOD_ID + ":" + (this.getUnlocalizedName().substring(5));
+	}
+	
 	@SideOnly(Side.CLIENT)
 	@Override
 	public void registerIcons(IconRegister register) {
 		String fullName = this.getUnlocalizedName();
 		String partialName = fullName.substring(5);
-		this.blockIcon = register.registerIcon(CommonProxy.MOD_ID + ":" + (this.getUnlocalizedName().substring(5)));
+		this.blockIcon = register.registerIcon(this.getIconName());
 	}
 	
 	/**
