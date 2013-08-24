@@ -12,7 +12,7 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 
 @Mod(modid = CommonProxy.MOD_ID, name = CommonProxy.MOD_NAME, version = CommonProxy.MOD_VERSION)
-@NetworkMod(clientSideRequired=true, serverSideRequired=false, channels={"OutgoingWormhole"}, packetHandler=PacketHandler.class)
+@NetworkMod(clientSideRequired=true, serverSideRequired=true, channels={"OutgoingWormhole"}, packetHandler=PacketHandler.class)
 public class SpaceDistortion {
 	// The instance of this mod that Forge uses
 	@Instance("SpaceDistortion")

@@ -11,6 +11,7 @@ import net.minecraft.network.packet.Packet250CustomPayload;
 import cpw.mods.fml.common.network.IPacketHandler;
 import cpw.mods.fml.common.network.Player;
 import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class PacketHandler implements IPacketHandler {
 	@Override
@@ -22,6 +23,7 @@ public class PacketHandler implements IPacketHandler {
 		}
 	}
 	
+	@SideOnly(Side.SERVER)
 	/**
 	 * Handles an outgoingWormhole packet
 	 * @param x The x coordinate of the DHD dialed from

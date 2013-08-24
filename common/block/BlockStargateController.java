@@ -123,6 +123,7 @@ public class BlockStargateController extends SDBlock {
 		
 		Side side = Minecraft.getMinecraft().theWorld.isRemote ? Side.CLIENT : Side.SERVER;//Side side = FMLCommonHandler.instance().getSide();
 		
+		
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		DataOutputStream outputStream = new DataOutputStream(bos);
 		try {
@@ -143,6 +144,8 @@ public class BlockStargateController extends SDBlock {
 		// Send the data over the wire
 		//PacketDispatcher.sendPacketToServer(packet);
 		Minecraft.getMinecraft().thePlayer.sendQueue.addToSendQueue(packet);
+		
+		
 		
 		//this.serverActivateStargate(dhdX, dhdY, dhdZ);
 		
@@ -167,6 +170,7 @@ public class BlockStargateController extends SDBlock {
 	/**
 	 * Activate the stargate attached to the given controller coordinates 
 	 */
+	@SideOnly(Side.SERVER)
 	public void serverActivateStargate(int x, int y, int z) {
 		Side side = FMLCommonHandler.instance().getEffectiveSide();
 		World world = Minecraft.getMinecraft().theWorld;
@@ -193,7 +197,8 @@ public class BlockStargateController extends SDBlock {
 					//((EntityClientPlayerMP) Minecraft.getMinecraft().thePlayer).sendQueue
 					//		.addToSendQueue(new Packet15Place(coords[0],
 					//				coords[1], coords[2], 0, new ItemStack(Block.stone, 64), 0, 0, 0));
-					world.setBlock(coords[0], coords[1], coords[2], SDBlock.stone.blockID);
+					world.setBlock(coords[0], coords[1], coords[2], SDBlock.stone.blockID, 0, 2);
+					
 					// world.setBlockTileEntity(coords[0], coords[1], coords[2], new TileEntityEventHorizon(templateX, templateY));
 				}
 			}
