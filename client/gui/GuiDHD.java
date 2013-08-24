@@ -14,7 +14,7 @@ import org.lwjgl.opengl.GL11;
  */
 public class GuiDHD extends GuiScreen {
 	public static ResourceLocation glyphTexture = new ResourceLocation(CommonProxy.MOD_ID + ":" + "textures/gui/glyphs.png");
-	public static ResourceLocation backgroundTexture = new ResourceLocation(CommonProxy.MOD_ID + ":" + "spacedistortion:textures/gui/DHD.png");
+	public static ResourceLocation backgroundTexture = new ResourceLocation(CommonProxy.MOD_ID + ":" + "textures/gui/DHD.png");
 	/**
 	 * Keeps track of the current position of the coordinate that the player is
 	 * inputting
