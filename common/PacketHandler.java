@@ -8,6 +8,7 @@ import jw.spacedistortion.common.block.SDBlock;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.INetworkManager;
 import net.minecraft.network.packet.Packet250CustomPayload;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.IPacketHandler;
 import cpw.mods.fml.common.network.Player;
 import cpw.mods.fml.relauncher.Side;
@@ -23,7 +24,7 @@ public class PacketHandler implements IPacketHandler {
 		}
 	}
 	
-	@SideOnly(Side.SERVER)
+	//@SideOnly(Side.SERVER)
 	/**
 	 * Handles an outgoingWormhole packet
 	 * @param x The x coordinate of the DHD dialed from
@@ -31,6 +32,8 @@ public class PacketHandler implements IPacketHandler {
 	 * @param z The z coordinate of the DHD dialed from
 	 */
 	public void handleOutgoingWormhole(Packet250CustomPayload packet) {
+		Side side = FMLCommonHandler.instance().getEffectiveSide();
+		side = FMLCommonHandler.instance().getSide();
 		DataInputStream inputStream = new DataInputStream(new ByteArrayInputStream(packet.data));
 		int x;
 		int y;

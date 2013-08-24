@@ -6,15 +6,20 @@ import java.util.List;
 
 import jw.spacedistortion.StringGrid;
 import jw.spacedistortion.client.gui.GuiDHD;
+import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.network.packet.Packet15Place;
 import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -144,8 +149,7 @@ public class BlockStargateController extends SDBlock {
 		// Send the data over the wire
 		//PacketDispatcher.sendPacketToServer(packet);
 		Minecraft.getMinecraft().thePlayer.sendQueue.addToSendQueue(packet);
-		
-		
+		//PacketDispatcher.sendPacketToServer(packet);
 		
 		//this.serverActivateStargate(dhdX, dhdY, dhdZ);
 		
@@ -170,7 +174,7 @@ public class BlockStargateController extends SDBlock {
 	/**
 	 * Activate the stargate attached to the given controller coordinates 
 	 */
-	@SideOnly(Side.SERVER)
+	//@SideOnly(Side.SERVER)
 	public void serverActivateStargate(int x, int y, int z) {
 		Side side = FMLCommonHandler.instance().getEffectiveSide();
 		World world = Minecraft.getMinecraft().theWorld;
@@ -188,12 +192,14 @@ public class BlockStargateController extends SDBlock {
 		// This is the top-left corner of the stargate ring
 		int[] origin = this.getBlockInStructure(world, firstNeighbor[0], firstNeighbor[1], firstNeighbor[2], -stargate.xOffset, stargate.yOffset, stargate.plane);
 		// Fill the center of the ring with EventHorizon blocks
+		
 		for (int templateX = 0; templateX <= stargateEventHorizonShape.width; templateX++) {
 			for (int templateY = 0; templateY <= stargateEventHorizonShape.height; templateY++) {
 				if (stargateEventHorizonShape.get(templateX, templateY) == 'X') {
 					int[] coords = this.getBlockInStructure(world, origin[0],
 							origin[1], origin[2], templateX, -templateY,
 							stargate.plane);
+					
 					//((EntityClientPlayerMP) Minecraft.getMinecraft().thePlayer).sendQueue
 					//		.addToSendQueue(new Packet15Place(coords[0],
 					//				coords[1], coords[2], 0, new ItemStack(Block.stone, 64), 0, 0, 0));
