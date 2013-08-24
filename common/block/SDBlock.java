@@ -7,11 +7,14 @@ import jw.spacedistortion.StringGrid;
 import jw.spacedistortion.common.CommonProxy;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.world.World;
 import net.minecraftforge.common.Configuration;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class SDBlock extends Block {
 	public static BlockStargateRing stargateRing;// = (BlockStargateRing) (new
@@ -38,10 +41,18 @@ public class SDBlock extends Block {
 	 */
 	public static void configureBlocks(Configuration config) {
 		stargateRing = (BlockStargateRing) new BlockStargateRing(config.get(
-				"Blocks", "Stargate Ring", 1600).getInt(), 0)
+				"Blocks", "Stargate Ring", 1600).getInt())
 				.setUnlocalizedName("stargateRing")
 				.setCreativeTab(CreativeTabs.tabBlock)
 				.setStepSound(Block.soundStoneFootstep);
+	}
+	
+	@SideOnly(Side.CLIENT)
+	@Override
+	public void registerIcons(IconRegister register) {
+		String fullName = this.getUnlocalizedName();
+		String partialName = fullName.substring(5);
+		this.blockIcon = register.registerIcon(CommonProxy.MOD_ID + ":" + (this.getUnlocalizedName().substring(5)));
 	}
 	
 	/**
@@ -50,15 +61,13 @@ public class SDBlock extends Block {
 	public static void registerBlocks() {
 		GameRegistry.registerBlock(stargateRing, stargateRing.getUnlocalizedName());
 		LanguageRegistry.addName(stargateRing, "Stargate Ring");
+		/*
 		GameRegistry.registerBlock(stargateController, "stargateController");
 		LanguageRegistry.addName(stargateController, "Stargate Controller");
 		// Don't need to set a tooltip name as this can't be obtained in the
 		// inventory without commands
 		GameRegistry.registerBlock(eventHorizon, "eventHorizon");
-	}
-
-	public SDBlock(int id, int texture, Material material) {
-		super(id, texture, material);
+		*/
 	}
 
 	public SDBlock(int id, Material material) {
@@ -200,9 +209,11 @@ public class SDBlock extends Block {
 		}
 		return new int[] { bx, by, bz };
 	}
-
+	
+	/*
 	@Override
 	public String getTextureFile() {
 		return CommonProxy.TEXTURES_PNG;
 	}
+	*/
 }
