@@ -6,11 +6,12 @@ import java.util.List;
 
 import jw.spacedistortion.StringGrid;
 import jw.spacedistortion.client.gui.GuiDHD;
-import jw.spacedistortion.common.CommonProxy;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.packet.Packet250CustomPayload;
+import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -34,16 +35,20 @@ public class BlockStargateController extends SDBlock {
 			" XXXXX ",
 			"  XXX  ",
 			"       ");
-
-	// The coordinate at which the textures for this block starts
-	private int blockIndexInTexture;
-	private int textureTop = 2;
-
-	public BlockStargateController(int id, int _blockIndexInTexture) {
-		super(id, Material.rock);
-		blockIndexInTexture = _blockIndexInTexture;
+	
+	private Icon controllerTopIcon;
+	
+	@SideOnly(Side.CLIENT)
+	@Override
+	public void registerIcons(IconRegister register) {
+		super.registerIcons(register);
+		controllerTopIcon = register.registerIcon(this.getIconName() + "_top");
 	}
-
+	
+	public BlockStargateController(int id) {
+		super(id, Material.rock);
+	}
+	
 	// Returns the coordinates of the dominate (first found) stargate controller
 	// in the given chunk; null if none is found
 	public static int[] getDominantController(World world, int chunkX,
@@ -218,18 +223,7 @@ public class BlockStargateController extends SDBlock {
 	}
 
 	@Override
-	public int getBlockTextureFromSide(int side) {
-		int offset;
-		if (side == 1) {
-			offset = 1;
-		} else {
-			offset = 0;
-		}
-		return blockIndexInTexture + offset;
-	}
-
-	@Override
-	public String getTextureFile() {
-		return CommonProxy.TEXTURES_PNG;
+	public Icon getIcon(int side, int metadata) {
+		return side == 1 ? this.controllerTopIcon : this.blockIcon;
 	}
 }

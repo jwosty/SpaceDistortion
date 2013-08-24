@@ -17,10 +17,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 public class SDBlock extends Block {
-	public static BlockStargateRing stargateRing;// = (BlockStargateRing) (new
-													// BlockStargateRing(
-	// 1600, 0)).setHardness(3.0f).setStepSound(Block.soundStoneFootstep)
-	// .setBlockName("stargateRing").setCreativeTab(CreativeTabs.tabBlock);
+	public static BlockStargateRing stargateRing;
 	public static BlockStargateController stargateController;// =
 																// (BlockStargateController)
 																// (new
@@ -45,6 +42,11 @@ public class SDBlock extends Block {
 				.setUnlocalizedName("stargateRing")
 				.setCreativeTab(CreativeTabs.tabBlock)
 				.setStepSound(Block.soundStoneFootstep);
+		stargateController = (BlockStargateController) new BlockStargateController(
+				config.get("Blocks", "Stargate Controller", 1601).getInt())
+				.setUnlocalizedName("stargateController")
+				.setCreativeTab(CreativeTabs.tabBlock)
+				.setStepSound(Block.soundStoneFootstep);
 	}
 	
 	/**
@@ -62,8 +64,6 @@ public class SDBlock extends Block {
 	@SideOnly(Side.CLIENT)
 	@Override
 	public void registerIcons(IconRegister register) {
-		String fullName = this.getUnlocalizedName();
-		String partialName = fullName.substring(5);
 		this.blockIcon = register.registerIcon(this.getIconName());
 	}
 	
@@ -73,9 +73,9 @@ public class SDBlock extends Block {
 	public static void registerBlocks() {
 		GameRegistry.registerBlock(stargateRing, stargateRing.getUnlocalizedName());
 		LanguageRegistry.addName(stargateRing, "Stargate Ring");
-		/*
 		GameRegistry.registerBlock(stargateController, "stargateController");
 		LanguageRegistry.addName(stargateController, "Stargate Controller");
+		/*
 		// Don't need to set a tooltip name as this can't be obtained in the
 		// inventory without commands
 		GameRegistry.registerBlock(eventHorizon, "eventHorizon");
@@ -221,11 +221,4 @@ public class SDBlock extends Block {
 		}
 		return new int[] { bx, by, bz };
 	}
-	
-	/*
-	@Override
-	public String getTextureFile() {
-		return CommonProxy.TEXTURES_PNG;
-	}
-	*/
 }
