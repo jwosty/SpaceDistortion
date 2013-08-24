@@ -47,8 +47,12 @@ public class SDBlock extends Block {
 				.setUnlocalizedName("stargateController")
 				.setCreativeTab(CreativeTabs.tabBlock)
 				.setStepSound(Block.soundStoneFootstep);
+		eventHorizon = (BlockEventHorizon) new BlockEventHorizon(config.get(
+				"Blocks", "Event Horizon", 1602).getInt())
+				.setUnlocalizedName("eventHorizon")
+				.setStepSound(Block.soundGlassFootstep).setLightValue(0.875f);
 	}
-	
+
 	/**
 	 * For use in registerIcons, but doesn't actually register the icon and just
 	 * returns the icon name
@@ -75,11 +79,8 @@ public class SDBlock extends Block {
 		LanguageRegistry.addName(stargateRing, "Stargate Ring");
 		GameRegistry.registerBlock(stargateController, "stargateController");
 		LanguageRegistry.addName(stargateController, "Stargate Controller");
-		/*
-		// Don't need to set a tooltip name as this can't be obtained in the
-		// inventory without commands
+		// Don't need to set a tooltip name as this can't be obtained in the inventory without commands
 		GameRegistry.registerBlock(eventHorizon, "eventHorizon");
-		*/
 	}
 
 	public SDBlock(int id, Material material) {
