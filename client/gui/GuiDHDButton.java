@@ -3,6 +3,7 @@ package jw.spacedistortion.client.gui;
 import jw.spacedistortion.common.CommonProxy;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
 
@@ -11,11 +12,13 @@ public class GuiDHDButton extends GuiButton {
 	public static int GlyphHeight = 32;
 	public static int GlyphSheetWidth = 256;
 	public static int GlyphSheetHeight = 160;
+	public static ResourceLocation glyphTexture;
 	public byte glyphID;
 	public boolean isActivated = false;
 	
-	public GuiDHDButton(int x, int y, byte glyphID) {
+	public GuiDHDButton(int x, int y, ResourceLocation glyphTexture, byte glyphID) {
 		super(0, x, y, GlyphWidth, GlyphHeight, "");
+		this.glyphTexture = glyphTexture;
 		this.glyphID = glyphID;
 	}
 	
@@ -29,7 +32,7 @@ public class GuiDHDButton extends GuiButton {
 			}
 			GL11.glDisable(GL11.GL_LIGHTING);
 			GL11.glEnable(GL11.GL_BLEND);
-			GL11.glBindTexture(GL11.GL_TEXTURE_2D, mc.renderEngine.getTexture(CommonProxy.GLYPHS_PNG));
+			mc.func_110434_K().func_110577_a(this.glyphTexture);
 			this.drawTexturedModalRect(this.xPosition, this.yPosition,
 					this.glyphID % (GlyphSheetWidth / GlyphWidth) * GlyphWidth, this.glyphID / (GlyphSheetWidth / GlyphWidth) * GlyphHeight,
 					GlyphWidth, GlyphHeight);

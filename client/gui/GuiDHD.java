@@ -5,6 +5,7 @@ import jw.spacedistortion.common.block.BlockStargateController;
 import jw.spacedistortion.common.block.SDBlock;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
 
@@ -12,6 +13,8 @@ import org.lwjgl.opengl.GL11;
  * Class written using GuiEditSign as a template
  */
 public class GuiDHD extends GuiScreen {
+	public static ResourceLocation glyphTexture = new ResourceLocation(CommonProxy.MOD_ID + ":" + "textures/gui/glyphs.png");
+	public static ResourceLocation backgroundTexture = new ResourceLocation(CommonProxy.MOD_ID + ":" + "spacedistortion:textures/gui/DHD.png");
 	/**
 	 * Keeps track of the current position of the coordinate that the player is
 	 * inputting
@@ -51,7 +54,7 @@ public class GuiDHD extends GuiScreen {
 
 	@Override
 	public void initGui() {
-		this.controlList.clear();
+		this.buttonList.clear();
 
 		// "Shortcuts" for frequently accessed constants
 		int gsw = GuiDHDButton.GlyphSheetWidth;
@@ -65,11 +68,11 @@ public class GuiDHD extends GuiScreen {
 			// for this, setting the glyph to the empty slot so it doesn't draw
 			// yet (b.drawButton doesn't seem to allow one to change it later)
 			GuiDHDButton b = new GuiDHDButton(this.getPanelX() + (gw * c),
-					this.getPanelY(), (byte) 39);
+					this.getPanelY(), this.glyphTexture, (byte) 39);
 			b.isActivated = true;
 			b.enabled = false;
 			// b.drawButton = false;
-			this.controlList.add(b);
+			this.buttonList.add(b);
 		}
 
 		// Create the buttons
@@ -80,7 +83,7 @@ public class GuiDHD extends GuiScreen {
 			int x = this.getPanelX() + (glyphID % (gsw / gw) * gw);
 			int y = this.getPanelY() + (glyphID / (gsw / gw) * gh) + (gh * 2);
 			// Finally, add the button
-			this.controlList.add(new GuiDHDButton(x, y, (byte) glyphID));
+			this.buttonList.add(new GuiDHDButton(x, y, this.glyphTexture, (byte) glyphID));
 		}
 	}
 
@@ -94,7 +97,7 @@ public class GuiDHD extends GuiScreen {
 			// the glyph is pretty much a base 39 number)
 			address[currentCoordinate] = b.glyphID;
 			// Set the appropriate display button's glyph and show it
-			GuiDHDButton display = (GuiDHDButton) this.controlList
+			GuiDHDButton display = (GuiDHDButton) this.buttonList
 					.get(currentCoordinate);
 			display.glyphID = b.glyphID;
 			currentCoordinate++;
@@ -110,8 +113,7 @@ public class GuiDHD extends GuiScreen {
 	public void drawScreen(int par1, int par2, float par3) {
 		this.drawDefaultBackground();
 		GL11.glDisable(GL11.GL_LIGHTING);
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D,
-				mc.renderEngine.getTexture(CommonProxy.DHD_PNG));
+		mc.func_110434_K().func_110577_a(this.backgroundTexture);
 		this.drawTexturedModalRect(this.getPanelX(), this.getPanelY(), 0, 0,
 				256, 256);
 		super.drawScreen(par1, par2, par3);
