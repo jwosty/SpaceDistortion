@@ -1,6 +1,5 @@
-package jw.spacedistortion.common;
+package jw.spacedistortion.common.network;
 
-import jw.spacedistortion.common.network.SDPacket;
 import jw.spacedistortion.common.network.SDPacket.ProtocolException;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
