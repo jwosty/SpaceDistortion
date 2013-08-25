@@ -1,4 +1,4 @@
-package jw.spacedistortion.common.network;
+package jw.spacedistortion.common.network.packet;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.packet.Packet;
