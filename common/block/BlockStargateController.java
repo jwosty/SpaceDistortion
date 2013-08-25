@@ -125,29 +125,8 @@ public class BlockStargateController extends SDBlock {
 		Side side = Minecraft.getMinecraft().theWorld.isRemote ? Side.CLIENT : Side.SERVER;//Side side = FMLCommonHandler.instance().getSide();
 		
 		
-		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		DataOutputStream outputStream = new DataOutputStream(bos);
-		try {
-			// X, y, and z coordinates
-			outputStream.writeInt(dhdX);
-			outputStream.writeInt(dhdY);
-			outputStream.writeInt(dhdZ);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-		
-		// Copy the data to the packet
-		Packet250CustomPayload packet = new Packet250CustomPayload();
-		packet.channel = "OutgoingWormhole";
-		packet.data = bos.toByteArray();
-		packet.length = bos.size();
-		
 		// Send the data over the wire
-		//PacketDispatcher.sendPacketToServer(packet);
 		Minecraft.getMinecraft().thePlayer.sendQueue.addToSendQueue(new OutgoingWormholePacket(1, 2, 3).makePacket());
-		//PacketDispatcher.sendPacketToServer(packet);
-		
-		//this.serverActivateStargate(dhdX, dhdY, dhdZ);
 		
 		// int[] controllerCoords = this.getDominantController(
 		// Minecraft.getMinecraft().theWorld, chunkX, chunkZ);
