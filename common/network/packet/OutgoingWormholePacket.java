@@ -36,7 +36,7 @@ public class OutgoingWormholePacket extends SDPacket {
 
 	@Override
 	public void excecute(EntityPlayer player, Side side) throws ProtocolException {
-			if (side.isClient()) {
+		if (side.isClient()) {
 			player.addChatMessage("dhdX = " + dhdX + ", dhdY = " + dhdY + ", dhdZ = " + dhdZ);
 		} else {
 			throw new ProtocolException("Cannot send this packet to the client!");
