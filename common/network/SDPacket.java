@@ -1,13 +1,15 @@
 package jw.spacedistortion.common.network;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.network.packet.Packet;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
-
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
 
+import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.relauncher.Side;
 
 public abstract class SDPacket {
@@ -43,6 +45,21 @@ public abstract class SDPacket {
 		public ProtocolException(Throwable cause) {
 			super(cause);
 		}
+	}
+	
+	public final int getPacketID() {
+		if (idMap.inverse().containsKey(this.getClass())) {
+			return idMap.inverse().get(this.getClass()).intValue();
+		} else {
+			throw new RuntimeException("Packet " + this.getClass().getSimpleName() + " is missing a mapping!");
+		}
+	}
+	
+	public final Packet makePacket() {
+		ByteArrayDataOutput out = ByteStreams.newDataOutput();
+		out.writeByte(this.getPacketID());
+		write(out);
+		return PacketDispatcher.getPacket(CHANNEL, out.toByteArray());
 	}
 	
 	public abstract void write(ByteArrayDataOutput out);

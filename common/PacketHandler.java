@@ -1,51 +1,36 @@
 package jw.spacedistortion.common;
 
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
-import java.io.IOException;
-
-import jw.spacedistortion.common.block.SDBlock;
-import net.minecraft.client.Minecraft;
+import jw.spacedistortion.common.network.SDPacket;
+import jw.spacedistortion.common.network.SDPacket.ProtocolException;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.INetworkManager;
 import net.minecraft.network.packet.Packet250CustomPayload;
-import cpw.mods.fml.common.FMLCommonHandler;
+
+import com.google.common.io.ByteArrayDataInput;
+import com.google.common.io.ByteStreams;
+
 import cpw.mods.fml.common.network.IPacketHandler;
 import cpw.mods.fml.common.network.Player;
 import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class PacketHandler implements IPacketHandler {
 	@Override
 	public void onPacketData(INetworkManager manager,
 			Packet250CustomPayload packet, Player player) {
-		Side side = Minecraft.getMinecraft().theWorld.isRemote ? Side.CLIENT : Side.SERVER;//FMLCommonHandler.instance().getSide();
-		if (packet.channel.equals("OutgoingWormhole")) {
-			this.handleOutgoingWormhole(packet);
-		}
-	}
-	
-	//@SideOnly(Side.SERVER)
-	/**
-	 * Handles an outgoingWormhole packet
-	 * @param x The x coordinate of the DHD dialed from
-	 * @param y The y coordinate of the DHD dialed from
-	 * @param z The z coordinate of the DHD dialed from
-	 */
-	public void handleOutgoingWormhole(Packet250CustomPayload packet) {
-		Side side = FMLCommonHandler.instance().getEffectiveSide();
-		side = FMLCommonHandler.instance().getSide();
-		DataInputStream inputStream = new DataInputStream(new ByteArrayInputStream(packet.data));
-		int x;
-		int y;
-		int z;
 		try {
-			x = inputStream.readInt();
-			y = inputStream.readInt();
-			z = inputStream.readInt();
-		} catch (IOException e) {
-			e.printStackTrace();
-			return;
+			EntityPlayer entityPlayer = (EntityPlayer)player;
+			ByteArrayDataInput in = ByteStreams.newDataInput(packet.data);
+			int packetID = in.readUnsignedByte();
+			SDPacket sdPacket = SDPacket.constructPacket(packetID);
+			sdPacket.read(in);
+			sdPacket.excecute(entityPlayer, entityPlayer.worldObj.isRemote ? Side.CLIENT : Side.SERVER);
+		} catch (ProtocolException e) {
+			if (player instanceof EntityPlayerMP) {
+				((EntityPlayerMP) player).playerNetServerHandler.kickPlayerFromServer("Protocol Exception!");
+			}
+		} catch (Exception e) {
+			throw new RuntimeException("Unexpected Reflection exception during Packet construction!", e);
 		}
-		SDBlock.stargateController.serverActivateStargate(x, y, z);
 	}
 }
