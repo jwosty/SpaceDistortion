@@ -18,7 +18,7 @@ public abstract class SDPacket {
 	
 	static {
 		ImmutableBiMap.Builder<Integer, Class<? extends SDPacket>> builder = ImmutableBiMap.builder();
-		
+		builder.put(Integer.valueOf(0), OutgoingWormholePacket.class);
 		idMap = builder.build();
 	}
 	
@@ -64,7 +64,7 @@ public abstract class SDPacket {
 	
 	public abstract void write(ByteArrayDataOutput out);
 	
-	public abstract void read(ByteArrayDataInput in);
+	public abstract void read(ByteArrayDataInput in) throws ProtocolException;
 	
-	public abstract void excecute(EntityPlayer player, Side side);
+	public abstract void excecute(EntityPlayer player, Side side) throws ProtocolException;
 }

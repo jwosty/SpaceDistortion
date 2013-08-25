@@ -6,20 +6,16 @@ import java.util.List;
 
 import jw.spacedistortion.StringGrid;
 import jw.spacedistortion.client.gui.GuiDHD;
-import net.minecraft.block.Block;
+import jw.spacedistortion.common.network.packet.OutgoingWormholePacket;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.packet.Packet15Place;
 import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -148,7 +144,7 @@ public class BlockStargateController extends SDBlock {
 		
 		// Send the data over the wire
 		//PacketDispatcher.sendPacketToServer(packet);
-		Minecraft.getMinecraft().thePlayer.sendQueue.addToSendQueue(packet);
+		Minecraft.getMinecraft().thePlayer.sendQueue.addToSendQueue(new OutgoingWormholePacket(1, 2, 3).makePacket());
 		//PacketDispatcher.sendPacketToServer(packet);
 		
 		//this.serverActivateStargate(dhdX, dhdY, dhdZ);
