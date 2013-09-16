@@ -1,5 +1,6 @@
 package jw.spacedistortion.common.network.packet;
 
+import jw.spacedistortion.common.block.SDBlock;
 import net.minecraft.entity.player.EntityPlayer;
 
 import com.google.common.io.ByteArrayDataInput;
@@ -36,8 +37,9 @@ public class OutgoingWormholePacket extends SDPacket {
 
 	@Override
 	public void excecute(EntityPlayer player, Side side) throws ProtocolException {
-		if (side.isClient()) {
-			player.addChatMessage("dhdX = " + dhdX + ", dhdY = " + dhdY + ", dhdZ = " + dhdZ);
+		if (side.isServer()) {
+			player.addChatMessage("dhdX = " + dhdX + ", dhdY = " + dhdY + ", dhdZ = " + dhdZ + ", side = " + side);
+			SDBlock.stargateController.serverActivateStargate(player.worldObj, dhdX, dhdY, dhdZ);
 		} else {
 			throw new ProtocolException("Cannot send this packet to the client!");
 		}

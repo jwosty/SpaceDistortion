@@ -7,6 +7,7 @@ import java.util.List;
 import jw.spacedistortion.StringGrid;
 import jw.spacedistortion.client.gui.GuiDHD;
 import jw.spacedistortion.common.network.packet.OutgoingWormholePacket;
+import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.IconRegister;
@@ -83,7 +84,9 @@ public class BlockStargateController extends SDBlock {
 		// player.setPosition(coords[0] + 0.5, coords[1] + 1.0, coords[2] +
 		// 0.5);
 		// }
-		if (world.isRemote) {
+		if (!world.isRemote) {
+			//world.setBlock(x, y, z, Block.blockEmerald.blockID);
+			//serverActivateStargate(world, x, y, z);
 			Minecraft.getMinecraft().displayGuiScreen(new GuiDHD(x, y, z));
 		}
 		return true;
@@ -126,7 +129,10 @@ public class BlockStargateController extends SDBlock {
 		
 		
 		// Send the data over the wire
-		Minecraft.getMinecraft().thePlayer.sendQueue.addToSendQueue(new OutgoingWormholePacket(1, 2, 3).makePacket());
+		Minecraft.getMinecraft().thePlayer.sendQueue.addToSendQueue(new OutgoingWormholePacket(dhdX, dhdY, dhdZ).makePacket());
+		//Minecraft.getMinecraft().thePlayer.sendQueue.handleCustomPayload((Packet250CustomPayload) new OutgoingWormholePacket(dhdX, dhdY, dhdZ).makePacket());
+		//Minecraft.getMinecraft().theWorld.setBlock(dhdX, dhdY, dhdZ, Block.blockEmerald.blockID);
+		//serverActivateStargate(Minecraft.getMinecraft().theWorld, dhdX, dhdY, dhdZ);
 		
 		// int[] controllerCoords = this.getDominantController(
 		// Minecraft.getMinecraft().theWorld, chunkX, chunkZ);
@@ -150,9 +156,8 @@ public class BlockStargateController extends SDBlock {
 	 * Activate the stargate attached to the given controller coordinates 
 	 */
 	//@SideOnly(Side.SERVER)
-	public void serverActivateStargate(int x, int y, int z) {
+	public void serverActivateStargate(World world, int x, int y, int z) {
 		Side side = FMLCommonHandler.instance().getEffectiveSide();
-		World world = Minecraft.getMinecraft().theWorld;
 		// If there's no controller block, don't continue
 		if (world.getBlockId(x, y, z) != this.blockID) {
 			System.out.println("No controller");
@@ -178,7 +183,7 @@ public class BlockStargateController extends SDBlock {
 					//((EntityClientPlayerMP) Minecraft.getMinecraft().thePlayer).sendQueue
 					//		.addToSendQueue(new Packet15Place(coords[0],
 					//				coords[1], coords[2], 0, new ItemStack(Block.stone, 64), 0, 0, 0));
-					world.setBlock(coords[0], coords[1], coords[2], SDBlock.stone.blockID, 0, 2);
+					world.setBlock(coords[0], coords[1], coords[2], SDBlock.eventHorizon.blockID, 0, 2);
 					
 					// world.setBlockTileEntity(coords[0], coords[1], coords[2], new TileEntityEventHorizon(templateX, templateY));
 				}
