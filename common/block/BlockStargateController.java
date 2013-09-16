@@ -125,7 +125,6 @@ public class BlockStargateController extends SDBlock {
 	/**
 	 * Activate the stargate attached to the given controller coordinates 
 	 */
-	//@SideOnly(Side.SERVER)
 	public void serverActivateStargate(World world, int x, int y, int z) {
 		Side side = FMLCommonHandler.instance().getEffectiveSide();
 		// If there's no controller block, don't continue
