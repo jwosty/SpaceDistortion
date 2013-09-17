@@ -1,18 +1,15 @@
 package jw.spacedistortion.common.tileentity;
 
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 
-public class TileEntityStargateController extends TileEntity {
+public class TileEntityStargateController extends TileEntityEventHorizon {
 	public boolean isActivated = false;
 	public boolean isOutgoing = false;
-	// Coordinates of the destination stargate controller
-	public int xDest;
-	public int yDest;
-	public int zDest;
 	
-	public TileEntityStargateController() {
-		
+	public TileEntityStargateController(boolean isActivated, boolean isOutgoing, int xDest, int yDest, int zDest) {
+		super(xDest, yDest, zDest);
+		this.isActivated = isActivated;
+		this.isOutgoing = isOutgoing;
 	}
 	
 	@Override
@@ -20,8 +17,6 @@ public class TileEntityStargateController extends TileEntity {
 		super.readFromNBT(data);
 		data.setBoolean("isActivated", isActivated);
 		data.setBoolean("isOutgoing", isOutgoing);
-		data.setIntArray("destCoords", new int[]{xDest, yDest, zDest});
-		System.out.println("x = " + this.xDest + ", y = " + this.yDest + ", z = " + this.zDest);
 	}
 	
 	@Override
@@ -29,10 +24,5 @@ public class TileEntityStargateController extends TileEntity {
 		super.readFromNBT(data);
 		this.isActivated = data.getBoolean("isActivated");
 		this.isOutgoing = data.getBoolean("isOutgoing");
-		int[] destCoords = data.getIntArray("destCoords");
-		xDest = destCoords[0];
-		yDest = destCoords[1];
-		zDest = destCoords[2];
-		System.out.println("x = " + this.xDest + ", y = " + this.yDest + ", z = " + this.zDest);
 	}
 }
