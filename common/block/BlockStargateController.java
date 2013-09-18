@@ -1,18 +1,15 @@
 package jw.spacedistortion.common.block;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
 import java.util.List;
 
 import jw.spacedistortion.StringGrid;
 import jw.spacedistortion.client.gui.GuiDHD;
 import jw.spacedistortion.common.network.packet.OutgoingWormholePacket;
-import net.minecraft.block.Block;
+import jw.spacedistortion.common.tileentity.TileEntityEventHorizon;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
@@ -116,16 +113,14 @@ public class BlockStargateController extends SDBlock {
 		System.out.println("chunkX = " + chunkX + ", chunkZ = " + chunkZ
 				+ ", dimension = " + dimension);
 		
-		Side side = Minecraft.getMinecraft().theWorld.isRemote ? Side.CLIENT : Side.SERVER;//Side side = FMLCommonHandler.instance().getSide();
-		
 		// Send the data over the wire
-		Minecraft.getMinecraft().thePlayer.sendQueue.addToSendQueue(new OutgoingWormholePacket(dhdX, dhdY, dhdZ).makePacket());
+		Minecraft.getMinecraft().thePlayer.sendQueue.addToSendQueue(new OutgoingWormholePacket(dhdX, dhdY, dhdZ, chunkX, chunkZ).makePacket());
 	}
 	
 	/**
 	 * Activate the stargate attached to the given controller coordinates 
 	 */
-	public void serverActivateStargate(World world, int x, int y, int z) {
+	public void serverActivateStargate(World world, int x, int y, int z, int xDest, int yDest, int zDest) {
 		Side side = FMLCommonHandler.instance().getEffectiveSide();
 		// If there's no controller block, don't continue
 		if (world.getBlockId(x, y, z) != this.blockID) {
@@ -148,6 +143,7 @@ public class BlockStargateController extends SDBlock {
 							origin[1], origin[2], templateX, -templateY,
 							stargate.plane);
 					world.setBlock(coords[0], coords[1], coords[2], SDBlock.eventHorizon.blockID, 0, 2);
+					world.setBlockTileEntity(coords[0], coords[1], coords[2], new TileEntityEventHorizon(xDest, yDest, zDest));
 				}
 			}
 		}
