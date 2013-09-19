@@ -40,9 +40,9 @@ public class OutgoingWormholePacket extends SDPacket {
 
 	@Override
 	public void read(ByteArrayDataInput in) {
-		this.dhdZ = in.readInt();
-		this.dhdY = in.readInt();
 		this.dhdX = in.readInt();
+		this.dhdY = in.readInt();
+		this.dhdZ = in.readInt();
 		this.xDest = in.readInt();
 		this.zDest = in.readInt();
 	}
