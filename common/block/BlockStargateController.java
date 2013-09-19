@@ -61,7 +61,6 @@ public class BlockStargateController extends SDBlock {
 					int block = chunk.getBlockID(x, y, z);
 					int rx = (chunkX << 4) + x;
 					int rz = (chunkZ << 4) + z;
-					// }
 					if (block == SDBlock.stargateController.blockID) {
 						return new int[] { rx, y, rz };
 					}
@@ -120,16 +119,16 @@ public class BlockStargateController extends SDBlock {
 	/**
 	 * Activate the stargate attached to the given controller coordinates 
 	 */
-	public void serverActivateStargate(World world, int x, int y, int z, int xDest, int yDest, int zDest) {
+	public void serverActivateStargatePair(World world, int x, int y, int z, int xDest, int yDest, int zDest) {
 		Side side = FMLCommonHandler.instance().getEffectiveSide();
 		// If there's no controller block, don't continue
-		if (world.getBlockId(x, y, z) != this.blockID) {
-			System.out.println("No controller");
+		if (world.getBlockId(x, y, z) != SDBlock.stargateController.blockID) {
+			System.out.println("No controller at (" + x + ", " + y + ", " + z + ")");
 			return;
 		}
 		DetectStructureResults stargate = this.getStargateBlocks(Minecraft.getMinecraft().theWorld, x, y, z);
 		if (stargate == null) {
-			System.out.println("No stargate");
+			System.out.println("No stargate at (" + x + ", " + y + ", " + z + ")");
 			return;
 		}
 		Integer[] firstNeighbor = this.getNeighboringBlocks(world, x, y, z).get(0);

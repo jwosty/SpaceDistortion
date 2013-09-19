@@ -1,7 +1,11 @@
 package jw.spacedistortion.common.network.packet;
 
+import jw.spacedistortion.common.block.BlockStargateController;
 import jw.spacedistortion.common.block.SDBlock;
+import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.World;
 
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
@@ -54,8 +58,18 @@ public class OutgoingWormholePacket extends SDPacket {
 			player.addChatMessage("dhdX = " + dhdX + ", dhdY = " + dhdY
 					+ ", dhdZ = " + dhdZ + "\nxDest = " + xDest + ", zDest = "
 					+ zDest + "\nside = " + side);
-			// SDBlock.stargateController.serverActivateStargate(player.worldObj,
-			// dhdX, dhdY, dhdZ, xDest, zDest);
+			World world = Minecraft.getMinecraft().theWorld;
+			int[] coords = BlockStargateController.getDominantController(
+					world, xDest, zDest);
+			if (coords != null) {
+				System.out.println("Locked onto destination Stargate");
+				world.setBlock(coords[0], coords[1], coords[2], Block.blockLapis.blockID);
+				//SDBlock.stargateController.serverActivateStargatePair(
+				//		player.worldObj, dhdX, dhdY, dhdZ, coords[0],
+				//		coords[1], coords[2]);
+			} else {
+				System.out.println("No destination Stargate detected");
+			}
 		} else {
 			throw new ProtocolException(
 					"Cannot send this packet to the client!");
