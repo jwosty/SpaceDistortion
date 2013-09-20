@@ -44,10 +44,10 @@ public class OutgoingWormholePacket extends SDPacket {
 		this.address = in.readInt();
 	}
 	
-	/*
 	@Override
 	public void excecute(EntityPlayer player, Side side)
 			throws ProtocolException {
+		/*
 		if (side.isServer()) {
 			player.addChatMessage("dhdX = " + dhdX + ", dhdY = " + dhdY
 					+ ", dhdZ = " + dhdZ + "\nxDest = " + xDest + ", zDest = "
@@ -67,6 +67,6 @@ public class OutgoingWormholePacket extends SDPacket {
 		} else {
 			throw new ProtocolException(
 					"Cannot send this packet to the client!");
+		*/
 		}
-	*/
 }
