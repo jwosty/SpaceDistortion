@@ -20,36 +20,25 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockStargateController extends SDBlock {
-	public static StringGrid stargateRingShape = new StringGrid(
-			"  XXX  ",
-			" X   X ",
-			"X     X",
-			"X     X",
-			"X     X",
-			" X   X ",
-			"  XXX  ");
+	public static StringGrid stargateRingShape = new StringGrid("  XXX  ",
+			" X   X ", "X     X", "X     X", "X     X", " X   X ", "  XXX  ");
 	public static StringGrid stargateEventHorizonShape = new StringGrid(
-			"       ",
-			"  XXX  ",
-			" XXXXX ",
-			" XXXXX ",
-			" XXXXX ",
-			"  XXX  ",
+			"       ", "  XXX  ", " XXXXX ", " XXXXX ", " XXXXX ", "  XXX  ",
 			"       ");
-	
+
 	private Icon controllerTopIcon;
-	
+
 	@SideOnly(Side.CLIENT)
 	@Override
 	public void registerIcons(IconRegister register) {
 		super.registerIcons(register);
 		controllerTopIcon = register.registerIcon(this.getIconName() + "_top");
 	}
-	
+
 	public BlockStargateController(int id) {
 		super(id, Material.rock);
 	}
-	
+
 	// Returns the coordinates of the dominate (first found) stargate controller
 	// in the given chunk; null if none is found
 	public static int[] getDominantController(World world, int chunkX,
@@ -80,7 +69,7 @@ public class BlockStargateController extends SDBlock {
 		}
 		return true;
 	}
-	
+
 	public Tuple<Integer, Tuple<Integer, Integer>> decodeAddress(byte[] address) {
 		for (int i = 0; i < 7; i++) {
 			if (i < 6) {

@@ -40,6 +40,7 @@ public class OutgoingWormholePacket extends SDPacket {
 
 	@Override
 	public void read(ByteArrayDataInput in) {
+		this.address = new byte[7];
 		this.dhdX = in.readInt();
 		this.dhdY = in.readInt();
 		this.dhdZ = in.readInt();
@@ -65,9 +66,9 @@ public class OutgoingWormholePacket extends SDPacket {
 				System.out.println("Locked onto destination Stargate");
 				world.setBlock(coords[0], coords[1], coords[2],
 						Block.blockLapis.blockID);
-				SDBlock.stargateController.serverActivateStargatePair(
-						player.worldObj, dhdX, dhdY, dhdZ, coords[0],
-						coords[1], coords[2]);
+				//SDBlock.stargateController.serverActivateStargatePair(
+				//		player.worldObj, dhdX, dhdY, dhdZ, coords[0],
+				//		coords[1], coords[2]);
 			} else {
 				System.out.println("No destination Stargate detected");
 			}
