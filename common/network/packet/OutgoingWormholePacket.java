@@ -16,9 +16,9 @@ public class OutgoingWormholePacket extends SDPacket {
 	public int dhdY;
 	public int dhdZ;
 	/* Destination chunk address */
-	public int address;
+	public byte[] address;
 
-	public OutgoingWormholePacket(int dhdX, int dhdY, int dhdZ, int address) {
+	public OutgoingWormholePacket(int dhdX, int dhdY, int dhdZ, byte[] address) {
 		this.dhdX = dhdX;
 		this.dhdY = dhdY;
 		this.dhdZ = dhdZ;
@@ -33,7 +33,7 @@ public class OutgoingWormholePacket extends SDPacket {
 		out.writeInt(this.dhdX);
 		out.writeInt(this.dhdY);
 		out.writeInt(this.dhdZ);
-		out.writeInt(this.address);
+		out.write(this.address);
 	}
 
 	@Override
@@ -41,7 +41,7 @@ public class OutgoingWormholePacket extends SDPacket {
 		this.dhdX = in.readInt();
 		this.dhdY = in.readInt();
 		this.dhdZ = in.readInt();
-		this.address = in.readInt();
+		in.readFully(this.address);
 	}
 	
 	@Override
