@@ -1,7 +1,6 @@
 package jw.spacedistortion.common.network.packet;
 
 import jw.spacedistortion.common.block.BlockStargateController;
-import jw.spacedistortion.common.block.SDBlock;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
@@ -16,18 +15,14 @@ public class OutgoingWormholePacket extends SDPacket {
 	public int dhdX;
 	public int dhdY;
 	public int dhdZ;
-	/* Destination chunk x */
-	public int xDest;
-	/* Destination chunk z */
-	public int zDest;
+	/* Destination chunk address */
+	public int address;
 
-	public OutgoingWormholePacket(int dhdX, int dhdY, int dhdZ, int xDest,
-			int zDest) {
+	public OutgoingWormholePacket(int dhdX, int dhdY, int dhdZ, int address) {
 		this.dhdX = dhdX;
 		this.dhdY = dhdY;
 		this.dhdZ = dhdZ;
-		this.xDest = xDest;
-		this.zDest = zDest;
+		this.address = address;
 	}
 
 	public OutgoingWormholePacket() {
@@ -38,8 +33,7 @@ public class OutgoingWormholePacket extends SDPacket {
 		out.writeInt(this.dhdX);
 		out.writeInt(this.dhdY);
 		out.writeInt(this.dhdZ);
-		out.writeInt(this.xDest);
-		out.writeInt(this.zDest);
+		out.writeInt(this.address);
 	}
 
 	@Override
@@ -47,10 +41,10 @@ public class OutgoingWormholePacket extends SDPacket {
 		this.dhdX = in.readInt();
 		this.dhdY = in.readInt();
 		this.dhdZ = in.readInt();
-		this.xDest = in.readInt();
-		this.zDest = in.readInt();
+		this.address = in.readInt();
 	}
-
+	
+	/*
 	@Override
 	public void excecute(EntityPlayer player, Side side)
 			throws ProtocolException {
@@ -74,5 +68,5 @@ public class OutgoingWormholePacket extends SDPacket {
 			throw new ProtocolException(
 					"Cannot send this packet to the client!");
 		}
-	}
+	*/
 }

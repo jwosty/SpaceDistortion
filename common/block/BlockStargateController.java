@@ -78,7 +78,7 @@ public class BlockStargateController extends SDBlock {
 		}
 		return true;
 	}
-
+	
 	@SideOnly(Side.CLIENT)
 	public void addressReceived(byte[] address, int dhdX, int dhdY, int dhdZ) {
 		for (int i = 0; i < 7; i++) {
@@ -113,7 +113,7 @@ public class BlockStargateController extends SDBlock {
 				+ ", dimension = " + dimension);
 		
 		// Send the data over the wire
-		Minecraft.getMinecraft().thePlayer.sendQueue.addToSendQueue(new OutgoingWormholePacket(dhdX, dhdY, dhdZ, chunkX, chunkZ).makePacket());
+		Minecraft.getMinecraft().thePlayer.sendQueue.addToSendQueue(new OutgoingWormholePacket(dhdX, dhdY, dhdZ, address).makePacket());
 	}
 	
 	/**
