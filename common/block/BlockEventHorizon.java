@@ -39,9 +39,9 @@ public class BlockEventHorizon extends SDBlock implements ITileEntityProvider {
 	
 	@Override
 	public void onEntityCollidedWithBlock(World world, int x, int y, int z, Entity entity) {
-		if (!world.isRemote) {
-			TileEntityEventHorizon tileEntity = (TileEntityEventHorizon) world
-					.getBlockTileEntity(x, y, z);
+		TileEntityEventHorizon tileEntity = (TileEntityEventHorizon) world
+				.getBlockTileEntity(x, y, z);
+		if (!world.isRemote && tileEntity.isOutgoing) {
 			if (entity instanceof EntityPlayerMP) {
 				// Teleport the entity as a player
 				EntityPlayer player = (EntityPlayer) entity;

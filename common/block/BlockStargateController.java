@@ -193,6 +193,7 @@ public class BlockStargateController extends SDBlock {
 								.getBlockTileEntity(coords[0], coords[1],
 										coords[2]);
 						if (tileEntity != null) {
+							tileEntity.isOutgoing = true;
 							tileEntity.destX = destX;
 							tileEntity.destY = destY;
 							tileEntity.destZ = destZ;
