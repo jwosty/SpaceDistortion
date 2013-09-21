@@ -189,9 +189,14 @@ public class BlockStargateController extends SDBlock {
 					world.setBlock(coords[0], coords[1], coords[2],
 							SDBlock.eventHorizon.blockID, 0, 2);
 					if (destX != null && destY != null && destZ != null) {
-						world.setBlockTileEntity(coords[0], coords[1],
-								coords[2], new TileEntityEventHorizon(destX,
-										destY, destZ));
+						TileEntityEventHorizon tileEntity = (TileEntityEventHorizon) world
+								.getBlockTileEntity(coords[0], coords[1],
+										coords[2]);
+						if (tileEntity != null) {
+							tileEntity.destX = destX;
+							tileEntity.destY = destY;
+							tileEntity.destZ = destZ;
+						}
 					}
 				}
 			}

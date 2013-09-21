@@ -2,6 +2,7 @@ package jw.spacedistortion.common;
 
 import jw.spacedistortion.common.block.SDBlock;
 import jw.spacedistortion.common.network.PacketHandler;
+import jw.spacedistortion.common.tileentity.TileEntityEventHorizon;
 import net.minecraftforge.common.Configuration;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -11,6 +12,7 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
+import cpw.mods.fml.common.registry.GameRegistry;
 
 @Mod(modid = CommonProxy.MOD_ID, name = CommonProxy.MOD_NAME, version = CommonProxy.MOD_VERSION)
 @NetworkMod(clientSideRequired=true, serverSideRequired=true, channels={"OutgoingWormhole"}, packetHandler=PacketHandler.class)
@@ -32,7 +34,9 @@ public class SpaceDistortion {
 	}
 	
 	@EventHandler
-	public void init(FMLInitializationEvent event) {}
+	public void init(FMLInitializationEvent event) {
+		GameRegistry.registerTileEntity(TileEntityEventHorizon.class, "tileEntityEventHorizon");
+	}
 	
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event) {}

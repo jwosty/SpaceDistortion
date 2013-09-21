@@ -5,9 +5,13 @@ import net.minecraft.tileentity.TileEntity;
 
 public class TileEntityEventHorizon extends TileEntity {
 	// Coordinates of the destination stargate controller
-	public int destX;
-	public int destY;
-	public int destZ;
+	public Integer destX;
+	public Integer destY;
+	public Integer destZ;
+
+	public TileEntityEventHorizon() {
+		System.out.println("new TileEntityEventHorizon initialized");
+	}
 	
 	public TileEntityEventHorizon(int xDest, int yDest, int zDest) {
 		this.destX = xDest;
