@@ -10,16 +10,13 @@ public class TileEntityEventHorizon extends TileEntity {
 	public int destY;
 	public int destZ;
 
-	public TileEntityEventHorizon() {
-		System.out.println("new TileEntityEventHorizon initialized");
-	}
+	public TileEntityEventHorizon() { }
 	
 	@Override
 	public void writeToNBT(NBTTagCompound data) {
 		super.writeToNBT(data);
 		data.setBoolean("outgoing", isOutgoing);
 		data.setIntArray("destCoords", new int[]{this.destX, this.destY, this.destZ});
-		System.out.println("TileEntityEventHorizon write x = " + this.destX + ", y = " + this.destY + ", z = " + this.destZ);
 	}
 	
 	@Override
@@ -30,6 +27,5 @@ public class TileEntityEventHorizon extends TileEntity {
 		destX = destCoords[0];
 		destY = destCoords[1];
 		destZ = destCoords[2];
-		System.out.println("TileEntityEventHorizon read x = " + this.destX + ", y = " + this.destY + ", z = " + this.destZ);
 	}
 }
