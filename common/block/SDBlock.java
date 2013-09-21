@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jw.spacedistortion.StringGrid;
+import jw.spacedistortion.Triplet;
 import jw.spacedistortion.common.CommonProxy;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -221,5 +222,28 @@ public class SDBlock extends Block {
 					+ plane);
 		}
 		return new int[] { bx, by, bz };
+	}
+	
+	public static Triplet<Integer, Integer, Integer> templateToWorldCoordinates(int tx, int ty, int plane) {
+		int x;
+		int y;
+		int z;
+		if (plane == -1) {
+			x = tx;
+			y = ty;
+			z = 0;
+		} else if (plane == 0) {
+			x = tx;
+			y = 0;
+			z = ty;
+		} else if (plane == 1) {
+			x = 0;
+			y = ty;
+			z = tx;
+		} else {
+			throw new IllegalArgumentException("Bad orientation value of "
+					+ plane);
+		}
+		return new Triplet(x, y, z);
 	}
 }

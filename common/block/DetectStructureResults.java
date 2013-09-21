@@ -4,7 +4,7 @@ public class DetectStructureResults {
 	boolean[][] blocks;
 	int plane;
 	int xOffset;
-	int yOffset;
+	int yOffset;	
 	
 	public DetectStructureResults(boolean[][] blocks, int plane, int xOffset, int yOffset) {
 		this.blocks = blocks;
