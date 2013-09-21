@@ -138,19 +138,29 @@ public class BlockStargateController extends SDBlock {
 			return;
 		}
 		// Fill the dialing stargate
-		this.fillStargateCenter(world, srcX, srcY, srcZ);
+		this.fillStargateCenter(world, srcX, srcY, srcZ, true);
 		// Fill the destination stargate
-		this.fillStargateCenter(world, targetX, targetY, targetZ);
+		this.fillStargateCenter(world, targetX, targetY, targetZ, false);
 	}
 
 	/**
-	 * Fills a given location w/event horizon blocks, assuming there's a stargate there
-	 * @param world The world
-	 * @param x The x position of the stargate controller
-	 * @param y The y position of the stargate controller
-	 * @param z The z position of the stargate controller
+	 * Fills a given location w/event horizon blocks, assuming there's a
+	 * stargate there
+	 * 
+	 * @param world
+	 *            The world
+	 * @param x
+	 *            The x position of the stargate controller
+	 * @param y
+	 *            The y position of the stargate controller
+	 * @param z
+	 *            The z position of the stargate controller
+	 * @param isSource
+	 *            Determines if this stargate is the dialing (source) or
+	 *            destination stargate
 	 */
-	private void fillStargateCenter(World world, int x, int y, int z) {
+	private void fillStargateCenter(World world, int x, int y, int z,
+			boolean isSource) {
 		// See if there's really a stargate here
 		DetectStructureResults stargate = this.getStargateBlocks(
 				Minecraft.getMinecraft().theWorld, x, y, z);
