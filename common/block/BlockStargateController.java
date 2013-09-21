@@ -93,7 +93,7 @@ public class BlockStargateController extends SDBlock {
 			}
 			// Building base 39 numbers using powers of 3
 			int chunkX = (int) ((address[0] * 1521) + (address[1] * 39) + address[2]);
-			int chunkZ = (int) ((address[3] * 1521) + (address[4] * 39) + address[2]);
+			int chunkZ = (int) ((address[3] * 1521) + (address[4] * 39) + address[5]);
 			int last = (int) address[6];
 			// The dimension is stored in the last 2 bits of the last
 			// number/symbol
