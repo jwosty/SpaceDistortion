@@ -5,6 +5,7 @@ import java.util.List;
 
 import jw.spacedistortion.StringGrid;
 import jw.spacedistortion.Pair;
+import jw.spacedistortion.Triplet;
 import jw.spacedistortion.client.gui.GuiDHD;
 import jw.spacedistortion.common.network.packet.OutgoingWormholePacket;
 import jw.spacedistortion.common.tileentity.TileEntityEventHorizon;
@@ -81,7 +82,7 @@ public class BlockStargateController extends SDBlock {
 		return true;
 	}
 
-	public Pair<Integer, Pair<Integer, Integer>> decodeAddress(byte[] address) {
+	public Triplet<Integer, Integer, Integer> decodeAddress(byte[] address) {
 			for (int i = 0; i < 7; i++) {
 				if (i < 6) {
 					System.out.print(address[i] + " ");
@@ -113,8 +114,7 @@ public class BlockStargateController extends SDBlock {
 			}
 			System.out.println("chunkX = " + chunkX + ", chunkZ = " + chunkZ
 					+ ", dimension = " + dimension);
-			return new Pair<Integer, Pair<Integer, Integer>>(dimension,
-					new Pair(chunkX, chunkZ));
+			return new Triplet(dimension, chunkX, chunkZ);
 	}
 
 	@SideOnly(Side.CLIENT)

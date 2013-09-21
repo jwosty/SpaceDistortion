@@ -1,6 +1,6 @@
 package jw.spacedistortion.common.network.packet;
 
-import jw.spacedistortion.Pair;
+import jw.spacedistortion.Triplet;
 import jw.spacedistortion.common.block.BlockStargateController;
 import jw.spacedistortion.common.block.SDBlock;
 import net.minecraft.block.Block;
@@ -50,11 +50,11 @@ public class OutgoingWormholePacket extends SDPacket {
 	@Override
 	public void excecute(EntityPlayer player, Side side)
 			throws ProtocolException {
-		Pair<Integer, Pair<Integer, Integer>> decodedAddress = SDBlock.stargateController
+		Triplet<Integer, Integer, Integer> decodedAddress = SDBlock.stargateController
 				.decodeAddress(address);
 		int dimension = decodedAddress.X;
-		int xDest = decodedAddress.Y.X;
-		int zDest = decodedAddress.Y.Y;
+		int xDest = decodedAddress.Y;
+		int zDest = decodedAddress.Z;
 		if (side.isServer()) {
 			player.addChatMessage("dhdX = " + dhdX + ", dhdY = " + dhdY
 					+ ", dhdZ = " + dhdZ + "\nxDest = " + xDest + ", zDest = "
