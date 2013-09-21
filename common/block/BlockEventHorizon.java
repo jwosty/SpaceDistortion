@@ -4,6 +4,8 @@ import jw.spacedistortion.common.tileentity.TileEntityEventHorizon;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.IBlockAccess;
@@ -37,8 +39,20 @@ public class BlockEventHorizon extends SDBlock implements ITileEntityProvider {
 	
 	@Override
 	public void onEntityCollidedWithBlock(World world, int x, int y, int z, Entity entity) {
-		// this is where the code to teleport the player to the other stargate will come in, but for now there's nothing here
-		entity.setInWeb();
+		if (!world.isRemote) {
+			TileEntityEventHorizon tileEntity = (TileEntityEventHorizon) world
+					.getBlockTileEntity(x, y, z);
+			if (entity instanceof EntityPlayerMP) {
+				// Teleport the entity as a player
+				EntityPlayer player = (EntityPlayer) entity;
+				((EntityPlayerMP) player).playerNetServerHandler
+						.setPlayerLocation(0, 56, 0, player.rotationYaw,
+								player.rotationPitch);
+			} else {
+				// Teleport the entity as anything else
+				entity.setPosition(0, 56, 0);
+			}
+		}
 	}
 	
 	// Returns true if the given side of this block type should be rendered, if the adjacent block is at the given coordinates
