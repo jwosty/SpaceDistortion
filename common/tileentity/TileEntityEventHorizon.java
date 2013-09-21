@@ -25,7 +25,7 @@ public class TileEntityEventHorizon extends TileEntity {
 	@Override
 	public void readFromNBT(NBTTagCompound data) {
 		super.readFromNBT(data);
-		this.isOutgoing = data.getBoolean("isOutgoing");
+		this.isOutgoing = data.getBoolean("outgoing");
 		int[] destCoords = data.getIntArray("destCoords");
 		destX = destCoords[0];
 		destY = destCoords[1];
