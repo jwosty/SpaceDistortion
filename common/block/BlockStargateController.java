@@ -138,9 +138,9 @@ public class BlockStargateController extends SDBlock {
 			return;
 		}
 		// Fill the dialing stargate
-		this.fillStargateCenter(world, srcX, srcY, srcZ, true);
+		this.fillStargateCenter(world, srcX, srcY, srcZ, targetX, targetY, targetZ);
 		// Fill the destination stargate
-		this.fillStargateCenter(world, targetX, targetY, targetZ, false);
+		this.fillStargateCenter(world, targetX, targetY, targetZ, null, null, null);
 	}
 
 	/**
@@ -155,12 +155,15 @@ public class BlockStargateController extends SDBlock {
 	 *            The y position of the stargate controller
 	 * @param z
 	 *            The z position of the stargate controller
-	 * @param isSource
-	 *            Determines if this stargate is the dialing (source) or
-	 *            destination stargate
+	 * @param destX
+	 *            The x position of the destination stargate (if any)
+	 * @param destY
+	 *            The y position of the destination stargate (if any)
+	 * @param destZ
+	 *            The z position of the destination stargate (if any)
 	 */
 	private void fillStargateCenter(World world, int x, int y, int z,
-			boolean isSource) {
+			Integer destX, Integer destY, Integer destZ) {
 		// See if there's really a stargate here
 		DetectStructureResults stargate = this.getStargateBlocks(
 				Minecraft.getMinecraft().theWorld, x, y, z);
@@ -185,8 +188,11 @@ public class BlockStargateController extends SDBlock {
 							stargate.plane);
 					world.setBlock(coords[0], coords[1], coords[2],
 							SDBlock.eventHorizon.blockID, 0, 2);
-					//world.setBlockTileEntity(coords[0], coords[1], coords[2],
-					//		new TileEntityEventHorizon(xDest, yDest, zDest));
+					if (destX != null && destY != null && destZ != null) {
+						world.setBlockTileEntity(coords[0], coords[1],
+								coords[2], new TileEntityEventHorizon(destX,
+										destY, destZ));
+					}
 				}
 			}
 		}
