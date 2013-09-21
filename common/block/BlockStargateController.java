@@ -137,6 +137,17 @@ public class BlockStargateController extends SDBlock {
 					+ ")");
 			return;
 		}
+		this.fillStargateCenter(world, x, y, z);
+	}
+
+	/**
+	 * Fills a given location w/event horizon blocks, assuming there's a stargate there
+	 * @param world The world
+	 * @param x The x position of the stargate controller
+	 * @param y The y position of the stargate controller
+	 * @param z The z position of the stargate controller
+	 */
+	private void fillStargateCenter(World world, int x, int y, int z) {
 		DetectStructureResults stargate = this.getStargateBlocks(
 				Minecraft.getMinecraft().theWorld, x, y, z);
 		if (stargate == null) {
@@ -150,23 +161,13 @@ public class BlockStargateController extends SDBlock {
 		int[] origin = this.getBlockInStructure(world, firstNeighbor[0],
 				firstNeighbor[1], firstNeighbor[2], -stargate.xOffset,
 				stargate.yOffset, stargate.plane);
-		int plane = stargate.plane;
-		fillStargateCenter(world, origin, plane);
-	}
-
-	/**
-	 * Fills a given location w/event horizon blocks, assuming there's a stargate there
-	 * @param world The world
-	 * @param origin The stargate's location
-	 * @param plane The plane to fill
-	 */
-	private void fillStargateCenter(World world, int[] origin, int plane) {
 		// Fill the center of the ring with EventHorizon blocks
 		for (int templateX = 0; templateX <= stargateEventHorizonShape.width; templateX++) {
 			for (int templateY = 0; templateY <= stargateEventHorizonShape.height; templateY++) {
 				if (stargateEventHorizonShape.get(templateX, templateY) == 'X') {
 					int[] coords = this.getBlockInStructure(world, origin[0],
-							origin[1], origin[2], templateX, -templateY, plane);
+							origin[1], origin[2], templateX, -templateY,
+							stargate.plane);
 					world.setBlock(coords[0], coords[1], coords[2],
 							SDBlock.eventHorizon.blockID, 0, 2);
 					//world.setBlockTileEntity(coords[0], coords[1], coords[2],
