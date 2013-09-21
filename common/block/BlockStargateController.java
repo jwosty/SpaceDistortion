@@ -128,19 +128,19 @@ public class BlockStargateController extends SDBlock {
 	/**
 	 * Activate the stargate attached to the given controller coordinates
 	 */
-	public void serverActivateStargatePair(World world, int x, int y, int z,
-			int xDest, int yDest, int zDest) {
+	public void serverActivateStargatePair(World world, int srcX, int srcY, int srcZ,
+			int targetX, int targetY, int targetZ) {
 		Side side = FMLCommonHandler.instance().getEffectiveSide();
 		// If there's no controller block, don't continue
-		if (world.getBlockId(x, y, z) != SDBlock.stargateController.blockID) {
-			System.out.println("No controller at (" + x + ", " + y + ", " + z
+		if (world.getBlockId(srcX, srcY, srcZ) != SDBlock.stargateController.blockID) {
+			System.out.println("No controller at (" + srcX + ", " + srcY + ", " + srcZ
 					+ ")");
 			return;
 		}
 		// Fill the dialing stargate
-		this.fillStargateCenter(world, x, y, z);
+		this.fillStargateCenter(world, srcX, srcY, srcZ);
 		// Fill the destination stargate
-		this.fillStargateCenter(world, xDest, yDest, zDest);
+		this.fillStargateCenter(world, targetX, targetY, targetZ);
 	}
 
 	/**

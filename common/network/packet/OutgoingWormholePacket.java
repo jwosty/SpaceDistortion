@@ -52,16 +52,16 @@ public class OutgoingWormholePacket extends SDPacket {
 			throws ProtocolException {
 		Triplet<Integer, Integer, Integer> decodedAddress = SDBlock.stargateController
 				.decodeAddress(address);
-		int dimension = decodedAddress.X;
-		int xDest = decodedAddress.Y;
-		int zDest = decodedAddress.Z;
+		int destDimension = decodedAddress.X;
+		int destX = decodedAddress.Y;
+		int destZ = decodedAddress.Z;
 		if (side.isServer()) {
 			player.addChatMessage("dhdX = " + dhdX + ", dhdY = " + dhdY
-					+ ", dhdZ = " + dhdZ + "\nxDest = " + xDest + ", zDest = "
-					+ zDest + ", dimension = " + dimension + "\nside = " + side);
+					+ ", dhdZ = " + dhdZ + "\ndestX = " + destX + ", destZ = "
+					+ destZ + ", destDimension = " + destDimension + "\nside = " + side);
 			World world = Minecraft.getMinecraft().theWorld;
 			int[] coords = BlockStargateController.getDominantController(world,
-					xDest, zDest);
+					destX, destZ);
 			if (coords != null) {
 				System.out.println("Locked onto destination Stargate");
 				SDBlock.stargateController.serverActivateStargatePair(
