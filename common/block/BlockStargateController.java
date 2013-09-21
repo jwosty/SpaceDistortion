@@ -83,38 +83,38 @@ public class BlockStargateController extends SDBlock {
 	}
 
 	public Triplet<Integer, Integer, Integer> decodeAddress(byte[] address) {
-			for (int i = 0; i < 7; i++) {
-				if (i < 6) {
-					System.out.print(address[i] + " ");
-				} else {
-					System.out.print("(" + Integer.toBinaryString(address[i])
-							+ ")\n");
-				}
+		for (int i = 0; i < 7; i++) {
+			if (i < 6) {
+				System.out.print(address[i] + " ");
+			} else {
+				System.out.print("(" + Integer.toBinaryString(address[i])
+						+ ")\n");
 			}
-			// Building base 39 numbers using powers of 3
-			int chunkX = (int) ((address[0] * 1521) + (address[1] * 39) + address[2]);
-			int chunkZ = (int) ((address[3] * 1521) + (address[4] * 39) + address[5]);
-			int last = (int) address[6];
-			// The dimension is stored in the last 2 bits of the last
-			// number/symbol
-			// (the
-			// mask is 0b11)
-			int dimension = last & 3;
-			// The sign of the x coordinate is the 4rd to last bit (the mask is
-			// 0b1000)
-			int xSign = last & 8;
-			// The sign of the z coordinate is the 3th to last bit (the mask is
-			// 0b100)
-			int zSign = last & 4;
-			if (xSign == 0) {
-				chunkX = -chunkX;
-			}
-			if (zSign == 0) {
-				chunkZ = -chunkZ;
-			}
-			System.out.println("chunkX = " + chunkX + ", chunkZ = " + chunkZ
-					+ ", dimension = " + dimension);
-			return new Triplet(dimension, chunkX, chunkZ);
+		}
+		// Building base 39 numbers using powers of 3
+		int chunkX = (int) ((address[0] * 1521) + (address[1] * 39) + address[2]);
+		int chunkZ = (int) ((address[3] * 1521) + (address[4] * 39) + address[5]);
+		int last = (int) address[6];
+		// The dimension is stored in the last 2 bits of the last
+		// number/symbol
+		// (the
+		// mask is 0b11)
+		int dimension = last & 3;
+		// The sign of the x coordinate is the 4rd to last bit (the mask is
+		// 0b1000)
+		int xSign = last & 8;
+		// The sign of the z coordinate is the 3th to last bit (the mask is
+		// 0b100)
+		int zSign = last & 4;
+		if (xSign == 0) {
+			chunkX = -chunkX;
+		}
+		if (zSign == 0) {
+			chunkZ = -chunkZ;
+		}
+		System.out.println("chunkX = " + chunkX + ", chunkZ = " + chunkZ
+				+ ", dimension = " + dimension);
+		return new Triplet(dimension, chunkX, chunkZ);
 	}
 
 	@SideOnly(Side.CLIENT)
