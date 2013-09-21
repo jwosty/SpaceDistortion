@@ -64,11 +64,6 @@ public class OutgoingWormholePacket extends SDPacket {
 					xDest, zDest);
 			if (coords != null) {
 				System.out.println("Locked onto destination Stargate");
-				world.setBlock(coords[0], coords[1], coords[2],
-						Block.blockLapis.blockID);
-				// SDBlock.stargateController.serverActivateStargatePair(
-				// player.worldObj, dhdX, dhdY, dhdZ, coords[0],
-				// coords[1], coords[2]);
 				SDBlock.stargateController.serverActivateStargatePair(
 						player.worldObj, dhdX, dhdY, dhdZ, coords[0],
 						coords[1], coords[2]);
