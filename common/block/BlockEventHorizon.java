@@ -46,11 +46,11 @@ public class BlockEventHorizon extends SDBlock implements ITileEntityProvider {
 				// Teleport the entity as a player
 				EntityPlayer player = (EntityPlayer) entity;
 				((EntityPlayerMP) player).playerNetServerHandler
-						.setPlayerLocation(0, 56, 0, player.rotationYaw,
+						.setPlayerLocation(tileEntity.destX, tileEntity.destY, tileEntity.destZ, player.rotationYaw,
 								player.rotationPitch);
 			} else {
 				// Teleport the entity as anything else
-				entity.setPosition(0, 56, 0);
+				entity.setPosition(tileEntity.destX, tileEntity.destY, tileEntity.destZ);
 			}
 		}
 	}
