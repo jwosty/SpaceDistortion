@@ -137,7 +137,10 @@ public class BlockStargateController extends SDBlock {
 					+ ")");
 			return;
 		}
+		// Fill the dialing stargate
 		this.fillStargateCenter(world, x, y, z);
+		// Fill the destination stargate
+		this.fillStargateCenter(world, xDest, yDest, zDest);
 	}
 
 	/**
@@ -148,8 +151,10 @@ public class BlockStargateController extends SDBlock {
 	 * @param z The z position of the stargate controller
 	 */
 	private void fillStargateCenter(World world, int x, int y, int z) {
+		// See if there's really a stargate here
 		DetectStructureResults stargate = this.getStargateBlocks(
 				Minecraft.getMinecraft().theWorld, x, y, z);
+		// If there's not, log it
 		if (stargate == null) {
 			System.out.println("No stargate at (" + x + ", " + y + ", " + z
 					+ ")");
