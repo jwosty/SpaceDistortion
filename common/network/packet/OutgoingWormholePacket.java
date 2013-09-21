@@ -58,7 +58,7 @@ public class OutgoingWormholePacket extends SDPacket {
 		if (side.isServer()) {
 			player.addChatMessage("dhdX = " + dhdX + ", dhdY = " + dhdY
 					+ ", dhdZ = " + dhdZ + "\nxDest = " + xDest + ", zDest = "
-					+ zDest + "\nside = " + side);
+					+ zDest + ", dimension = " + dimension + "\nside = " + side);
 			World world = Minecraft.getMinecraft().theWorld;
 			int[] coords = BlockStargateController.getDominantController(world,
 					xDest, zDest);
@@ -66,9 +66,9 @@ public class OutgoingWormholePacket extends SDPacket {
 				System.out.println("Locked onto destination Stargate");
 				world.setBlock(coords[0], coords[1], coords[2],
 						Block.blockLapis.blockID);
-				//SDBlock.stargateController.serverActivateStargatePair(
-				//		player.worldObj, dhdX, dhdY, dhdZ, coords[0],
-				//		coords[1], coords[2]);
+				// SDBlock.stargateController.serverActivateStargatePair(
+				// player.worldObj, dhdX, dhdY, dhdZ, coords[0],
+				// coords[1], coords[2]);
 			} else {
 				System.out.println("No destination Stargate detected");
 			}
