@@ -159,8 +159,8 @@ public class BlockStargateController extends SDBlock {
 							stargate.plane);
 					world.setBlock(coords[0], coords[1], coords[2],
 							SDBlock.eventHorizon.blockID, 0, 2);
-					world.setBlockTileEntity(coords[0], coords[1], coords[2],
-							new TileEntityEventHorizon(xDest, yDest, zDest));
+					//world.setBlockTileEntity(coords[0], coords[1], coords[2],
+					//		new TileEntityEventHorizon(xDest, yDest, zDest));
 				}
 			}
 		}
