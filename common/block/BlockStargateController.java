@@ -4,7 +4,7 @@ import java.awt.geom.Point2D;
 import java.util.List;
 
 import jw.spacedistortion.StringGrid;
-import jw.spacedistortion.Tuple;
+import jw.spacedistortion.Pair;
 import jw.spacedistortion.client.gui.GuiDHD;
 import jw.spacedistortion.common.network.packet.OutgoingWormholePacket;
 import jw.spacedistortion.common.tileentity.TileEntityEventHorizon;
@@ -81,7 +81,7 @@ public class BlockStargateController extends SDBlock {
 		return true;
 	}
 
-	public Tuple<Integer, Tuple<Integer, Integer>> decodeAddress(byte[] address) {
+	public Pair<Integer, Pair<Integer, Integer>> decodeAddress(byte[] address) {
 			for (int i = 0; i < 7; i++) {
 				if (i < 6) {
 					System.out.print(address[i] + " ");
@@ -113,8 +113,8 @@ public class BlockStargateController extends SDBlock {
 			}
 			System.out.println("chunkX = " + chunkX + ", chunkZ = " + chunkZ
 					+ ", dimension = " + dimension);
-			return new Tuple<Integer, Tuple<Integer, Integer>>(dimension,
-					new Tuple(chunkX, chunkZ));
+			return new Pair<Integer, Pair<Integer, Integer>>(dimension,
+					new Pair(chunkX, chunkZ));
 	}
 
 	@SideOnly(Side.CLIENT)

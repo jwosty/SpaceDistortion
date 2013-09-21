@@ -1,6 +1,6 @@
 package jw.spacedistortion.common.network.packet;
 
-import jw.spacedistortion.Tuple;
+import jw.spacedistortion.Pair;
 import jw.spacedistortion.common.block.BlockStargateController;
 import jw.spacedistortion.common.block.SDBlock;
 import net.minecraft.block.Block;
@@ -50,7 +50,7 @@ public class OutgoingWormholePacket extends SDPacket {
 	@Override
 	public void excecute(EntityPlayer player, Side side)
 			throws ProtocolException {
-		Tuple<Integer, Tuple<Integer, Integer>> decodedAddress = SDBlock.stargateController
+		Pair<Integer, Pair<Integer, Integer>> decodedAddress = SDBlock.stargateController
 				.decodeAddress(address);
 		int dimension = decodedAddress.X;
 		int xDest = decodedAddress.Y.X;
