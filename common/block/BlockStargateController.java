@@ -138,7 +138,7 @@ public class BlockStargateController extends SDBlock {
 		// Fill the dialing stargate
 		this.fillStargateCenter(world, srcX, srcY, srcZ, targetX, targetY, targetZ);
 		// Fill the destination stargate
-		//this.fillStargateCenter(world, targetX, targetY, targetZ, null, null, null);
+		this.fillStargateCenter(world, targetX, targetY, targetZ, null, null, null);
 	}
 
 	/**
@@ -177,12 +177,6 @@ public class BlockStargateController extends SDBlock {
 		Triplet<Integer, Integer, Integer> origin = this
 				.templateToWorldCoordinates(-stargate.xOffset, stargate.yOffset,
 						stargate.plane);
-		/*
-		// This is the top-left corner of the stargate ring
-		int[] origin = this.getBlockInStructure(world, firstNeighbor[0],
-				firstNeighbor[1], firstNeighbor[2], stargate.xOffset,
-				stargate.yOffset, stargate.plane);
-		*/
 		// Fill the center of the ring with EventHorizon blocks
 		for (int templateX = 0; templateX <= stargateEventHorizonShape.width; templateX++) {
 			for (int templateY = 0; templateY <= stargateEventHorizonShape.height; templateY++) {
