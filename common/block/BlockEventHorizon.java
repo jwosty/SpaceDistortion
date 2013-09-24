@@ -41,16 +41,19 @@ public class BlockEventHorizon extends SDBlock implements ITileEntityProvider {
 	public void onEntityCollidedWithBlock(World world, int x, int y, int z, Entity entity) {
 		TileEntityEventHorizon tileEntity = (TileEntityEventHorizon) world
 				.getBlockTileEntity(x, y, z);
+		double entityX = entity.posX - ((Math.floor(entity.posX)) - tileEntity.destX);
+		double entityY = entity.posY - ((Math.floor(entity.posY)) - tileEntity.destY);
+		double entityZ = entity.posZ - ((Math.floor(entity.posZ)) - tileEntity.destZ);
 		if (!world.isRemote && tileEntity.isOutgoing) {
 			if (entity instanceof EntityPlayerMP) {
 				// Teleport the entity as a player
 				EntityPlayer player = (EntityPlayer) entity;
 				((EntityPlayerMP) player).playerNetServerHandler
-						.setPlayerLocation(tileEntity.destX, tileEntity.destY, tileEntity.destZ, player.rotationYaw,
+						.setPlayerLocation(entityX, entityY, entityZ, player.rotationYaw,
 								player.rotationPitch);
 			} else {
 				// Teleport the entity as anything else
-				entity.setPosition(tileEntity.destX, tileEntity.destY, tileEntity.destZ);
+				entity.setPosition(entityX, entityY, entityZ);
 			}
 		}
 	}

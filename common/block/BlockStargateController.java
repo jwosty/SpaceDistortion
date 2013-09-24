@@ -188,14 +188,16 @@ public class BlockStargateController extends SDBlock {
 					world.setBlock(coords[0], coords[1], coords[2],
 							SDBlock.eventHorizon.blockID, 0, 2);
 					if (destX != null && destY != null && destZ != null) {
+						// Outgoing wormhole
 						TileEntityEventHorizon tileEntity = (TileEntityEventHorizon) world
 								.getBlockTileEntity(coords[0], coords[1],
 										coords[2]);
 						if (tileEntity != null) {
 							tileEntity.isOutgoing = true;
-							tileEntity.destX = destX;
-							tileEntity.destY = destY;
-							tileEntity.destZ = destZ;
+							Triplet<Integer, Integer, Integer> specificDestCoords = this.templateToWorldCoordinates(templateX, templateY, stargate.plane);
+							tileEntity.destX = destX - specificDestCoords.X;
+							tileEntity.destY = destY - specificDestCoords.Y;
+							tileEntity.destZ = destZ - specificDestCoords.Z;
 						}
 					}
 				}
