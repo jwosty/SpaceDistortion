@@ -183,16 +183,18 @@ public class BlockStargateController extends SDBlock {
 				world, x, y, z);
 		Integer[] firstNeighbor = this.getNeighboringBlocks(world, x, y, z)
 				.get(0);
-		Triplet<Integer, Integer, Integer> origin = this
+		Triplet<Integer, Integer, Integer> relativeOrigin = this
 				.templateToWorldCoordinates(-stargate.xOffset,
 						stargate.yOffset, stargate.plane);
+		Triplet<Integer, Integer, Integer> origin = new Triplet<Integer, Integer, Integer>(
+				firstNeighbor[0] + relativeOrigin.X, firstNeighbor[1]
+						+ relativeOrigin.Y, firstNeighbor[2] + relativeOrigin.Z);
 		for (int templateX = 0; templateX <= stargateEventHorizonShape.width; templateX++) {
 			for (int templateY = 0; templateY <= stargateEventHorizonShape.height; templateY++) {
 				if (stargateEventHorizonShape.get(templateX, templateY) == 'X') {
-					int[] coords = this.getBlockInStructure(world,
-							firstNeighbor[0] + origin.X, firstNeighbor[1] + origin.Y,
-							firstNeighbor[2] + origin.Z, templateX, -templateY,
-							stargate.plane);
+					int[] coords = this.getBlockInStructure(world, origin.X,
+							origin.Y, origin.Z, templateX,
+							-templateY, stargate.plane);
 					results.add(new Triplet(coords[0], coords[1], coords[2]));
 				}
 			}
