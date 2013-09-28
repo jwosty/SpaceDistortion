@@ -162,6 +162,9 @@ public class BlockStargateController extends SDBlock {
 				tileEntity.destZ = dstBlockCoords.Z;
 				System.out.println("dstBlockCoords -> " + dstBlockCoords);
 			}
+			
+			// Fill the target stargate with "dummy" event horizon blocks
+			world.setBlock(dstBlockCoords.X, dstBlockCoords.Y, dstBlockCoords.Z, SDBlock.eventHorizon.blockID);
 			//world.setBlockTileEntity(srcBlockCoords.X, srcBlockCoords.Y, srcBlockCoords.Z, tileEntity);
 		}
 	}
