@@ -136,16 +136,33 @@ public class BlockStargateController extends SDBlock {
 					+ ")");
 			return;
 		}
+		// Get the target stargate center coordinates for use in both stargates'
+		// filling code (coords of target, tile entity of src)
+		ArrayList<Triplet<Integer, Integer, Integer>> dstBlocks = this
+				.getStargateCenterBlocks(world, targetX, targetY, targetZ);
+
 		// Fill the dialing stargate
-		//this.fillStargateCenter(world, srcX, srcY, srcZ, targetX, targetY, targetZ);
-		// Fill the destination stargate
-		//this.fillStargateCenter(world, targetX, targetY, targetZ, null, null, null);
-		// Fill the dialing stargate
-		ArrayList<Triplet<Integer, Integer, Integer>> srcBlocks = this.getStargateCenterBlocks(world, srcX, srcY, srcZ);
+		ArrayList<Triplet<Integer, Integer, Integer>> srcBlocks = this
+				.getStargateCenterBlocks(world, srcX, srcY, srcZ);
 		for (int i = 0; i < srcBlocks.size(); i++) {
-			Triplet<Integer, Integer, Integer> blockCoords = srcBlocks.get(i);
-			System.out.println("someBlocks.get(i) -> " + blockCoords);
-			world.setBlock(blockCoords.X, blockCoords.Y, blockCoords.Z, SDBlock.eventHorizon.blockID);
+			Triplet<Integer, Integer, Integer> srcBlockCoords = srcBlocks.get(i);
+			Triplet<Integer, Integer, Integer> dstBlockCoords = dstBlocks.get(i);
+			System.out.println("srcBlockCoords -> " + srcBlockCoords);
+			// Set the destination blocks
+			world.setBlock(srcBlockCoords.X, srcBlockCoords.Y, srcBlockCoords.Z,
+					SDBlock.eventHorizon.blockID);
+			// Set the tile entity that stores the specific destination coordinates
+			//TileEntityEventHorizon tileEntity = new TileEntityEventHorizon();
+			TileEntityEventHorizon tileEntity = (TileEntityEventHorizon) world
+					.getBlockTileEntity(srcBlockCoords.X, srcBlockCoords.Y, srcBlockCoords.Z);
+			if (tileEntity != null) {
+				tileEntity.isOutgoing = true;
+				tileEntity.destX = dstBlockCoords.X;
+				tileEntity.destY = dstBlockCoords.Y;
+				tileEntity.destZ = dstBlockCoords.Z;
+				System.out.println("dstBlockCoords -> " + dstBlockCoords);
+			}
+			//world.setBlockTileEntity(srcBlockCoords.X, srcBlockCoords.Y, srcBlockCoords.Z, tileEntity);
 		}
 	}
 
