@@ -165,97 +165,22 @@ public class BlockStargateController extends SDBlock {
 			
 			// Fill the target stargate with "dummy" event horizon blocks
 			world.setBlock(dstBlockCoords.X, dstBlockCoords.Y, dstBlockCoords.Z, SDBlock.eventHorizon.blockID);
-			//world.setBlockTileEntity(srcBlockCoords.X, srcBlockCoords.Y, srcBlockCoords.Z, tileEntity);
-		}
-	}
-
-	/**
-	 * Fills a given location w/event horizon blocks, assuming there's a
-	 * stargate there
-	 * 
-	 * @param world
-	 *            The world
-	 * @param x
-	 *            The x position of the stargate controller
-	 * @param y
-	 *            The y position of the stargate controller
-	 * @param z
-	 *            The z position of the stargate controller
-	 * @param destX
-	 *            The x position of the destination stargate (if any)
-	 * @param destY
-	 *            The y position of the destination stargate (if any)
-	 * @param destZ
-	 *            The z position of the destination stargate (if any)
-	 */
-	private void fillStargateCenter(World world, int x, int y, int z,
-			Integer destX, Integer destY, Integer destZ) {
-		// See if there's really a stargate here
-		DetectStructureResults stargate = this.getStargateBlocks(
-				Minecraft.getMinecraft().theWorld, x, y, z);
-		DetectStructureResults destStargate = this.getStargateBlocks(
-				Minecraft.getMinecraft().theWorld, x, y, z);
-		// If there's not, log it
-		if (stargate == null) {
-			System.out.println("No stargate at (" + x + ", " + y + ", " + z
-					+ ")");
-			return;
-		}
-		
-		Integer[] firstNeighbor = this.getNeighboringBlocks(world, x, y, z)
-				.get(0);
-		Triplet<Integer, Integer, Integer> origin = this
-				.templateToWorldCoordinates(-stargate.xOffset, stargate.yOffset,
-						stargate.plane);
-		Integer[] destFirstNeighbor;
-		try {
-			destFirstNeighbor = this.getNeighboringBlocks(world, destX, destY, destZ).get(0);
-		} catch (NullPointerException e) {
-			destFirstNeighbor = null;
-		}
-		Triplet<Integer, Integer, Integer> destOrigin = this
-				.templateToWorldCoordinates(-destStargate.xOffset, destStargate.yOffset,
-						destStargate.plane);
-		// Fill the center of the ring with EventHorizon blocks
-		for (int templateX = 0; templateX <= stargateEventHorizonShape.width; templateX++) {
-			for (int templateY = 0; templateY <= stargateEventHorizonShape.height; templateY++) {
-				if (stargateEventHorizonShape.get(templateX, templateY) == 'X') {
-				System.out.println("origin.X = " + origin.X + ", origin.Y = " + origin.Y + ", origin.Z = " + origin.Z);
-					int[] coords = this.getBlockInStructure(world, origin.X + firstNeighbor[0],
-							origin.Y + firstNeighbor[1], origin.Z + firstNeighbor[2], templateX, -templateY,
-							stargate.plane);
-					world.setBlock(coords[0], coords[1], coords[2],
-							SDBlock.eventHorizon.blockID, 0, 2);
-					if (destX != null && destY != null && destZ != null) {
-						// Outgoing wormhole
-						TileEntityEventHorizon tileEntity = (TileEntityEventHorizon) world
-								.getBlockTileEntity(coords[0], coords[1],
-										coords[2]);
-						if (tileEntity != null && destFirstNeighbor != null) {
-							tileEntity.isOutgoing = true;
-							//Triplet<Integer, Integer, Integer> specificDestCoords = this.templateToWorldCoordinates(templateX, templateY, stargate.plane);
-							int[] specificDestCoords = this.getBlockInStructure(world, 0,
-									0, 0, templateX, templateY, stargate.plane);
-							Triplet<Integer, Integer, Integer> sorigin = this.templateToWorldCoordinates(-stargate.xOffset, stargate.yOffset, stargate.plane);
-							tileEntity.destX = destFirstNeighbor[0] + destOrigin.X;// - specificDestCoords[0];
-							tileEntity.destY = destFirstNeighbor[1] + destOrigin.Y;// - specificDestCoords[1];
-							tileEntity.destZ = destFirstNeighbor[2] + destOrigin.Z;// - specificDestCoords[2];
-							System.out.println("specificDestCoords = ("
-									+ specificDestCoords[0] + ", "
-									+ specificDestCoords[1] + ", "
-									+ specificDestCoords[2] + ")");
-						}
-					}
-				}
-			}
 		}
 	}
 	
+	/**
+	 * Returns the coordinates of all the center blocks at the given stargate, or an empty ArrayList if there's no stargate there.
+	 * @param world The world that the stargate is located in
+	 * @param x The x coordinate of the stargate controller
+	 * @param y The y coordinate of the stargate controller
+	 * @param z The z coordinate of the stargate controller
+	 * @return
+	 */
 	public ArrayList<Triplet<Integer, Integer, Integer>> getStargateCenterBlocks(World world, int x, int y, int z) {
 		ArrayList<Triplet<Integer, Integer, Integer>> results = new ArrayList();
 		// See if there's really a stargate here
 		DetectStructureResults stargate = this.getStargateBlocks(
-				Minecraft.getMinecraft().theWorld, x, y, z);
+				world, x, y, z);
 		Integer[] firstNeighbor = this.getNeighboringBlocks(world, x, y, z)
 				.get(0);
 		Triplet<Integer, Integer, Integer> origin = this
