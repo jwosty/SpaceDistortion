@@ -201,10 +201,10 @@ public class BlockStargateController extends SDBlock {
 		for (int templateX = 0; templateX <= stargateEventHorizonShape.width; templateX++) {
 			for (int templateY = 0; templateY <= stargateEventHorizonShape.height; templateY++) {
 				if (stargateEventHorizonShape.get(templateX, templateY) == 'X') {
-					int[] coords = this.getBlockInStructure(world, origin.X,
+					Triplet<Integer, Integer, Integer> coords = this.getBlockInStructure(world, origin.X,
 							origin.Y, origin.Z, templateX,
 							-templateY, stargate.plane);
-					results.add(new Triplet(coords[0], coords[1], coords[2]));
+					results.add(new Triplet(coords.X, coords.Y, coords.Z));
 				}
 			}
 		}

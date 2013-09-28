@@ -177,10 +177,10 @@ public class SDBlock extends Block {
 		match: for (int gridY = 0; gridY < template.height; gridY++) {
 			for (int gridX = 0; gridX < template.width; gridX++) {
 				// Get the correct block
-				int[] coords = SDBlock.getBlockInStructure(world, x, y, z,
+				Triplet<Integer, Integer, Integer> coords = SDBlock.getBlockInStructure(world, x, y, z,
 						gridX - xTemplateOffset, -gridY + yTemplateOffset,
 						plane);
-				int id = world.getBlockId(coords[0], coords[1], coords[2]);
+				int id = world.getBlockId(coords.X, coords.Y, coords.Z);
 				// Test it
 				if (template.get(gridX, gridY) != ' ') {
 					// Expecting this block
@@ -200,7 +200,7 @@ public class SDBlock extends Block {
 		return blocks;
 	}
 
-	public static int[] getBlockInStructure(World world, int x, int y, int z,
+	public static Triplet<Integer, Integer, Integer> getBlockInStructure(World world, int x, int y, int z,
 			int gridX, int gridY, int plane) {
 		int bx;
 		int by;
@@ -221,7 +221,7 @@ public class SDBlock extends Block {
 			throw new IllegalArgumentException("Bad orientation value of "
 					+ plane);
 		}
-		return new int[] { bx, by, bz };
+		return new Triplet<Integer, Integer, Integer>(bx, by, bz);
 	}
 	
 	public static Triplet<Integer, Integer, Integer> templateToWorldCoordinates(int tx, int ty, int plane) {
