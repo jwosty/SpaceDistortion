@@ -1,5 +1,6 @@
 package jw.spacedistortion.common.block;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import jw.spacedistortion.StringGrid;
@@ -136,9 +137,15 @@ public class BlockStargateController extends SDBlock {
 			return;
 		}
 		// Fill the dialing stargate
-		this.fillStargateCenter(world, srcX, srcY, srcZ, targetX, targetY, targetZ);
+		//this.fillStargateCenter(world, srcX, srcY, srcZ, targetX, targetY, targetZ);
 		// Fill the destination stargate
-		this.fillStargateCenter(world, targetX, targetY, targetZ, null, null, null);
+		//this.fillStargateCenter(world, targetX, targetY, targetZ, null, null, null);
+		ArrayList<Triplet<Integer, Integer, Integer>> someBlocks = this.getStargateCenterBlocks(world, srcX, srcY, srcZ);
+		for (int i = 0; i < someBlocks.size(); i++) {
+			Triplet<Integer, Integer, Integer> block = someBlocks.get(i);
+			System.out.println("someBlocks.get(i) -> " + block);
+			world.setBlock(block.X, block.Y, block.Z, SDBlock.eventHorizon.blockID);
+		}
 	}
 
 	/**
@@ -221,6 +228,30 @@ public class BlockStargateController extends SDBlock {
 				}
 			}
 		}
+	}
+	
+	public ArrayList<Triplet<Integer, Integer, Integer>> getStargateCenterBlocks(World world, int x, int y, int z) {
+		ArrayList<Triplet<Integer, Integer, Integer>> results = new ArrayList();
+		// See if there's really a stargate here
+		DetectStructureResults stargate = this.getStargateBlocks(
+				Minecraft.getMinecraft().theWorld, x, y, z);
+		Integer[] firstNeighbor = this.getNeighboringBlocks(world, x, y, z)
+				.get(0);
+		Triplet<Integer, Integer, Integer> origin = this
+				.templateToWorldCoordinates(-stargate.xOffset,
+						stargate.yOffset, stargate.plane);
+		for (int templateX = 0; templateX <= stargateEventHorizonShape.width; templateX++) {
+			for (int templateY = 0; templateY <= stargateEventHorizonShape.height; templateY++) {
+				if (stargateEventHorizonShape.get(templateX, templateY) == 'X') {
+					int[] coords = this.getBlockInStructure(world,
+							firstNeighbor[0] + origin.X, firstNeighbor[1] + origin.Y,
+							firstNeighbor[2] + origin.Z, templateX, -templateY,
+							stargate.plane);
+					results.add(new Triplet(coords[0], coords[1], coords[2]));
+				}
+			}
+		}
+		return results;
 	}
 
 	/**
