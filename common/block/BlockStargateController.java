@@ -167,13 +167,19 @@ public class BlockStargateController extends SDBlock {
 			world.setBlock(dstBlockCoords.X, dstBlockCoords.Y, dstBlockCoords.Z, SDBlock.eventHorizon.blockID);
 		}
 	}
-	
+
 	/**
-	 * Returns the coordinates of all the center blocks at the given stargate, or an empty ArrayList if there's no stargate there.
-	 * @param world The world that the stargate is located in
-	 * @param x The x coordinate of the stargate controller
-	 * @param y The y coordinate of the stargate controller
-	 * @param z The z coordinate of the stargate controller
+	 * Returns the coordinates of all the center blocks at the given stargate,
+	 * or an empty ArrayList if there's no stargate there.
+	 * 
+	 * @param world
+	 *            The world that the stargate is located in
+	 * @param x
+	 *            The x coordinate of the stargate controller
+	 * @param y
+	 *            The y coordinate of the stargate controller
+	 * @param z
+	 *            The z coordinate of the stargate controller
 	 * @return
 	 */
 	public ArrayList<Triplet<Integer, Integer, Integer>> getStargateCenterBlocks(World world, int x, int y, int z) {
