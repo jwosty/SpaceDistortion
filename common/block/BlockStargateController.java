@@ -140,11 +140,12 @@ public class BlockStargateController extends SDBlock {
 		//this.fillStargateCenter(world, srcX, srcY, srcZ, targetX, targetY, targetZ);
 		// Fill the destination stargate
 		//this.fillStargateCenter(world, targetX, targetY, targetZ, null, null, null);
-		ArrayList<Triplet<Integer, Integer, Integer>> someBlocks = this.getStargateCenterBlocks(world, srcX, srcY, srcZ);
-		for (int i = 0; i < someBlocks.size(); i++) {
-			Triplet<Integer, Integer, Integer> block = someBlocks.get(i);
-			System.out.println("someBlocks.get(i) -> " + block);
-			world.setBlock(block.X, block.Y, block.Z, SDBlock.eventHorizon.blockID);
+		// Fill the dialing stargate
+		ArrayList<Triplet<Integer, Integer, Integer>> srcBlocks = this.getStargateCenterBlocks(world, srcX, srcY, srcZ);
+		for (int i = 0; i < srcBlocks.size(); i++) {
+			Triplet<Integer, Integer, Integer> blockCoords = srcBlocks.get(i);
+			System.out.println("someBlocks.get(i) -> " + blockCoords);
+			world.setBlock(blockCoords.X, blockCoords.Y, blockCoords.Z, SDBlock.eventHorizon.blockID);
 		}
 	}
 
