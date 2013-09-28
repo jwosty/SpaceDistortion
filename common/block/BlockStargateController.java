@@ -152,7 +152,6 @@ public class BlockStargateController extends SDBlock {
 			world.setBlock(srcBlockCoords.X, srcBlockCoords.Y, srcBlockCoords.Z,
 					SDBlock.eventHorizon.blockID);
 			// Set the tile entity that stores the specific destination coordinates
-			//TileEntityEventHorizon tileEntity = new TileEntityEventHorizon();
 			TileEntityEventHorizon tileEntity = (TileEntityEventHorizon) world
 					.getBlockTileEntity(srcBlockCoords.X, srcBlockCoords.Y, srcBlockCoords.Z);
 			if (tileEntity != null) {
