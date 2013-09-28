@@ -165,6 +165,8 @@ public class BlockStargateController extends SDBlock {
 		// See if there's really a stargate here
 		DetectStructureResults stargate = this.getStargateBlocks(
 				Minecraft.getMinecraft().theWorld, x, y, z);
+		DetectStructureResults destStargate = this.getStargateBlocks(
+				Minecraft.getMinecraft().theWorld, x, y, z);
 		// If there's not, log it
 		if (stargate == null) {
 			System.out.println("No stargate at (" + x + ", " + y + ", " + z
@@ -177,6 +179,15 @@ public class BlockStargateController extends SDBlock {
 		Triplet<Integer, Integer, Integer> origin = this
 				.templateToWorldCoordinates(-stargate.xOffset, stargate.yOffset,
 						stargate.plane);
+		Integer[] destFirstNeighbor;
+		try {
+			destFirstNeighbor = this.getNeighboringBlocks(world, destX, destY, destZ).get(0);
+		} catch (NullPointerException e) {
+			destFirstNeighbor = null;
+		}
+		Triplet<Integer, Integer, Integer> destOrigin = this
+				.templateToWorldCoordinates(-destStargate.xOffset, destStargate.yOffset,
+						destStargate.plane);
 		// Fill the center of the ring with EventHorizon blocks
 		for (int templateX = 0; templateX <= stargateEventHorizonShape.width; templateX++) {
 			for (int templateY = 0; templateY <= stargateEventHorizonShape.height; templateY++) {
@@ -192,12 +203,19 @@ public class BlockStargateController extends SDBlock {
 						TileEntityEventHorizon tileEntity = (TileEntityEventHorizon) world
 								.getBlockTileEntity(coords[0], coords[1],
 										coords[2]);
-						if (tileEntity != null) {
+						if (tileEntity != null && destFirstNeighbor != null) {
 							tileEntity.isOutgoing = true;
-							Triplet<Integer, Integer, Integer> specificDestCoords = this.templateToWorldCoordinates(templateX, templateY, stargate.plane);
-							tileEntity.destX = destX - specificDestCoords.X;
-							tileEntity.destY = destY - specificDestCoords.Y;
-							tileEntity.destZ = destZ - specificDestCoords.Z;
+							//Triplet<Integer, Integer, Integer> specificDestCoords = this.templateToWorldCoordinates(templateX, templateY, stargate.plane);
+							int[] specificDestCoords = this.getBlockInStructure(world, 0,
+									0, 0, templateX, templateY, stargate.plane);
+							Triplet<Integer, Integer, Integer> sorigin = this.templateToWorldCoordinates(-stargate.xOffset, stargate.yOffset, stargate.plane);
+							tileEntity.destX = destFirstNeighbor[0] + destOrigin.X;// - specificDestCoords[0];
+							tileEntity.destY = destFirstNeighbor[1] + destOrigin.Y;// - specificDestCoords[1];
+							tileEntity.destZ = destFirstNeighbor[2] + destOrigin.Z;// - specificDestCoords[2];
+							System.out.println("specificDestCoords = ("
+									+ specificDestCoords[0] + ", "
+									+ specificDestCoords[1] + ", "
+									+ specificDestCoords[2] + ")");
 						}
 					}
 				}
