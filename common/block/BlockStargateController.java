@@ -147,10 +147,10 @@ public class BlockStargateController extends SDBlock {
 		for (int i = 0; i < srcBlocks.size(); i++) {
 			Triplet<Integer, Integer, Integer> srcBlockCoords = srcBlocks.get(i);
 			Triplet<Integer, Integer, Integer> dstBlockCoords = dstBlocks.get(i);
-			System.out.println("srcBlockCoords -> " + srcBlockCoords);
+			//System.out.println("srcBlockCoords -> " + srcBlockCoords);
 			// Set the destination blocks
-			world.setBlock(srcBlockCoords.X, srcBlockCoords.Y, srcBlockCoords.Z,
-					SDBlock.eventHorizon.blockID);
+			//world.setBlock(srcBlockCoords.X, srcBlockCoords.Y, srcBlockCoords.Z,
+			//		SDBlock.eventHorizon.blockID);
 			// Set the tile entity that stores the specific destination coordinates
 			TileEntityEventHorizon tileEntity = (TileEntityEventHorizon) world
 					.getBlockTileEntity(srcBlockCoords.X, srcBlockCoords.Y, srcBlockCoords.Z);
@@ -159,11 +159,11 @@ public class BlockStargateController extends SDBlock {
 				tileEntity.destX = dstBlockCoords.X;
 				tileEntity.destY = dstBlockCoords.Y;
 				tileEntity.destZ = dstBlockCoords.Z;
-				System.out.println("dstBlockCoords -> " + dstBlockCoords);
+				//System.out.println("dstBlockCoords -> " + dstBlockCoords);
 			}
 			
 			// Fill the target stargate with "dummy" event horizon blocks
-			world.setBlock(dstBlockCoords.X, dstBlockCoords.Y, dstBlockCoords.Z, SDBlock.eventHorizon.blockID);
+			//world.setBlock(dstBlockCoords.X, dstBlockCoords.Y, dstBlockCoords.Z, SDBlock.eventHorizon.blockID);
 		}
 	}
 
@@ -186,14 +186,22 @@ public class BlockStargateController extends SDBlock {
 		// See if there's really a stargate here
 		DetectStructureResults stargate = this.getStargateBlocks(
 				world, x, y, z);
-		Integer[] firstNeighbor = this.getNeighboringBlocks(world, x, y, z)
-				.get(0);
+		List<Integer[]> neighbors = this.getNeighboringBlocks(world, x, y, z);
+		Integer[] firstNeighbor = null;
+		for (int i = 0; i < neighbors.size(); i++) {
+			if (world.getBlockId(neighbors.get(i)[0], neighbors.get(i)[1],
+					neighbors.get(i)[2]) == SDBlock.stargateRing.blockID) {
+				firstNeighbor = neighbors.get(i);
+			}
+		}
+		System.out.println("firstNeighbor -> " + new Triplet(firstNeighbor[0], firstNeighbor[1], firstNeighbor[2]));
 		Triplet<Integer, Integer, Integer> relativeOrigin = this
 				.templateToWorldCoordinates(-stargate.xOffset,
 						stargate.yOffset, stargate.plane);
 		Triplet<Integer, Integer, Integer> origin = new Triplet<Integer, Integer, Integer>(
 				firstNeighbor[0] + relativeOrigin.X, firstNeighbor[1]
 						+ relativeOrigin.Y, firstNeighbor[2] + relativeOrigin.Z);
+		System.out.println("origin -> " + origin);
 		for (int templateX = 0; templateX <= stargateEventHorizonShape.width; templateX++) {
 			for (int templateY = 0; templateY <= stargateEventHorizonShape.height; templateY++) {
 				if (stargateEventHorizonShape.get(templateX, templateY) == 'X') {
