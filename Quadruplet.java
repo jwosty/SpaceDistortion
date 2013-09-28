@@ -11,4 +11,9 @@ public class Quadruplet<A, B, C, D> {
 		this.C = C;
 		this.D = D;
 	}
+
+	public String toString() {
+		return "(" + this.A + ", " + this.B + ", " + this.C + ", " + this.D
+				+ ")";
+	}
 }

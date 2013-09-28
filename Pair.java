@@ -7,4 +7,8 @@ public class Pair<X, Y> {
 		this.X = X;
 		this.Y = Y;
 	}
+	
+	public String toString() {
+		return "(" + this.X + ", " + this.Y + ")";
+	}
 }

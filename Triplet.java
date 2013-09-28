@@ -9,4 +9,8 @@ public class Triplet<X, Y, Z> {
 		this.Y = Y;
 		this.Z = Z;
 	}
+
+	public String toString() {
+		return "(" + this.X + ", " + this.Y + ", " + this.Z + ")";
+	}
 }
