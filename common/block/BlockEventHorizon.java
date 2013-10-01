@@ -42,7 +42,7 @@ public class BlockEventHorizon extends SDBlock implements ITileEntityProvider {
 		TileEntityEventHorizon tileEntity = (TileEntityEventHorizon) world
 				.getBlockTileEntity(x, y, z);
 		double entityX = tileEntity.destX + (entity.posX - Math.floor(entity.posX));
-		double entityY = tileEntity.destY - (entity.posY - Math.floor(entity.posY));
+		double entityY = tileEntity.destY - (entity.posY - Math.floor(entity.posY)) - 1;
 		double entityZ = tileEntity.destZ + (entity.posZ - Math.floor(entity.posZ));
 		if (!world.isRemote && tileEntity.isOutgoing) {
 			if (entity instanceof EntityPlayerMP) {
