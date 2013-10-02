@@ -39,12 +39,24 @@ public class BlockEventHorizon extends SDBlock implements ITileEntityProvider {
 	
 	@Override
 	public void onEntityCollidedWithBlock(World world, int x, int y, int z, Entity entity) {
-		TileEntityEventHorizon tileEntity = (TileEntityEventHorizon) world
+		// Tile entities of source and target blocks
+		TileEntityEventHorizon srcTileEntity = (TileEntityEventHorizon) world
 				.getBlockTileEntity(x, y, z);
-		double entityX = tileEntity.destX + (entity.posX - Math.floor(entity.posX));
-		double entityY = tileEntity.destY - (entity.posY - Math.floor(entity.posY)) - 1;
-		double entityZ = tileEntity.destZ + (entity.posZ - Math.floor(entity.posZ));
-		if (!world.isRemote && tileEntity.isOutgoing) {
+		TileEntityEventHorizon dstTileEntity = (TileEntityEventHorizon) world
+				.getBlockTileEntity(srcTileEntity.destX, srcTileEntity.destY,
+						srcTileEntity.destZ);
+		// Planes of source and target stargates
+		int srcPlane = srcTileEntity.plane;
+		if (!world.isRemote && srcTileEntity.isOutgoing) {
+			int dstPlane = dstTileEntity.plane;
+			System.out.print("srcPlane -> " + srcPlane);
+			System.out.println(", dstPlane -> " + dstPlane);
+			double entityX = srcTileEntity.destX
+					+ (entity.posX - Math.floor(entity.posX));
+			double entityY = srcTileEntity.destY
+					- (entity.posY - Math.floor(entity.posY)) - 1;
+			double entityZ = srcTileEntity.destZ
+					+ (entity.posZ - Math.floor(entity.posZ));
 			if (entity instanceof EntityPlayerMP) {
 				// Teleport the entity as a player
 				EntityPlayer player = (EntityPlayer) entity;
