@@ -149,35 +149,43 @@ public class BlockStargateController extends SDBlock {
 		
 		// Fill the dialing stargate
 		for (int i = 0; i < srcBlocks.size(); i++) {
-			Triplet<Integer, Integer, Integer> srcBlockCoords = srcBlocks.get(i);
-			Triplet<Integer, Integer, Integer> dstBlockCoords = dstBlocks.get(i);
-			// Set the destination blocks
-			world.setBlock(srcBlockCoords.X, srcBlockCoords.Y, srcBlockCoords.Z,
-					SDBlock.eventHorizon.blockID);
-			// Set the tile entity that stores the specific destination
-			// coordinates
-			TileEntityEventHorizon srcTileEntity = (TileEntityEventHorizon) world
-					.getBlockTileEntity(srcBlockCoords.X, srcBlockCoords.Y,
-							srcBlockCoords.Z);
-			if (srcTileEntity != null) {
-				srcTileEntity.isOutgoing = true;
-				srcTileEntity.plane = srcPlane;
-				srcTileEntity.destX = dstBlockCoords.X;
-				srcTileEntity.destY = dstBlockCoords.Y;
-				srcTileEntity.destZ = dstBlockCoords.Z;
-			}
-			TileEntityEventHorizon dstTileEntity = (TileEntityEventHorizon) world
-					.getBlockTileEntity(dstBlockCoords.X, dstBlockCoords.Y,
-							dstBlockCoords.Z);
-			if (dstTileEntity != null) {
-				// Only the plane matters; everything else is ignored if
-				// isOutgoing is false (which is the default value)
-				dstTileEntity.plane = dstPlane;
-			}
-			// Fill the target stargate with "dummy" event horizon blocks
-			world.setBlock(dstBlockCoords.X, dstBlockCoords.Y,
-					dstBlockCoords.Z, SDBlock.eventHorizon.blockID);
+			basicUnsafeFillStargateCenter(world, dstPlane, dstBlocks, srcPlane,
+					srcBlocks, i);
 		}
+	}
+
+	private void basicUnsafeFillStargateCenter(World world, int dstPlane,
+			ArrayList<Triplet<Integer, Integer, Integer>> dstBlocks,
+			int srcPlane,
+			ArrayList<Triplet<Integer, Integer, Integer>> srcBlocks, int i) {
+		Triplet<Integer, Integer, Integer> srcBlockCoords = srcBlocks.get(i);
+		Triplet<Integer, Integer, Integer> dstBlockCoords = dstBlocks.get(i);
+		// Set the destination blocks
+		world.setBlock(srcBlockCoords.X, srcBlockCoords.Y, srcBlockCoords.Z,
+				SDBlock.eventHorizon.blockID);
+		// Set the tile entity that stores the specific destination
+		// coordinates
+		TileEntityEventHorizon srcTileEntity = (TileEntityEventHorizon) world
+				.getBlockTileEntity(srcBlockCoords.X, srcBlockCoords.Y,
+						srcBlockCoords.Z);
+		if (srcTileEntity != null) {
+			srcTileEntity.isOutgoing = true;
+			srcTileEntity.plane = srcPlane;
+			srcTileEntity.destX = dstBlockCoords.X;
+			srcTileEntity.destY = dstBlockCoords.Y;
+			srcTileEntity.destZ = dstBlockCoords.Z;
+		}
+		TileEntityEventHorizon dstTileEntity = (TileEntityEventHorizon) world
+				.getBlockTileEntity(dstBlockCoords.X, dstBlockCoords.Y,
+						dstBlockCoords.Z);
+		if (dstTileEntity != null) {
+			// Only the plane matters; everything else is ignored if
+			// isOutgoing is false (which is the default value)
+			dstTileEntity.plane = dstPlane;
+		}
+		// Fill the target stargate with "dummy" event horizon blocks
+		world.setBlock(dstBlockCoords.X, dstBlockCoords.Y,
+				dstBlockCoords.Z, SDBlock.eventHorizon.blockID);
 	}
 
 	/**
