@@ -3,6 +3,7 @@ package jw.spacedistortion.common.block;
 import java.util.ArrayList;
 import java.util.List;
 
+import jw.spacedistortion.Pair;
 import jw.spacedistortion.StringGrid;
 import jw.spacedistortion.Triplet;
 import jw.spacedistortion.client.gui.GuiDHD;
@@ -136,32 +137,46 @@ public class BlockStargateController extends SDBlock {
 					+ ")");
 			return;
 		}
-		// Get the target stargate center coordinates for use in both stargates'
-		// filling code (coords of target, tile entity of src)
-		ArrayList<Triplet<Integer, Integer, Integer>> dstBlocks = this
+		// Get the source and target stargate center coordinates
+		Pair<Integer, ArrayList<Triplet<Integer, Integer, Integer>>> dstPlaneBlocks = this
 				.getStargateCenterBlocks(world, targetX, targetY, targetZ);
-
-		// Fill the dialing stargate
-		ArrayList<Triplet<Integer, Integer, Integer>> srcBlocks = this
+		int dstPlane = dstPlaneBlocks.X;
+		ArrayList<Triplet<Integer, Integer, Integer>> dstBlocks = dstPlaneBlocks.Y;
+		Pair<Integer, ArrayList<Triplet<Integer, Integer, Integer>>> srcPlaneBlocks = this
 				.getStargateCenterBlocks(world, srcX, srcY, srcZ);
+		int srcPlane = srcPlaneBlocks.X;
+		ArrayList<Triplet<Integer, Integer, Integer>> srcBlocks = srcPlaneBlocks.Y;
+		
+		// Fill the dialing stargate
 		for (int i = 0; i < srcBlocks.size(); i++) {
 			Triplet<Integer, Integer, Integer> srcBlockCoords = srcBlocks.get(i);
 			Triplet<Integer, Integer, Integer> dstBlockCoords = dstBlocks.get(i);
 			// Set the destination blocks
 			world.setBlock(srcBlockCoords.X, srcBlockCoords.Y, srcBlockCoords.Z,
 					SDBlock.eventHorizon.blockID);
-			// Set the tile entity that stores the specific destination coordinates
-			TileEntityEventHorizon tileEntity = (TileEntityEventHorizon) world
-					.getBlockTileEntity(srcBlockCoords.X, srcBlockCoords.Y, srcBlockCoords.Z);
-			if (tileEntity != null) {
-				tileEntity.isOutgoing = true;
-				tileEntity.destX = dstBlockCoords.X;
-				tileEntity.destY = dstBlockCoords.Y;
-				tileEntity.destZ = dstBlockCoords.Z;
+			// Set the tile entity that stores the specific destination
+			// coordinates
+			TileEntityEventHorizon srcTileEntity = (TileEntityEventHorizon) world
+					.getBlockTileEntity(srcBlockCoords.X, srcBlockCoords.Y,
+							srcBlockCoords.Z);
+			if (srcTileEntity != null) {
+				srcTileEntity.isOutgoing = true;
+				srcTileEntity.plane = srcPlane;
+				srcTileEntity.destX = dstBlockCoords.X;
+				srcTileEntity.destY = dstBlockCoords.Y;
+				srcTileEntity.destZ = dstBlockCoords.Z;
 			}
-			
+			TileEntityEventHorizon dstTileEntity = (TileEntityEventHorizon) world
+					.getBlockTileEntity(dstBlockCoords.X, dstBlockCoords.Y,
+							dstBlockCoords.Z);
+			if (dstTileEntity != null) {
+				// Only the plane matters; everything else is ignored if
+				// isOutgoing is false (which is the default value)
+				dstTileEntity.plane = dstPlane;
+			}
 			// Fill the target stargate with "dummy" event horizon blocks
-			world.setBlock(dstBlockCoords.X, dstBlockCoords.Y, dstBlockCoords.Z, SDBlock.eventHorizon.blockID);
+			world.setBlock(dstBlockCoords.X, dstBlockCoords.Y,
+					dstBlockCoords.Z, SDBlock.eventHorizon.blockID);
 		}
 	}
 
@@ -179,7 +194,7 @@ public class BlockStargateController extends SDBlock {
 	 *            The z coordinate of the stargate controller
 	 * @return
 	 */
-	public ArrayList<Triplet<Integer, Integer, Integer>> getStargateCenterBlocks(World world, int x, int y, int z) {
+	public Pair<Integer, ArrayList<Triplet<Integer, Integer, Integer>>> getStargateCenterBlocks(World world, int x, int y, int z) {
 		ArrayList<Triplet<Integer, Integer, Integer>> results = new ArrayList();
 		// See if there's really a stargate here
 		DetectStructureResults stargate = this.getStargateBlocks(
@@ -201,14 +216,16 @@ public class BlockStargateController extends SDBlock {
 		for (int templateX = 0; templateX <= stargateEventHorizonShape.width; templateX++) {
 			for (int templateY = 0; templateY <= stargateEventHorizonShape.height; templateY++) {
 				if (stargateEventHorizonShape.get(templateX, templateY) == 'X') {
-					Triplet<Integer, Integer, Integer> coords = this.getBlockInStructure(world, origin.X,
-							origin.Y, origin.Z, templateX,
-							-templateY, stargate.plane);
+					Triplet<Integer, Integer, Integer> coords = this
+							.getBlockInStructure(world, origin.X, origin.Y,
+									origin.Z, templateX, -templateY,
+									stargate.plane);
 					results.add(new Triplet(coords.X, coords.Y, coords.Z));
 				}
 			}
 		}
-		return results;
+		return new Pair<Integer, ArrayList<Triplet<Integer, Integer, Integer>>>(
+				stargate.plane, results);
 	}
 
 	/**
