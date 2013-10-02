@@ -154,8 +154,6 @@ public class SDBlock extends Block {
 	 *            The z ...
 	 * @param plane
 	 *            The plane the structure lies on (-1 = x-y, 0 = x-z, 1 = y-z)
-	 * @param xFlip
-	 *            If true, the structure is mirrored
 	 * @return
 	 */
 	public static boolean[][] detectStructureAtLocation(World world,
