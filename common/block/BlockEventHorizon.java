@@ -49,8 +49,7 @@ public class BlockEventHorizon extends SDBlock implements ITileEntityProvider {
 			// Planes of source and target stargates
 			int srcPlane = srcTileEntity.plane;
 			int dstPlane = dstTileEntity.plane;
-			System.out.print("srcPlane -> " + srcPlane);
-			System.out.println(", dstPlane -> " + dstPlane);
+			System.out.println("srcPlane -> " + srcPlane + ", dstPlane -> " + dstPlane);
 			double entityX = srcTileEntity.destX
 					+ (entity.posX - Math.floor(entity.posX));
 			double entityY = srcTileEntity.destY
