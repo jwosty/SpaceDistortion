@@ -19,19 +19,8 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class SDBlock extends Block {
 	public static BlockStargateRing stargateRing;
-	public static BlockStargateController stargateController;// =
-																// (BlockStargateController)
-																// (new
-																// BlockStargateController(
-	// 1601, 1)).setHardness(3.0f).setStepSound(Block.soundStoneFootstep)
-	// .setBlockName("stargateController")
-	// .setCreativeTab(CreativeTabs.tabBlock);
-	public static BlockEventHorizon eventHorizon;// = (BlockEventHorizon) (new
-													// BlockEventHorizon(
-
-	// 1602, 16)).setHardness(-1.0f)
-	// .setStepSound(Block.soundGlassFootstep)
-	// .setBlockName("eventHorizon").setLightValue(0.875f);
+	public static BlockStargateController stargateController;
+	public static BlockEventHorizon eventHorizon;
 
 	/**
 	 * Create the block objects based on configuration information
