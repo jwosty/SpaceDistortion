@@ -13,6 +13,20 @@ public enum Axis {
 		}
 	}
 	
+	/**
+	 * Calculates the pitch and yaw values
+	 * @return A pair containing the pitch and yaw, in that order
+	 */
+	public Pair<Integer, Integer> getPitchAndYaw() {
+		if (this == X) {
+			return new Pair(0, -90);
+		} else if (this == Y) {
+			return new Pair(-90, 0);
+		} else {
+			return new Pair(0, 0);
+		}
+	}
+	
 	public static Axis ofInt(int x) {
 		if (x == 0) {
 			return X;

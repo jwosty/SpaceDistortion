@@ -47,6 +47,8 @@ public class BlockEventHorizon extends SDBlock implements ITileEntityProvider {
 				.getBlockTileEntity(srcTileEntity.destX, srcTileEntity.destY,
 						srcTileEntity.destZ);
 		if (!world.isRemote && srcTileEntity.isOutgoing) {
+			System.out.println("Entity pitch -> " + entity.rotationPitch + ", Entity yaw -> " + entity.rotationYaw);
+			
 			// Planes of source and target stargates
 			Axis srcPlane = srcTileEntity.axis;
 			Axis dstPlane = dstTileEntity.axis;
