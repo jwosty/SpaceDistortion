@@ -128,8 +128,9 @@ public class SDBlock extends Block {
 								world, template, xOrigin, yOrigin, zOrigin,
 								axis, xOffset, yOffset, blockID);
 						if (blocks != null) {
-							results = new DetectStructureResults(blocks, axis,
-									xOffset, yOffset);
+							results = new DetectStructureResults(blocks,
+									new Triplet(xOrigin, yOrigin, zOrigin),
+									axis, xOffset, yOffset);
 							break match;
 						}
 					}
