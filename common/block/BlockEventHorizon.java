@@ -64,7 +64,7 @@ public class BlockEventHorizon extends SDBlock implements ITileEntityProvider {
 			Pair<Integer, Integer> srcRotation = srcPlane.getPitchAndYaw();
 			Pair<Integer, Integer> dstRotation = dstPlane.getPitchAndYaw();
 			float entityPitch = dstRotation.X - srcRotation.X;
-			float entityYaw = dstRotation.Y - srcRotation.Y - 180;
+			float entityYaw = dstRotation.Y - srcRotation.Y;
 			
 			if (entity instanceof EntityPlayerMP) {
 				// Teleport the entity as a player
