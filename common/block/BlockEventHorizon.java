@@ -1,6 +1,7 @@
 package jw.spacedistortion.common.block;
 
 import jw.spacedistortion.Axis;
+import jw.spacedistortion.Pair;
 import jw.spacedistortion.common.tileentity.TileEntityEventHorizon;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
@@ -47,27 +48,34 @@ public class BlockEventHorizon extends SDBlock implements ITileEntityProvider {
 				.getBlockTileEntity(srcTileEntity.destX, srcTileEntity.destY,
 						srcTileEntity.destZ);
 		if (!world.isRemote && srcTileEntity.isOutgoing) {
-			System.out.println("Entity pitch -> " + entity.rotationPitch + ", Entity yaw -> " + entity.rotationYaw);
-			
 			// Planes of source and target stargates
 			Axis srcPlane = srcTileEntity.axis;
 			Axis dstPlane = dstTileEntity.axis;
 			System.out.println("srcPlane -> " + srcPlane + ", dstPlane -> " + dstPlane);
+			// Calculate position
 			double entityX = srcTileEntity.destX
 					+ (entity.posX - Math.floor(entity.posX));
 			double entityY = srcTileEntity.destY
 					- (entity.posY - Math.floor(entity.posY)) - 1;
 			double entityZ = srcTileEntity.destZ
 					+ (entity.posZ - Math.floor(entity.posZ));
+			
+			// Calculate rotation
+			Pair<Integer, Integer> srcRotation = srcPlane.getPitchAndYaw();
+			Pair<Integer, Integer> dstRotation = dstPlane.getPitchAndYaw();
+			float entityPitch = dstRotation.X - srcRotation.X;
+			float entityYaw = dstRotation.Y - srcRotation.Y - 180;
+			
 			if (entity instanceof EntityPlayerMP) {
 				// Teleport the entity as a player
 				EntityPlayer player = (EntityPlayer) entity;
 				((EntityPlayerMP) player).playerNetServerHandler
-						.setPlayerLocation(entityX, entityY, entityZ, player.rotationYaw,
-								player.rotationPitch);
+						.setPlayerLocation(entityX, entityY, entityZ, entityYaw,
+								entityPitch);
 			} else {
 				// Teleport the entity as anything else
 				entity.setPosition(entityX, entityY, entityZ);
+				entity.setPositionAndRotation(entityX, entityY, entityZ, entityYaw, entityPitch);
 			}
 		}
 	}

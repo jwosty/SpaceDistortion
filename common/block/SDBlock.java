@@ -224,17 +224,17 @@ public class SDBlock extends Block {
 		int y;
 		int z;
 		if (axis == Axis.X) {
-			x = tx;
+			x = 0;
 			y = ty;
-			z = 0;
+			z = tx;
 		} else if (axis == Axis.Y) {
 			x = tx;
 			y = 0;
 			z = ty;
 		} else { // axis == Axis.Z
-			x = 0;
+			x = tx;
 			y = ty;
-			z = tx;
+			z = 0;
 		}
 		return new Triplet(x, y, z);
 	}
