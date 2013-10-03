@@ -3,6 +3,7 @@ package jw.spacedistortion.common.block;
 import java.util.ArrayList;
 import java.util.List;
 
+import jw.spacedistortion.Axis;
 import jw.spacedistortion.StringGrid;
 import jw.spacedistortion.Triplet;
 import jw.spacedistortion.common.CommonProxy;
@@ -118,7 +119,7 @@ public class SDBlock extends Block {
 		// boolean[][] blocks = null;
 		// For now, assume its on the xy plane
 		// Move the template over each possible position
-		match: for (int axis = -1; axis < 2; axis++) {
+		match: for (Axis axis : Axis.values()) {
 			for (int xOffset = 0; xOffset < template.width; xOffset++) {
 				for (int yOffset = 0; yOffset < template.height; yOffset++) {
 					if (template.get(xOffset, yOffset) != ' ') {
@@ -133,6 +134,7 @@ public class SDBlock extends Block {
 						}
 					}
 				}
+
 			}
 		}
 		return results;
@@ -157,16 +159,19 @@ public class SDBlock extends Block {
 	 * @return
 	 */
 	public static boolean[][] detectStructureAtLocation(World world,
-			StringGrid template, int x, int y, int z, int plane,
-			int xTemplateOffset, int yTemplateOffset, int blockID) {
+			StringGrid template, int x, int y, int z, Axis axis,
+			int xTemplateOffset, int yTemplateOffset,
+			int blockID) {
+		Triplet<Integer, Integer, Integer> p = new Triplet(x, y, z);
 		// To keep track of the found blocks, if any
 		boolean[][] blocks = new boolean[template.height][template.width];
-		match: for (int gridY = 0; gridY < template.height; gridY++) {
+		match:
+			for (int gridY = 0; gridY < template.height; gridY++) {
 			for (int gridX = 0; gridX < template.width; gridX++) {
 				// Get the correct block
 				Triplet<Integer, Integer, Integer> coords = SDBlock.getBlockInStructure(world, x, y, z,
 						gridX - xTemplateOffset, -gridY + yTemplateOffset,
-						plane);
+						axis);
 				int id = world.getBlockId(coords.X, coords.Y, coords.Z);
 				// Test it
 				if (template.get(gridX, gridY) != ' ') {
@@ -186,50 +191,49 @@ public class SDBlock extends Block {
 		}
 		return blocks;
 	}
-
-	public static Triplet<Integer, Integer, Integer> getBlockInStructure(World world, int x, int y, int z,
-			int gridX, int gridY, int plane) {
-		int bx;
-		int by;
-		int bz;
-		if (plane == -1) {
-			bx = x + gridX;
-			by = y + gridY;
-			bz = z;
-		} else if (plane == 0) {
-			bx = x + gridX;
-			by = y;
-			bz = z + gridY;
-		} else if (plane == 1) {
-			bx = x;
-			by = y + gridY;
-			bz = z + gridX;
-		} else {
-			throw new IllegalArgumentException("Bad orientation value of "
-					+ plane);
-		}
-		return new Triplet<Integer, Integer, Integer>(bx, by, bz);
+	
+	/**
+	 * Get a set of block coordinates relative to a structure.
+	 * 
+	 * @param x
+	 *            The x origin of the structure
+	 * @param y
+	 *            The y origin of the structure
+	 * @param z
+	 *            The z origin of the structure
+	 * @param gridX
+	 *            The x position in the structure
+	 * @param gridY
+	 *            The y position in the structure
+	 * @param axis
+	 *            The axis perpendicular to the structure
+	 * @param a
+	 *            The angle of the structure in radians
+	 * @return
+	 */
+	public static Triplet<Integer, Integer, Integer> getBlockInStructure(
+			World world, int x, int y, int z, int gridX, int gridY,
+			Axis axis) {
+		Triplet<Integer, Integer, Integer> offset = templateToWorldCoordinates(gridX, gridY, axis);
+		return new Triplet(x + offset.X, y + offset.Y, z + offset.Z);
 	}
 	
-	public static Triplet<Integer, Integer, Integer> templateToWorldCoordinates(int tx, int ty, int plane) {
+	public static Triplet<Integer, Integer, Integer> templateToWorldCoordinates(int tx, int ty, Axis axis) {
 		int x;
 		int y;
 		int z;
-		if (plane == -1) {
+		if (axis == Axis.X) {
 			x = tx;
 			y = ty;
 			z = 0;
-		} else if (plane == 0) {
+		} else if (axis == Axis.Y) {
 			x = tx;
 			y = 0;
 			z = ty;
-		} else if (plane == 1) {
+		} else { // axis == Axis.Z
 			x = 0;
 			y = ty;
 			z = tx;
-		} else {
-			throw new IllegalArgumentException("Bad orientation value of "
-					+ plane);
 		}
 		return new Triplet(x, y, z);
 	}

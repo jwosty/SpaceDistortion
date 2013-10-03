@@ -1,5 +1,6 @@
 package jw.spacedistortion.common.block;
 
+import jw.spacedistortion.Axis;
 import jw.spacedistortion.common.tileentity.TileEntityEventHorizon;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
@@ -47,8 +48,8 @@ public class BlockEventHorizon extends SDBlock implements ITileEntityProvider {
 						srcTileEntity.destZ);
 		if (!world.isRemote && srcTileEntity.isOutgoing) {
 			// Planes of source and target stargates
-			int srcPlane = srcTileEntity.plane;
-			int dstPlane = dstTileEntity.plane;
+			Axis srcPlane = srcTileEntity.axis;
+			Axis dstPlane = dstTileEntity.axis;
 			System.out.println("srcPlane -> " + srcPlane + ", dstPlane -> " + dstPlane);
 			double entityX = srcTileEntity.destX
 					+ (entity.posX - Math.floor(entity.posX));

@@ -3,6 +3,7 @@ package jw.spacedistortion.common.block;
 import java.util.ArrayList;
 import java.util.List;
 
+import jw.spacedistortion.Axis;
 import jw.spacedistortion.Pair;
 import jw.spacedistortion.StringGrid;
 import jw.spacedistortion.Triplet;
@@ -138,25 +139,25 @@ public class BlockStargateController extends SDBlock {
 			return;
 		}
 		// Get the source and target stargate center coordinates
-		Pair<Integer, ArrayList<Triplet<Integer, Integer, Integer>>> dstPlaneBlocks = this
+		Pair<Axis, ArrayList<Triplet<Integer, Integer, Integer>>> dstPlaneBlocks = this
 				.getStargateCenterBlocks(world, targetX, targetY, targetZ);
-		int dstPlane = dstPlaneBlocks.X;
+		Axis dstAxis = dstPlaneBlocks.X;
 		ArrayList<Triplet<Integer, Integer, Integer>> dstBlocks = dstPlaneBlocks.Y;
-		Pair<Integer, ArrayList<Triplet<Integer, Integer, Integer>>> srcPlaneBlocks = this
+		Pair<Axis, ArrayList<Triplet<Integer, Integer, Integer>>> srcPlaneBlocks = this
 				.getStargateCenterBlocks(world, srcX, srcY, srcZ);
-		int srcPlane = srcPlaneBlocks.X;
+		Axis srcAxis = srcPlaneBlocks.X;
 		ArrayList<Triplet<Integer, Integer, Integer>> srcBlocks = srcPlaneBlocks.Y;
 		
 		// Fill the dialing stargate
 		for (int i = 0; i < srcBlocks.size(); i++) {
-			basicUnsafeFillStargateCenter(world, dstPlane, dstBlocks, srcPlane,
+			basicUnsafeFillStargateCenter(world, dstAxis, dstBlocks, srcAxis,
 					srcBlocks, i);
 		}
 	}
 
-	private void basicUnsafeFillStargateCenter(World world, int dstPlane,
+	private void basicUnsafeFillStargateCenter(World world, Axis dstAxis,
 			ArrayList<Triplet<Integer, Integer, Integer>> dstBlocks,
-			int srcPlane,
+			Axis srcAxis,
 			ArrayList<Triplet<Integer, Integer, Integer>> srcBlocks, int i) {
 		Triplet<Integer, Integer, Integer> srcBlockCoords = srcBlocks.get(i);
 		Triplet<Integer, Integer, Integer> dstBlockCoords = dstBlocks.get(i);
@@ -170,7 +171,7 @@ public class BlockStargateController extends SDBlock {
 						srcBlockCoords.Z);
 		if (srcTileEntity != null) {
 			srcTileEntity.isOutgoing = true;
-			srcTileEntity.plane = srcPlane;
+			srcTileEntity.axis = srcAxis;
 			srcTileEntity.destX = dstBlockCoords.X;
 			srcTileEntity.destY = dstBlockCoords.Y;
 			srcTileEntity.destZ = dstBlockCoords.Z;
@@ -181,7 +182,7 @@ public class BlockStargateController extends SDBlock {
 		if (dstTileEntity != null) {
 			// Only the plane matters; everything else is ignored if
 			// isOutgoing is false (which is the default value)
-			dstTileEntity.plane = dstPlane;
+			dstTileEntity.axis = dstAxis;
 		}
 		// Fill the target stargate with "dummy" event horizon blocks
 		world.setBlock(dstBlockCoords.X, dstBlockCoords.Y,
@@ -202,7 +203,7 @@ public class BlockStargateController extends SDBlock {
 	 *            The z coordinate of the stargate controller
 	 * @return
 	 */
-	public Pair<Integer, ArrayList<Triplet<Integer, Integer, Integer>>> getStargateCenterBlocks(World world, int x, int y, int z) {
+	public Pair<Axis, ArrayList<Triplet<Integer, Integer, Integer>>> getStargateCenterBlocks(World world, int x, int y, int z) {
 		ArrayList<Triplet<Integer, Integer, Integer>> results = new ArrayList();
 		// See if there's really a stargate here
 		DetectStructureResults stargate = this.getStargateBlocks(
@@ -217,7 +218,7 @@ public class BlockStargateController extends SDBlock {
 		}
 		Triplet<Integer, Integer, Integer> relativeOrigin = this
 				.templateToWorldCoordinates(-stargate.xOffset,
-						stargate.yOffset, stargate.plane);
+						stargate.yOffset, stargate.axis);
 		Triplet<Integer, Integer, Integer> origin = new Triplet<Integer, Integer, Integer>(
 				firstNeighbor[0] + relativeOrigin.X, firstNeighbor[1]
 						+ relativeOrigin.Y, firstNeighbor[2] + relativeOrigin.Z);
@@ -227,13 +228,12 @@ public class BlockStargateController extends SDBlock {
 					Triplet<Integer, Integer, Integer> coords = this
 							.getBlockInStructure(world, origin.X, origin.Y,
 									origin.Z, templateX, -templateY,
-									stargate.plane);
+									stargate.axis);
 					results.add(new Triplet(coords.X, coords.Y, coords.Z));
 				}
 			}
 		}
-		return new Pair<Integer, ArrayList<Triplet<Integer, Integer, Integer>>>(
-				stargate.plane, results);
+		return new Pair(stargate.axis, results);
 	}
 
 	/**

@@ -1,16 +1,16 @@
 package jw.spacedistortion.common.block;
 
-import jw.spacedistortion.Triplet;
+import jw.spacedistortion.Axis;
 
 public class DetectStructureResults {
 	boolean[][] blocks;
-	int plane;
+	Axis axis;
 	int xOffset;
 	int yOffset;
 	
-	public DetectStructureResults(boolean[][] blocks, int plane, int xOffset, int yOffset) {
+	public DetectStructureResults(boolean[][] blocks, Axis axis, int xOffset, int yOffset) {
 		this.blocks = blocks;
-		this.plane = plane;
+		this.axis = axis;
 		this.xOffset = xOffset;
 		this.yOffset = yOffset;
 	}
