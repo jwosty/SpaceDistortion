@@ -47,7 +47,9 @@ public class BlockEventHorizon extends SDBlock implements ITileEntityProvider {
 		TileEntityEventHorizon dstTileEntity = (TileEntityEventHorizon) world
 				.getBlockTileEntity(srcTileEntity.destX, srcTileEntity.destY,
 						srcTileEntity.destZ);
-		if (!world.isRemote && srcTileEntity.isOutgoing) {
+		if (!world.isRemote && srcTileEntity.isOutgoing
+				&& Math.floor(entity.posX) == x && Math.floor(entity.posY) == y
+				&& Math.floor(entity.posZ) == z) {
 			// Planes of source and target stargates
 			Axis srcPlane = srcTileEntity.axis;
 			Axis dstPlane = dstTileEntity.axis;
@@ -56,15 +58,19 @@ public class BlockEventHorizon extends SDBlock implements ITileEntityProvider {
 			double entityX = srcTileEntity.destX
 					+ (entity.posX - Math.floor(entity.posX));
 			double entityY = srcTileEntity.destY
-					- (entity.posY - Math.floor(entity.posY)) - 1;
+					- (entity.posY - Math.floor(entity.posY));
 			double entityZ = srcTileEntity.destZ
 					+ (entity.posZ - Math.floor(entity.posZ));
 			
 			// Calculate rotation
 			Pair<Integer, Integer> srcRotation = srcPlane.getPitchAndYaw();
 			Pair<Integer, Integer> dstRotation = dstPlane.getPitchAndYaw();
-			float entityPitch = dstRotation.X - srcRotation.X;
-			float entityYaw = dstRotation.Y - srcRotation.Y;
+			float ep = entity.rotationPitch;
+			float ey = entity.rotationYaw;
+			float eAnglePitch = srcRotation.X - (entity.rotationPitch - 180);
+			float eAngleYaw = srcRotation.Y - (entity.rotationYaw - 180);
+			float entityPitch = entity.rotationPitch;
+			float entityYaw = (srcRotation.Y - (entity.rotationYaw + 180)) + dstRotation.Y;
 			
 			if (entity instanceof EntityPlayerMP) {
 				// Teleport the entity as a player
