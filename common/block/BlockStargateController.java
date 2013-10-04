@@ -40,12 +40,16 @@ public class BlockStargateController extends SDBlock {
 			"       ");
 
 	private Icon controllerTopIcon;
+	private Icon controllerInvalid;
+	private Icon controllerValid;
 
 	@SideOnly(Side.CLIENT)
 	@Override
 	public void registerIcons(IconRegister register) {
 		super.registerIcons(register);
-		controllerTopIcon = register.registerIcon(this.getIconName() + "_top");
+		this.controllerTopIcon = register.registerIcon(this.getIconName() + "_top");
+		this.controllerInvalid = register.registerIcon(this.getIconName() + "_invalid");
+		this.controllerValid = register.registerIcon(this.getIconName() + "_valid");
 	}
 
 	public BlockStargateController(int id) {
