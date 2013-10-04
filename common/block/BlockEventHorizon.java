@@ -2,6 +2,7 @@ package jw.spacedistortion.common.block;
 
 import jw.spacedistortion.Axis;
 import jw.spacedistortion.Pair;
+import jw.spacedistortion.Triplet;
 import jw.spacedistortion.common.tileentity.TileEntityEventHorizon;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
@@ -65,10 +66,6 @@ public class BlockEventHorizon extends SDBlock implements ITileEntityProvider {
 			// Calculate rotation
 			Pair<Integer, Integer> srcRotation = srcPlane.getPitchAndYaw();
 			Pair<Integer, Integer> dstRotation = dstPlane.getPitchAndYaw();
-			float ep = entity.rotationPitch;
-			float ey = entity.rotationYaw;
-			float eAnglePitch = srcRotation.X - (entity.rotationPitch - 180);
-			float eAngleYaw = srcRotation.Y - (entity.rotationYaw - 180);
 			float entityPitch = entity.rotationPitch;
 			float entityYaw = (srcRotation.Y - (entity.rotationYaw + 180)) + dstRotation.Y;
 			
@@ -80,7 +77,6 @@ public class BlockEventHorizon extends SDBlock implements ITileEntityProvider {
 								entityPitch);
 			} else {
 				// Teleport the entity as anything else
-				entity.setPosition(entityX, entityY, entityZ);
 				entity.setPositionAndRotation(entityX, entityY, entityZ, entityYaw, entityPitch);
 			}
 		}
