@@ -255,9 +255,21 @@ public class BlockStargateController extends SDBlock {
 		}
 		return null;
 	}
-
+	
 	@Override
 	public Icon getIcon(int side, int metadata) {
-		return side == 1 ? this.controllerTopIcon : this.blockIcon;
+		if (side == 1) {
+			return this.controllerTopIcon;
+		// First 2 bits are the facing; mask is 0b11 or 3
+		} else if ((side - 2) == (3 | metadata)) {
+			// Next bit is whether or not the controller is part of a valid stargate
+			if ((8 | metadata) == 1) {
+				return this.controllerValid;
+			} else {
+				return this.controllerInvalid;
+			}
+		} else {
+			return this.blockIcon;
+		}
 	}
 }
