@@ -11,6 +11,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.Configuration;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -91,7 +92,7 @@ public class SDBlock extends Block {
 	 * @return A list of blocks in the format of a list where the first 3
 	 *         elements are the x, y, and z and the last is the block id
 	 */
-	public static List<Integer[]> getNeighboringBlocks(World world, int x,
+	public static List<Integer[]> getNeighboringBlocks(IBlockAccess world, int x,
 			int y, int z) {
 		List<Integer[]> blocks = new ArrayList<Integer[]>();
 		int[][] neighbors = { { -1, 0, 0 }, { 1, 0, 0 }, { 0, -1, 0 },
@@ -112,7 +113,7 @@ public class SDBlock extends Block {
 	}
 
 	// Returns all blocks in a structure if this block is part of it
-	public static DetectStructureResults detectStructure(World world,
+	public static DetectStructureResults detectStructure(IBlockAccess world,
 			StringGrid template, int xOrigin, int yOrigin, int zOrigin,
 			int blockID) {
 		DetectStructureResults results = null;
@@ -159,7 +160,7 @@ public class SDBlock extends Block {
 	 *            The plane the structure lies on (-1 = x-y, 0 = x-z, 1 = y-z)
 	 * @return
 	 */
-	public static boolean[][] detectStructureAtLocation(World world,
+	public static boolean[][] detectStructureAtLocation(IBlockAccess world,
 			StringGrid template, int x, int y, int z, Axis axis,
 			int xTemplateOffset, int yTemplateOffset,
 			int blockID) {
@@ -213,7 +214,7 @@ public class SDBlock extends Block {
 	 * @return
 	 */
 	public static Triplet<Integer, Integer, Integer> getBlockInStructure(
-			World world, int x, int y, int z, int gridX, int gridY,
+			IBlockAccess world, int x, int y, int z, int gridX, int gridY,
 			Axis axis) {
 		Triplet<Integer, Integer, Integer> offset = templateToWorldCoordinates(gridX, gridY, axis);
 		return new Triplet(x + offset.X, y + offset.Y, z + offset.Z);

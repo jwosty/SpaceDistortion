@@ -3,6 +3,7 @@ package jw.spacedistortion.common;
 import jw.spacedistortion.common.block.SDBlock;
 import jw.spacedistortion.common.network.PacketHandler;
 import jw.spacedistortion.common.tileentity.TileEntityEventHorizon;
+import jw.spacedistortion.common.tileentity.TileEntityStargateController;
 import net.minecraftforge.common.Configuration;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -36,6 +37,7 @@ public class SpaceDistortion {
 	@EventHandler
 	public void init(FMLInitializationEvent event) {
 		GameRegistry.registerTileEntity(TileEntityEventHorizon.class, "tileEntityEventHorizon");
+		GameRegistry.registerTileEntity(TileEntityStargateController.class, "tileEntityStargateController");
 	}
 	
 	@EventHandler

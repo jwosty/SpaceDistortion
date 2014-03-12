@@ -9,19 +9,30 @@ import jw.spacedistortion.StringGrid;
 import jw.spacedistortion.Triplet;
 import jw.spacedistortion.client.gui.GuiDHD;
 import jw.spacedistortion.common.network.packet.OutgoingWormholePacket;
+import jw.spacedistortion.common.tileentity.StargateControllerState;
 import jw.spacedistortion.common.tileentity.TileEntityEventHorizon;
+import jw.spacedistortion.common.tileentity.TileEntityStargateController;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockPistonBase;
+import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.network.packet.Packet;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Icon;
+import net.minecraft.util.MathHelper;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class BlockStargateController extends SDBlock {
+public class BlockStargateController extends SDBlock implements ITileEntityProvider {
 	public static StringGrid stargateRingShape = new StringGrid(
 			"  XXX  ",
 			" X   X ",
@@ -43,6 +54,11 @@ public class BlockStargateController extends SDBlock {
 	private Icon controllerInvalid;
 	private Icon controllerValid;
 
+	@Override
+	public TileEntity createNewTileEntity(World world) {
+		return new TileEntityStargateController();
+	}
+	
 	@SideOnly(Side.CLIENT)
 	@Override
 	public void registerIcons(IconRegister register) {
@@ -78,6 +94,24 @@ public class BlockStargateController extends SDBlock {
 		return null;
 	}
 
+	public static StargateControllerState getCurrentState(IBlockAccess world, int x, int y, int z) {
+		if (SDBlock.stargateController.getStargateBlocks(world, x, y, z) != null) {
+			return StargateControllerState.READY;
+		} else {
+			return StargateControllerState.NO_CONNECTED_STARGATE;
+		}
+	}
+	
+	@Override
+	public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entity, ItemStack itemStack) {
+		int direction = BlockPistonBase.determineOrientation(world, x, y, z, entity);
+		world.setBlockMetadataWithNotify(x, y, z, direction, 2);
+		
+		TileEntityStargateController controllerTileEntity = (TileEntityStargateController) world.getBlockTileEntity(x, y, z);
+		controllerTileEntity.state = BlockStargateController.getCurrentState(world, x, y, z);
+	}
+	
+	
 	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z,
 			EntityPlayer player, int par1, float par2, float par3, float par4) {
@@ -92,24 +126,18 @@ public class BlockStargateController extends SDBlock {
 			if (i < 6) {
 				System.out.print(address[i] + " ");
 			} else {
-				System.out.print("(" + Integer.toBinaryString(address[i])
-						+ ")\n");
+				System.out.print("(" + Integer.toBinaryString(address[i]) + ")\n");
 			}
 		}
 		// Building base 39 numbers using powers of 3
 		int chunkX = (int) ((address[0] * 1521) + (address[1] * 39) + address[2]);
 		int chunkZ = (int) ((address[3] * 1521) + (address[4] * 39) + address[5]);
 		int last = (int) address[6];
-		// The dimension is stored in the last 2 bits of the last
-		// number/symbol
-		// (the
-		// mask is 0b11)
+		// The dimension is stored in the last 2 bits of the last number/symbol (the mask is 0b11)
 		int dimension = last & 3;
-		// The sign of the x coordinate is the 4rd to last bit (the mask is
-		// 0b1000)
+		// The sign of the x coordinate is the 4rd to last bit (the mask is 0b1000)
 		int xSign = last & 8;
-		// The sign of the z coordinate is the 3th to last bit (the mask is
-		// 0b100)
+		// The sign of the z coordinate is the 3th to last bit (the mask is 0b100)
 		int zSign = last & 4;
 		if (xSign == 0) {
 			chunkX = -chunkX;
@@ -117,17 +145,15 @@ public class BlockStargateController extends SDBlock {
 		if (zSign == 0) {
 			chunkZ = -chunkZ;
 		}
-		System.out.println("chunkX = " + chunkX + ", chunkZ = " + chunkZ
-				+ ", dimension = " + dimension);
+		System.out.println("chunkX = " + chunkX + ", chunkZ = " + chunkZ + ", dimension = " + dimension);
 		return new Triplet(dimension, chunkX, chunkZ);
 	}
 
 	@SideOnly(Side.CLIENT)
 	public void addressReceived(byte[] address, int dhdX, int dhdY, int dhdZ) {
+		Packet p = new OutgoingWormholePacket(dhdX, dhdY, dhdZ, address).makePacket();
 		// Send the data over the wire
-		Minecraft.getMinecraft().thePlayer.sendQueue
-				.addToSendQueue(new OutgoingWormholePacket(dhdX, dhdY, dhdZ,
-						address).makePacket());
+		Minecraft.getMinecraft().thePlayer.sendQueue.addToSendQueue(p);
 	}
 	
 	/**
@@ -168,8 +194,7 @@ public class BlockStargateController extends SDBlock {
 		// Set the destination blocks
 		world.setBlock(srcBlockCoords.X, srcBlockCoords.Y, srcBlockCoords.Z,
 				SDBlock.eventHorizon.blockID);
-		// Set the tile entity that stores the specific destination
-		// coordinates
+		// Set the tile entity that stores the specific destination coordinates
 		TileEntityEventHorizon srcTileEntity = (TileEntityEventHorizon) world
 				.getBlockTileEntity(srcBlockCoords.X, srcBlockCoords.Y,
 						srcBlockCoords.Z);
@@ -235,10 +260,10 @@ public class BlockStargateController extends SDBlock {
 
 	/**
 	 * Returns the position of the first neighboring block found that is a
-	 * stargate ring Coordinates in returns are not relative to the given
-	 * coordinates Does nothing yet
+	 * stargate ring. Coordinates in returns are not relative to the given
+	 * coordinates
 	 **/
-	public DetectStructureResults getStargateBlocks(World world, int xOrigin,
+	public DetectStructureResults getStargateBlocks(IBlockAccess world, int xOrigin,
 			int yOrigin, int zOrigin) {
 		List<Integer[]> neighbors = this.getNeighboringBlocks(world, xOrigin,
 				yOrigin, zOrigin);
@@ -257,19 +282,18 @@ public class BlockStargateController extends SDBlock {
 	}
 	
 	@Override
-	public Icon getIcon(int side, int metadata) {
-		if (side == 1) {
-			return this.controllerTopIcon;
-		// First 2 bits are the facing; mask is 0b11 or 3
-		} else if ((side - 2) == (3 | metadata)) {
-			// Next bit is whether or not the controller is part of a valid stargate
-			if ((8 | metadata) == 1) {
-				return this.controllerValid;
-			} else {
+	public Icon getBlockTexture(IBlockAccess world, int x, int y, int z, int side) {
+		int facing = world.getBlockMetadata(x, y, z);
+		TileEntityStargateController tileEntity = (TileEntityStargateController) world.getBlockTileEntity(x, y, z);
+		if (side == facing) {
+			if (tileEntity.state == StargateControllerState.NO_CONNECTED_STARGATE) {
 				return this.controllerInvalid;
+			} else if (tileEntity.state == StargateControllerState.READY){
+				return this.controllerValid;
 			}
-		} else {
-			return this.blockIcon;
+		} else if (side == 1) {
+			return this.controllerTopIcon;
 		}
+		return this.blockIcon;
 	}
 }
