@@ -50,9 +50,16 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 			"  XXX  ",
 			"       ");
 
+	@SideOnly(Side.CLIENT)
 	private Icon controllerInvalid;
+	@SideOnly(Side.CLIENT)
 	private Icon controllerIdle;
 
+	@Override
+	public boolean hasTileEntity(int metadata) {
+		return true;
+	}
+	
 	@Override
 	public TileEntity createNewTileEntity(World world) {
 		return new TileEntityStargateController();
@@ -70,8 +77,13 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 		super(id, Material.rock);
 	}
 
-	// Returns the coordinates of the dominate (first found) stargate controller
-	// in the given chunk; null if none is found
+	/**
+	 * Finds the dominant stargate in a chunk
+	 * @param world the world to search in
+	 * @param chunkX the chunk's x coordinate
+	 * @param chunkZ the chunk's y coordinate
+	 * @return The coordinates of the dominant stargate controller (this is simply the first one found)
+	 */
 	public static int[] getDominantController(World world, int chunkX,
 			int chunkZ) {
 		System.out.println("Searching for Stargate at chunk (" + chunkX + ", "
@@ -91,7 +103,15 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 		}
 		return null;
 	}
-
+	
+	/**
+	 * Retrieves the current state of the stargate associated with this stargate controller
+	 * @param world the world
+	 * @param x the x position of the controller
+	 * @param y the y position of the controller
+	 * @param z the z position of the controller
+	 * @return A StargateControllerState the describes the stargate's state
+	 */
 	public static StargateControllerState getCurrentState(IBlockAccess world, int x, int y, int z) {
 		if (SDBlock.stargateController.getStargateBlocks(world, x, y, z) != null) {
 			return StargateControllerState.READY;
@@ -102,13 +122,13 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 	
 	@Override
 	public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entity, ItemStack itemStack) {
+		// no need to figure out the right orientation again when the piston block can do it for us
 		int direction = BlockPistonBase.determineOrientation(world, x, y, z, entity);
 		world.setBlockMetadataWithNotify(x, y, z, direction, 2);
 		
 		TileEntityStargateController controllerTileEntity = (TileEntityStargateController) world.getBlockTileEntity(x, y, z);
 		controllerTileEntity.state = BlockStargateController.getCurrentState(world, x, y, z);
 	}
-	
 	
 	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z,
@@ -279,6 +299,7 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 		return null;
 	}
 	
+	@SideOnly(Side.CLIENT)
 	@Override
 	public Icon getBlockTexture(IBlockAccess world, int x, int y, int z, int side) {
 		int facing = world.getBlockMetadata(x, y, z);
