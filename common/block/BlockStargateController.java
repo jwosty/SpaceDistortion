@@ -51,9 +51,11 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 			"       ");
 
 	@SideOnly(Side.CLIENT)
-	private Icon controllerInvalid;
+	private Icon controllerOff;
 	@SideOnly(Side.CLIENT)
 	private Icon controllerIdle;
+	@SideOnly(Side.CLIENT)
+	private Icon controllerActive;
 
 	@Override
 	public boolean hasTileEntity(int metadata) {
@@ -69,8 +71,9 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 	@Override
 	public void registerIcons(IconRegister register) {
 		super.registerIcons(register);
-		this.controllerInvalid = register.registerIcon(this.getIconName() + "_invalid");
+		this.controllerOff = register.registerIcon(this.getIconName() + "_off");
 		this.controllerIdle = register.registerIcon(this.getIconName() + "_idle");
+		this.controllerActive = register.registerIcon(this.getIconName() + "_active");
 	}
 
 	public BlockStargateController(int id) {
@@ -138,7 +141,18 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 		}
 		return true;
 	}
-
+	
+	@Override
+	public void onNeighborBlockChange(World world, int x, int y, int z, int neighborBlockID) {
+		StargateControllerState state = BlockStargateController.getCurrentState(world, x, y, z);
+		TileEntityStargateController controllerTileEntity = (TileEntityStargateController) world.getBlockTileEntity(x, y, z);
+		if (controllerTileEntity != null) {
+			controllerTileEntity.state = state;
+			SDBlock.syncTileEntity(controllerTileEntity);
+			world.markBlockForUpdate(x, y, z);
+		}
+	}
+	
 	public Triplet<Integer, Integer, Integer> decodeAddress(byte[] address) {
 		for (int i = 0; i < 7; i++) {
 			if (i < 6) {
@@ -305,10 +319,12 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 		int facing = world.getBlockMetadata(x, y, z);
 		TileEntityStargateController tileEntity = (TileEntityStargateController) world.getBlockTileEntity(x, y, z);
 		if (side == facing) {
-			if (tileEntity.state == StargateControllerState.NO_CONNECTED_STARGATE) {
+			if (tileEntity.state == StargateControllerState.READY) {
 				return this.controllerIdle;
-			} else if (tileEntity.state == StargateControllerState.READY){
-				return this.controllerInvalid;
+			} else if (tileEntity.state == StargateControllerState.ACTIVE) {
+				return this.controllerActive;
+			} else {
+				return this.controllerOff;
 			}
 		}
 		return this.blockIcon;

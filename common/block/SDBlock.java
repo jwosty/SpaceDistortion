@@ -11,9 +11,13 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.network.NetServerHandler;
+import net.minecraft.network.packet.Packet;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.Configuration;
+import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.relauncher.Side;
@@ -74,13 +78,38 @@ public class SDBlock extends Block {
 		// Don't need to set a tooltip name as this can't be obtained in the inventory without commands
 		GameRegistry.registerBlock(eventHorizon, "eventHorizon");
 	}
-
+	
 	public SDBlock(int id, Material material) {
 		super(id, material);
 	}
 
-	// Returns 6 neighboring blocks on each of the faces (no corners here)
 	/**
+	 * Synchronizes a TileEntity with all clients. Only works server-side; will throw an error for client-side!
+	 * @param tileEntity
+	 */
+	public static void syncTileEntity(TileEntity tileEntity) {
+		if (tileEntity != null) {
+			Packet packet = tileEntity.getDescriptionPacket();
+			PacketDispatcher.sendPacketToAllPlayers(packet);
+		}
+	}
+	
+	public void updateNearbyStargateControllers(World world, int x, int y, int z) {
+		int thisBlock = world.getBlockId(x, y, z);
+		for (int xx = (x-4); xx < (x+5); xx++) {
+			for (int yy = (y-4); yy < (y+5); yy++) {
+				for (int zz = (z-4); zz < (z+5); zz++) {
+					int blockID = world.getBlockId(xx, yy, zz);
+					if (blockID == SDBlock.stargateController.blockID) {
+						world.notifyBlockOfNeighborChange(xx, yy, zz, SDBlock.stargateController.blockID);
+					}
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Returns 6 neighboring blocks on each of the faces, not including the corners
 	 * @param world
 	 *            The world in which to find the blocks
 	 * @param x
