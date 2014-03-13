@@ -50,9 +50,8 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 			"  XXX  ",
 			"       ");
 
-	private Icon controllerTopIcon;
 	private Icon controllerInvalid;
-	private Icon controllerValid;
+	private Icon controllerIdle;
 
 	@Override
 	public TileEntity createNewTileEntity(World world) {
@@ -63,9 +62,8 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 	@Override
 	public void registerIcons(IconRegister register) {
 		super.registerIcons(register);
-		this.controllerTopIcon = register.registerIcon(this.getIconName() + "_top");
 		this.controllerInvalid = register.registerIcon(this.getIconName() + "_invalid");
-		this.controllerValid = register.registerIcon(this.getIconName() + "_valid");
+		this.controllerIdle = register.registerIcon(this.getIconName() + "_idle");
 	}
 
 	public BlockStargateController(int id) {
@@ -287,12 +285,10 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 		TileEntityStargateController tileEntity = (TileEntityStargateController) world.getBlockTileEntity(x, y, z);
 		if (side == facing) {
 			if (tileEntity.state == StargateControllerState.NO_CONNECTED_STARGATE) {
-				return this.controllerInvalid;
+				return this.controllerIdle;
 			} else if (tileEntity.state == StargateControllerState.READY){
-				return this.controllerValid;
+				return this.controllerInvalid;
 			}
-		} else if (side == 1) {
-			return this.controllerTopIcon;
 		}
 		return this.blockIcon;
 	}
