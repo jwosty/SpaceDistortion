@@ -1,1 +1,14 @@
 .DS_Store
+.classpath
+.gradle/
+.project
+.settings
+build/
+CREDITS-fml.txt
+LICENSE-fml.txt
+MinecraftForge-Credits.txt
+MinecraftForge-License.txt
+README.txt
+bin/
+eclipse/
+forge-*-changelog.txt

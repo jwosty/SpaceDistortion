@@ -11,9 +11,7 @@ import net.minecraft.tileentity.TileEntity;
 public class TileEntityStargateController extends TileEntity {
 	public StargateControllerState state;
 	
-	public TileEntityStargateController() {
-		System.out.println("TileEntityStargateController constructor called");
-	}
+	public TileEntityStargateController() { }
 	
 	@Override
 	public void writeToNBT(NBTTagCompound data) {
