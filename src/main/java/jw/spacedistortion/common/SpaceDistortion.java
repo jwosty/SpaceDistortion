@@ -22,19 +22,15 @@ import cpw.mods.fml.relauncher.Side;
 
 @Mod(modid = CommonProxy.MOD_ID, name = CommonProxy.MOD_NAME, version = CommonProxy.MOD_VERSION)
 public class SpaceDistortion {
-	// The instance of this mod that Forge uses
 	@Instance("SpaceDistortion")
 	public static SpaceDistortion instance;
 	
 	@SidedProxy(clientSide="jw.spacedistortion.client.ClientProxy", serverSide="jw.spacedistortion.common.CommonProxy")
 	public static CommonProxy proxy;
 	
-	public EnumMap<Side, FMLEmbeddedChannel> channels;
-	
 	@EventHandler
 	public void serverLoad(FMLServerStartingEvent event) {
-		// create the mod's channel
-		channels = NetworkRegistry.INSTANCE.newChannel("SpaceDistortion", new ChannelHandler());
+		ChannelHandler.initChannels();
 	}
 	
 	@EventHandler
