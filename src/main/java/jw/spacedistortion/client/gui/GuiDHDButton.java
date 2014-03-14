@@ -24,7 +24,7 @@ public class GuiDHDButton extends GuiButton {
 	
 	@Override
 	public void drawButton(Minecraft mc, int par1, int par2) {
-		if (this.drawButton) {
+		if (this.visible) {
 			if (this.isActivated) {
 				GL11.glColor4f(1, 0.5f, 0, 1);
 			} else {
@@ -32,7 +32,7 @@ public class GuiDHDButton extends GuiButton {
 			}
 			GL11.glDisable(GL11.GL_LIGHTING);
 			GL11.glEnable(GL11.GL_BLEND);
-			mc.func_110434_K().func_110577_a(this.glyphTexture);
+			mc.getTextureManager().bindTexture(this.glyphTexture);
 			this.drawTexturedModalRect(this.xPosition, this.yPosition,
 					this.glyphID % (GlyphSheetWidth / GlyphWidth) * GlyphWidth, this.glyphID / (GlyphSheetWidth / GlyphWidth) * GlyphHeight,
 					GlyphWidth, GlyphHeight);

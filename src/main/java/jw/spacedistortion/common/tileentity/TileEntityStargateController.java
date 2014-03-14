@@ -1,11 +1,9 @@
 package jw.spacedistortion.common.tileentity;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.INetworkManager;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.Packet132TileEntityData;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.Packet;
+import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 
 public class TileEntityStargateController extends TileEntity {
@@ -25,15 +23,17 @@ public class TileEntityStargateController extends TileEntity {
 		this.state = StargateControllerState.values()[data.getInteger("state")];
 	}
 	
+	/*
 	@Override
 	public Packet getDescriptionPacket() {
 		NBTTagCompound tag = new NBTTagCompound();
 		this.writeToNBT(tag);
-		return new Packet132TileEntityData(this.xCoord, this.yCoord, this.zCoord, 1, tag);
+		return new S35PacketUpdateTileEntity(this.xCoord, this.yCoord, this.zCoord, 1, tag);
 	}
 	
 	@Override
-	public void onDataPacket(INetworkManager net, Packet132TileEntityData data) {
-		this.readFromNBT(data.customParam1);
+	public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity data) {
+		this.readFromNBT(data.);
 	}
+	*/
 }

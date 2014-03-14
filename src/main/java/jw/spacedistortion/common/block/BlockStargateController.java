@@ -8,6 +8,8 @@ import jw.spacedistortion.Pair;
 import jw.spacedistortion.StringGrid;
 import jw.spacedistortion.Triplet;
 import jw.spacedistortion.client.gui.GuiDHD;
+import jw.spacedistortion.common.network.ChannelHandler;
+import jw.spacedistortion.common.network.packet.IPacket;
 import jw.spacedistortion.common.network.packet.OutgoingWormholePacket;
 import jw.spacedistortion.common.tileentity.StargateControllerState;
 import jw.spacedistortion.common.tileentity.TileEntityEventHorizon;
@@ -17,13 +19,12 @@ import net.minecraft.block.BlockPistonBase;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.packet.Packet;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -51,11 +52,11 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 			"       ");
 
 	@SideOnly(Side.CLIENT)
-	private Icon controllerOff;
+	private IIcon controllerOff;
 	@SideOnly(Side.CLIENT)
-	private Icon controllerIdle;
+	private IIcon controllerIdle;
 	@SideOnly(Side.CLIENT)
-	private Icon controllerActive;
+	private IIcon controllerActive;
 
 	@Override
 	public boolean hasTileEntity(int metadata) {
@@ -63,21 +64,21 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 	}
 	
 	@Override
-	public TileEntity createNewTileEntity(World world) {
+	public TileEntity createNewTileEntity(World world, int metadata) {
 		return new TileEntityStargateController();
 	}
 	
 	@SideOnly(Side.CLIENT)
 	@Override
-	public void registerIcons(IconRegister register) {
-		super.registerIcons(register);
+	public void registerBlockIcons(IIconRegister register) {
+		super.registerBlockIcons(register);
 		this.controllerOff = register.registerIcon(this.getIconName() + "_off");
 		this.controllerIdle = register.registerIcon(this.getIconName() + "_idle");
 		this.controllerActive = register.registerIcon(this.getIconName() + "_active");
 	}
 
-	public BlockStargateController(int id) {
-		super(id, Material.rock);
+	public BlockStargateController() {
+		super(Material.rock);
 	}
 
 	/**
@@ -95,10 +96,10 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 		for (int x = 0; x < 16; x++) {
 			for (int z = 0; z < 16; z++) {
 				for (int y = 0; y < 256; y++) {
-					int block = chunk.getBlockID(x, y, z);
+					Block block = chunk.getBlock(x, y, z);
 					int rx = (chunkX << 4) + x;
 					int rz = (chunkZ << 4) + z;
-					if (block == SDBlock.stargateController.blockID) {
+					if (block == SDBlock.stargateController) {
 						return new int[] { rx, y, rz };
 					}
 				}
@@ -129,11 +130,12 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 		int direction = BlockPistonBase.determineOrientation(world, x, y, z, entity);
 		world.setBlockMetadataWithNotify(x, y, z, direction, 2);
 		
-		TileEntityStargateController controllerTileEntity = (TileEntityStargateController) world.getBlockTileEntity(x, y, z);
+		TileEntityStargateController controllerTileEntity = (TileEntityStargateController) world.getTileEntity(x, y, z);
 		controllerTileEntity.state = BlockStargateController.getCurrentState(world, x, y, z);
 	}
 	
 	@Override
+	/** Called when the block is right-clicked on **/
 	public boolean onBlockActivated(World world, int x, int y, int z,
 			EntityPlayer player, int par1, float par2, float par3, float par4) {
 		if (!world.isRemote) {
@@ -143,13 +145,13 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 	}
 	
 	@Override
-	public void onNeighborBlockChange(World world, int x, int y, int z, int neighborBlockID) {
+	public void onNeighborChange(IBlockAccess world, int x, int y, int z, int otherX, int otherY, int otherZ) {
 		StargateControllerState state = BlockStargateController.getCurrentState(world, x, y, z);
-		TileEntityStargateController controllerTileEntity = (TileEntityStargateController) world.getBlockTileEntity(x, y, z);
+		TileEntityStargateController controllerTileEntity = (TileEntityStargateController) world.getTileEntity(x, y, z);
 		if (controllerTileEntity != null) {
 			controllerTileEntity.state = state;
 			SDBlock.syncTileEntity(controllerTileEntity);
-			world.markBlockForUpdate(x, y, z);
+			//world.markBlockForUpdate(x, y, z);
 		}
 	}
 	
@@ -183,9 +185,10 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 
 	@SideOnly(Side.CLIENT)
 	public void addressReceived(byte[] address, int dhdX, int dhdY, int dhdZ) {
-		Packet p = new OutgoingWormholePacket(dhdX, dhdY, dhdZ, address).makePacket();
+		IPacket packet = new OutgoingWormholePacket(dhdX, dhdY, dhdZ, address);
 		// Send the data over the wire
-		Minecraft.getMinecraft().thePlayer.sendQueue.addToSendQueue(p);
+		//Minecraft.getMinecraft().thePlayer.sendQueue.addToSendQueue(p);
+		ChannelHandler.clientSendPacket(packet);
 	}
 	
 	/**
@@ -195,7 +198,7 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 			int targetX, int targetY, int targetZ) {
 		Side side = FMLCommonHandler.instance().getEffectiveSide();
 		// If there's no controller block, don't continue
-		if (world.getBlockId(srcX, srcY, srcZ) != SDBlock.stargateController.blockID) {
+		if (world.getBlock(srcX, srcY, srcZ) != SDBlock.stargateController) {
 			System.out.println("No controller at (" + srcX + ", " + srcY + ", " + srcZ
 					+ ")");
 			return;
@@ -224,11 +227,10 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 		Triplet<Integer, Integer, Integer> srcBlockCoords = srcBlocks.get(i);
 		Triplet<Integer, Integer, Integer> dstBlockCoords = dstBlocks.get(i);
 		// Set the destination blocks
-		world.setBlock(srcBlockCoords.X, srcBlockCoords.Y, srcBlockCoords.Z,
-				SDBlock.eventHorizon.blockID);
+		world.setBlock(srcBlockCoords.X, srcBlockCoords.Y, srcBlockCoords.Z, SDBlock.eventHorizon);
 		// Set the tile entity that stores the specific destination coordinates
 		TileEntityEventHorizon srcTileEntity = (TileEntityEventHorizon) world
-				.getBlockTileEntity(srcBlockCoords.X, srcBlockCoords.Y,
+				.getTileEntity(srcBlockCoords.X, srcBlockCoords.Y,
 						srcBlockCoords.Z);
 		if (srcTileEntity != null) {
 			srcTileEntity.isOutgoing = true;
@@ -239,10 +241,8 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 		}
 		// Fill the target stargate with do-nothing event horizon blocks
 		world.setBlock(dstBlockCoords.X, dstBlockCoords.Y,
-				dstBlockCoords.Z, SDBlock.eventHorizon.blockID);
-		TileEntityEventHorizon dstTileEntity = (TileEntityEventHorizon) world
-				.getBlockTileEntity(dstBlockCoords.X, dstBlockCoords.Y,
-						dstBlockCoords.Z);
+				dstBlockCoords.Z, SDBlock.eventHorizon);
+		TileEntityEventHorizon dstTileEntity = (TileEntityEventHorizon) world.getTileEntity(dstBlockCoords.X, dstBlockCoords.Y, dstBlockCoords.Z);
 		// Set tile entity info. Mainly empty.
 		if (dstTileEntity != null) {
 			dstTileEntity.isOutgoing = false;
@@ -297,14 +297,15 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 	 **/
 	public DetectStructureResults getStargateBlocks(IBlockAccess world, int xOrigin,
 			int yOrigin, int zOrigin) {
-		List<Integer[]> neighbors = this.getNeighboringBlocks(world, xOrigin,
-				yOrigin, zOrigin);
+		List<Pair<Integer[], Block>> neighbors = this.getNeighboringBlocks(world, xOrigin, yOrigin, zOrigin);
 		for (int i = 0; i < neighbors.size(); i++) {
-			Integer[] blockInfo = neighbors.get(i);
-			if (blockInfo[3] == SDBlock.stargateRing.blockID) {
+			Pair<Integer[], Block> blockInfo = neighbors.get(i);
+			Integer[] coords = blockInfo.X;
+			Block type = blockInfo.Y;
+			if (type == SDBlock.stargateRing) {
 				DetectStructureResults results = SDBlock.detectStructure(world,
-						stargateRingShape, blockInfo[0], blockInfo[1],
-						blockInfo[2], SDBlock.stargateRing.blockID);
+						stargateRingShape, coords[0], coords[1],
+						coords[2], SDBlock.stargateRing);
 				if (results != null) {
 					return results;
 				}
@@ -315,9 +316,9 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 	
 	@SideOnly(Side.CLIENT)
 	@Override
-	public Icon getBlockTexture(IBlockAccess world, int x, int y, int z, int side) {
+	public IIcon getIcon(IBlockAccess world, int x, int y, int z, int side) {
 		int facing = world.getBlockMetadata(x, y, z);
-		TileEntityStargateController tileEntity = (TileEntityStargateController) world.getBlockTileEntity(x, y, z);
+		TileEntityStargateController tileEntity = (TileEntityStargateController) world.getTileEntity(x, y, z);
 		if (side == facing) {
 			if (tileEntity.state == StargateControllerState.READY) {
 				return this.controllerIdle;

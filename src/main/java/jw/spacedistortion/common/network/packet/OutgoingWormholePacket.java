@@ -1,8 +1,10 @@
 package jw.spacedistortion.common.network.packet;
 
+import io.netty.buffer.ByteBuf;
 import jw.spacedistortion.Triplet;
 import jw.spacedistortion.common.block.BlockStargateController;
 import jw.spacedistortion.common.block.SDBlock;
+import jw.spacedistortion.common.network.ChannelHandler;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
@@ -13,13 +15,14 @@ import com.google.common.io.ByteArrayDataOutput;
 
 import cpw.mods.fml.relauncher.Side;
 
-public class OutgoingWormholePacket extends SDPacket {
+public class OutgoingWormholePacket implements IPacket {
+	
 	public int dhdX;
 	public int dhdY;
 	public int dhdZ;
 	/* Destination chunk address */
 	public byte[] address;
-
+	
 	public OutgoingWormholePacket(int dhdX, int dhdY, int dhdZ, byte[] address) {
 		this.dhdX = dhdX;
 		this.dhdY = dhdY;
@@ -27,52 +30,19 @@ public class OutgoingWormholePacket extends SDPacket {
 		this.address = address;
 	}
 
-	public OutgoingWormholePacket() {
-	}
-
+	public OutgoingWormholePacket() { }
+	
 	@Override
-	public void write(ByteArrayDataOutput out) {
-		out.writeInt(this.dhdX);
-		out.writeInt(this.dhdY);
-		out.writeInt(this.dhdZ);
-		out.write(this.address);
+	public void readBytes(ByteBuf bytes) {
+		dhdX = bytes.readInt();
+		dhdY = bytes.readInt();
+		dhdZ = bytes.readInt();
 	}
-
+	
 	@Override
-	public void read(ByteArrayDataInput in) {
-		this.address = new byte[7];
-		this.dhdX = in.readInt();
-		this.dhdY = in.readInt();
-		this.dhdZ = in.readInt();
-		in.readFully(this.address);
-	}
-
-	@Override
-	public void excecute(EntityPlayer player, Side side)
-			throws ProtocolException {
-		Triplet<Integer, Integer, Integer> decodedAddress = SDBlock.stargateController
-				.decodeAddress(address);
-		int destDimension = decodedAddress.X;
-		int destX = decodedAddress.Y;
-		int destZ = decodedAddress.Z;
-		if (side.isServer()) {
-			player.addChatMessage("dhdX = " + dhdX + ", dhdY = " + dhdY
-					+ ", dhdZ = " + dhdZ + "\ndestX = " + destX + ", destZ = "
-					+ destZ + ", destDimension = " + destDimension + "\nside = " + side);
-			World world = Minecraft.getMinecraft().theWorld;
-			int[] coords = BlockStargateController.getDominantController(world,
-					destX, destZ);
-			if (coords != null) {
-				System.out.println("Locked onto destination Stargate");
-				SDBlock.stargateController.serverActivateStargatePair(
-						player.worldObj, dhdX, dhdY, dhdZ, coords[0],
-						coords[1], coords[2]);
-			} else {
-				System.out.println("No destination Stargate detected");
-			}
-		} else {
-			throw new ProtocolException(
-					"Cannot send this packet to the client!");
-		}
+	public void writeBytes(ByteBuf bytes) {
+		bytes.writeInt(dhdX);
+		bytes.writeInt(dhdY);
+		bytes.writeInt(dhdZ);
 	}
 }

@@ -4,6 +4,7 @@ import jw.spacedistortion.Axis;
 import jw.spacedistortion.Pair;
 import jw.spacedistortion.Triplet;
 import jw.spacedistortion.common.tileentity.TileEntityEventHorizon;
+import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
@@ -16,12 +17,12 @@ import net.minecraft.world.World;
 
 public class BlockEventHorizon extends SDBlock implements ITileEntityProvider {
 	
-	public BlockEventHorizon(int id) {
-		super(id,  Material.portal);
+	public BlockEventHorizon() {
+		super(Material.portal);
 	}
 	
 	@Override
-	public TileEntity createNewTileEntity(World world) {
+	public TileEntity createNewTileEntity(World world, int metadata) {
 		return new TileEntityEventHorizon();
 	}
 	
@@ -44,9 +45,9 @@ public class BlockEventHorizon extends SDBlock implements ITileEntityProvider {
 	public void onEntityCollidedWithBlock(World world, int x, int y, int z, Entity entity) {
 		// Tile entities of source and target blocks
 		TileEntityEventHorizon srcTileEntity = (TileEntityEventHorizon) world
-				.getBlockTileEntity(x, y, z);
+				.getTileEntity(x, y, z);
 		TileEntityEventHorizon dstTileEntity = (TileEntityEventHorizon) world
-				.getBlockTileEntity(srcTileEntity.destX, srcTileEntity.destY,
+				.getTileEntity(srcTileEntity.destX, srcTileEntity.destY,
 						srcTileEntity.destZ);
 		if (!world.isRemote && srcTileEntity.isOutgoing
 				&& Math.floor(entity.posX) == x && Math.floor(entity.posY) == y
@@ -85,7 +86,7 @@ public class BlockEventHorizon extends SDBlock implements ITileEntityProvider {
 	// Returns true if the given side of this block type should be rendered, if the adjacent block is at the given coordinates
 	@Override
 	public boolean shouldSideBeRendered(IBlockAccess blockAccess, int x, int y, int z, int side) {
-		int bid = blockAccess.getBlockId(x, y, z);
-		return !(bid == this.blockID || bid == SDBlock.stargateRing.blockID);
+		Block block = blockAccess.getBlock(x, y, z);
+		return block != this;
 	}
 }

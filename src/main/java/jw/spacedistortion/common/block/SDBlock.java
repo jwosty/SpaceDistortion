@@ -4,20 +4,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jw.spacedistortion.Axis;
+import jw.spacedistortion.Pair;
 import jw.spacedistortion.StringGrid;
 import jw.spacedistortion.Triplet;
 import jw.spacedistortion.common.CommonProxy;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.network.NetServerHandler;
-import net.minecraft.network.packet.Packet;
+import net.minecraft.init.Blocks;
+import net.minecraft.network.Packet;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.Configuration;
-import cpw.mods.fml.common.network.PacketDispatcher;
+import net.minecraftforge.common.config.Configuration;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.relauncher.Side;
@@ -33,20 +33,22 @@ public class SDBlock extends Block {
 	 * @param config The configuration file to use
 	 */
 	public static void configureBlocks(Configuration config) {
-		stargateRing = (BlockStargateRing) new BlockStargateRing(config.get(
-				"Blocks", "Stargate Ring", 1600).getInt())
-				.setUnlocalizedName("stargateRing")
+		stargateRing = (BlockStargateRing) new BlockStargateRing()
+				.setBlockName("stargateRing")
 				.setCreativeTab(CreativeTabs.tabBlock)
-				.setStepSound(Block.soundStoneFootstep);
-		stargateController = (BlockStargateController) new BlockStargateController(
-				config.get("Blocks", "Stargate Controller", 1601).getInt())
-				.setUnlocalizedName("stargateController")
+				.setStepSound(Block.soundTypeStone);
+		stargateController = (BlockStargateController) new BlockStargateController()
+				.setBlockName("stargateController")
 				.setCreativeTab(CreativeTabs.tabBlock)
-				.setStepSound(Block.soundStoneFootstep);
-		eventHorizon = (BlockEventHorizon) new BlockEventHorizon(config.get(
-				"Blocks", "Event Horizon", 1602).getInt())
-				.setUnlocalizedName("eventHorizon")
-				.setStepSound(Block.soundGlassFootstep).setLightValue(0.875f);
+				.setStepSound(Block.soundTypeStone);
+		eventHorizon = (BlockEventHorizon) new BlockEventHorizon()
+				.setBlockName("eventHorizon")
+				.setStepSound(Block.soundTypeGlass)
+				.setLightLevel(0.875f);
+	}
+	
+	public SDBlock(Material material) {
+		super(material);
 	}
 
 	/**
@@ -63,7 +65,7 @@ public class SDBlock extends Block {
 	
 	@SideOnly(Side.CLIENT)
 	@Override
-	public void registerIcons(IconRegister register) {
+	public void registerBlockIcons(IIconRegister register) {
 		this.blockIcon = register.registerIcon(this.getIconName());
 	}
 	
@@ -78,10 +80,6 @@ public class SDBlock extends Block {
 		// Don't need to set a tooltip name as this can't be obtained in the inventory without commands
 		GameRegistry.registerBlock(eventHorizon, "eventHorizon");
 	}
-	
-	public SDBlock(int id, Material material) {
-		super(id, material);
-	}
 
 	/**
 	 * Synchronizes a TileEntity with all clients. Only works server-side; will throw an error for client-side!
@@ -90,20 +88,21 @@ public class SDBlock extends Block {
 	public static void syncTileEntity(TileEntity tileEntity) {
 		if (tileEntity != null) {
 			Packet packet = tileEntity.getDescriptionPacket();
-			PacketDispatcher.sendPacketToAllPlayers(packet);
+			
+			//PacketDispatcher.sendPacketToAllPlayers(packet);
 		}
 	}
 	
 	public void updateNearbyStargateControllers(World world, int x, int y, int z) {
-		int thisBlock = world.getBlockId(x, y, z);
+		Block thisBlock = world.getBlock(x, y, z);
 		for (int xx = (x-4); xx < (x+5); xx++) {
 			for (int yy = (y-4); yy < (y+5); yy++) {
 				for (int zz = (z-4); zz < (z+5); zz++) {
-					int blockID = world.getBlockId(xx, yy, zz);
-					if (blockID == SDBlock.stargateController.blockID && !(world.isRemote)) {
-						world.notifyBlockOfNeighborChange(xx, yy, zz, SDBlock.stargateController.blockID);
+					Block block = world.getBlock(xx, yy, zz);
+					if (block == SDBlock.stargateController && !(world.isRemote)) {
+						world.notifyBlockOfNeighborChange(xx, yy, zz, SDBlock.stargateController);
 						world.markBlockForUpdate(xx, yy, zz);
-						SDBlock.syncTileEntity(world.getBlockTileEntity(xx, yy, zz));
+						SDBlock.syncTileEntity(world.getTileEntity(xx, yy, zz));
 					}
 				}
 			}
@@ -123,9 +122,9 @@ public class SDBlock extends Block {
 	 * @return A list of blocks in the format of a list where the first 3
 	 *         elements are the x, y, and z and the last is the block id
 	 */
-	public static List<Integer[]> getNeighboringBlocks(IBlockAccess world, int x,
+	public static List<Pair<Integer[], Block>> getNeighboringBlocks(IBlockAccess world, int x,
 			int y, int z) {
-		List<Integer[]> blocks = new ArrayList<Integer[]>();
+		List<Pair<Integer[], Block>> blocks = new ArrayList<Pair<Integer[], Block>>();
 		int[][] neighbors = { { -1, 0, 0 }, { 1, 0, 0 }, { 0, -1, 0 },
 				{ 0, 1, 0 }, { 0, 0, -1 }, { 0, 0, 1 } };
 		for (int i = 0; i < neighbors.length; i++) {
@@ -134,10 +133,10 @@ public class SDBlock extends Block {
 			int bx = neighbor[0] + x;
 			int by = neighbor[1] + y;
 			int bz = neighbor[2] + z;
-			int id = world.getBlockId(bx, by, bz);
-			if (id != 0) {
+			Block block = world.getBlock(bx, by, bz);
+			if (block != Blocks.air) {
 				// We found a neighbor, so add it to the list
-				blocks.add(new Integer[] { bx, by, bz, id });
+				blocks.add(new Pair(new Integer[] { bx, by, bz }, block ));
 			}
 		}
 		return blocks;
@@ -146,7 +145,7 @@ public class SDBlock extends Block {
 	// Returns all blocks in a structure if this block is part of it
 	public static DetectStructureResults detectStructure(IBlockAccess world,
 			StringGrid template, int xOrigin, int yOrigin, int zOrigin,
-			int blockID) {
+			Block block) {
 		DetectStructureResults results = null;
 		// boolean[][] blocks = null;
 		// For now, assume its on the xy plane
@@ -158,7 +157,7 @@ public class SDBlock extends Block {
 						// Test the template with this offset.
 						boolean[][] blocks = SDBlock.detectStructureAtLocation(
 								world, template, xOrigin, yOrigin, zOrigin,
-								axis, xOffset, yOffset, blockID);
+								axis, xOffset, yOffset, block);
 						if (blocks != null) {
 							results = new DetectStructureResults(blocks,
 									new Triplet(xOrigin, yOrigin, zOrigin),
@@ -194,7 +193,7 @@ public class SDBlock extends Block {
 	public static boolean[][] detectStructureAtLocation(IBlockAccess world,
 			StringGrid template, int x, int y, int z, Axis axis,
 			int xTemplateOffset, int yTemplateOffset,
-			int blockID) {
+			Block block) {
 		Triplet<Integer, Integer, Integer> p = new Triplet(x, y, z);
 		// To keep track of the found blocks, if any
 		boolean[][] blocks = new boolean[template.height][template.width];
@@ -205,11 +204,11 @@ public class SDBlock extends Block {
 				Triplet<Integer, Integer, Integer> coords = SDBlock.getBlockInStructure(world, x, y, z,
 						gridX - xTemplateOffset, -gridY + yTemplateOffset,
 						axis);
-				int id = world.getBlockId(coords.X, coords.Y, coords.Z);
+				Block b = world.getBlock(coords.X, coords.Y, coords.Z);
 				// Test it
 				if (template.get(gridX, gridY) != ' ') {
 					// Expecting this block
-					if (id == blockID) {
+					if (b == block) {
 						// We matched a block on the structure, so add it to the
 						// list
 						blocks[gridY][gridX] = true;

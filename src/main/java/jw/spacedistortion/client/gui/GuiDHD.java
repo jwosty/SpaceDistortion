@@ -113,7 +113,7 @@ public class GuiDHD extends GuiScreen {
 	public void drawScreen(int par1, int par2, float par3) {
 		this.drawDefaultBackground();
 		GL11.glDisable(GL11.GL_LIGHTING);
-		mc.func_110434_K().func_110577_a(this.backgroundTexture);
+		mc.getTextureManager().bindTexture(this.backgroundTexture);
 		this.drawTexturedModalRect(this.getPanelX(), this.getPanelY(), 0, 0,
 				256, 256);
 		super.drawScreen(par1, par2, par3);
