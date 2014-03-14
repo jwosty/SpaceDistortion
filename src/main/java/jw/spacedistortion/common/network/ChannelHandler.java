@@ -5,10 +5,14 @@ import io.netty.channel.ChannelHandlerContext;
 
 import java.util.EnumMap;
 
-import jw.spacedistortion.common.SpaceDistortion;
 import jw.spacedistortion.common.network.packet.IPacket;
 import jw.spacedistortion.common.network.packet.OutgoingWormholePacket;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.network.INetHandler;
+import net.minecraft.network.NetHandlerPlayServer;
+import net.minecraft.network.NetworkManager;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.FMLEmbeddedChannel;
 import cpw.mods.fml.common.network.FMLIndexedMessageToMessageCodec;
 import cpw.mods.fml.common.network.FMLOutboundHandler;
@@ -63,12 +67,26 @@ public class ChannelHandler extends FMLIndexedMessageToMessageCodec<IPacket> {
 	}
 	
 	@Override
-	public void encodeInto(ChannelHandlerContext context, IPacket packet, ByteBuf data) {
+	public void encodeInto(ChannelHandlerContext context, IPacket packet, ByteBuf data) throws Exception {
 		packet.writeBytes(data);
 	}
 	
 	@Override
 	public void decodeInto(ChannelHandlerContext context, ByteBuf data, IPacket packet) {
+		// read the packet
 		packet.readBytes(data);
+		
+		// handle the packet by calling IPacket#onReceive
+		Side side = FMLCommonHandler.instance().getEffectiveSide();
+		EntityPlayer player;
+		switch (side) {
+			case CLIENT:
+				player = Minecraft.getMinecraft().thePlayer;
+				packet.onReceive(player, side);
+			case SERVER:
+				INetHandler net = context.channel().attr(NetworkRegistry.NET_HANDLER).get();
+				player = ((NetHandlerPlayServer) net).playerEntity;
+				packet.onReceive(player, side);
+		}
 	}
 }

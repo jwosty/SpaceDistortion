@@ -25,7 +25,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
-import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
@@ -186,8 +185,6 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 	@SideOnly(Side.CLIENT)
 	public void addressReceived(byte[] address, int dhdX, int dhdY, int dhdZ) {
 		IPacket packet = new OutgoingWormholePacket(dhdX, dhdY, dhdZ, address);
-		// Send the data over the wire
-		//Minecraft.getMinecraft().thePlayer.sendQueue.addToSendQueue(p);
 		ChannelHandler.clientSendPacket(packet);
 	}
 	
@@ -199,8 +196,6 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 		Side side = FMLCommonHandler.instance().getEffectiveSide();
 		// If there's no controller block, don't continue
 		if (world.getBlock(srcX, srcY, srcZ) != SDBlock.stargateController) {
-			System.out.println("No controller at (" + srcX + ", " + srcY + ", " + srcZ
-					+ ")");
 			return;
 		}
 		// Get the source and target stargate center coordinates

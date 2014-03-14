@@ -2,7 +2,6 @@ package jw.spacedistortion.common.block;
 
 import jw.spacedistortion.Axis;
 import jw.spacedistortion.Pair;
-import jw.spacedistortion.Triplet;
 import jw.spacedistortion.common.tileentity.TileEntityEventHorizon;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;

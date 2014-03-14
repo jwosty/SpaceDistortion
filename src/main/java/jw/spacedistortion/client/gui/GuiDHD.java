@@ -86,7 +86,7 @@ public class GuiDHD extends GuiScreen {
 			this.buttonList.add(new GuiDHDButton(x, y, this.glyphTexture, (byte) glyphID));
 		}
 	}
-
+	
 	@Override
 	public void actionPerformed(GuiButton guiButton) {
 		if (guiButton.enabled && guiButton instanceof GuiDHDButton) {
@@ -102,7 +102,6 @@ public class GuiDHD extends GuiScreen {
 			display.glyphID = b.glyphID;
 			currentCoordinate++;
 			if (currentCoordinate == 7) {
-				//System.out.println(address);
 				((BlockStargateController)SDBlock.stargateController).addressReceived(address, this.dhdX, this.dhdY, this.dhdZ);
 				this.mc.displayGuiScreen((GuiScreen) null);
 			}
