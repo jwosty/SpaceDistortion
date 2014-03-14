@@ -100,8 +100,10 @@ public class SDBlock extends Block {
 			for (int yy = (y-4); yy < (y+5); yy++) {
 				for (int zz = (z-4); zz < (z+5); zz++) {
 					int blockID = world.getBlockId(xx, yy, zz);
-					if (blockID == SDBlock.stargateController.blockID) {
+					if (blockID == SDBlock.stargateController.blockID && !(world.isRemote)) {
 						world.notifyBlockOfNeighborChange(xx, yy, zz, SDBlock.stargateController.blockID);
+						world.markBlockForUpdate(xx, yy, zz);
+						SDBlock.syncTileEntity(world.getBlockTileEntity(xx, yy, zz));
 					}
 				}
 			}
