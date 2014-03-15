@@ -5,6 +5,7 @@ import java.util.Arrays;
 import jw.spacedistortion.common.CommonProxy;
 import jw.spacedistortion.common.block.BlockStargateController;
 import jw.spacedistortion.common.block.SDBlock;
+import jw.spacedistortion.common.tileentity.StargateControllerState;
 import jw.spacedistortion.common.tileentity.TileEntityStargateController;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
@@ -97,10 +98,10 @@ public class GuiDHD extends GuiScreen {
 			}
 			if (b.glyphID == 39) {
 				this.mc.displayGuiScreen((GuiScreen) null);
-				this.tileEntity.resetAddress();
 				((BlockStargateController)SDBlock.stargateController).addressReceived(
 						this.tileEntity.dialingAddress, this.tileEntity.xCoord,
 						this.tileEntity.yCoord, this.tileEntity.zCoord);
+				this.tileEntity.resetAddress();
 			}
 		}
 	}
