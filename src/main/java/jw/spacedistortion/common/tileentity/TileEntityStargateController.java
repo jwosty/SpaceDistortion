@@ -15,7 +15,7 @@ public class TileEntityStargateController extends TileEntity {
 	 */
 	public byte[] dialingAddress;
 	public int currentGlyphIndex;
-	public StargateControllerState lastState;
+	public StargateControllerState state;
 	
 	public TileEntityStargateController() {
 		this.resetAddress();
@@ -29,7 +29,7 @@ public class TileEntityStargateController extends TileEntity {
 	@Override
 	public void writeToNBT(NBTTagCompound data) {
 		super.writeToNBT(data);
-		data.setInteger("state", this.lastState.value());
+		data.setInteger("state", this.state.value());
 		data.setByteArray("address", this.dialingAddress);
 		data.setInteger("glyph", this.currentGlyphIndex);
 	}
@@ -37,7 +37,7 @@ public class TileEntityStargateController extends TileEntity {
 	@Override
 	public void readFromNBT(NBTTagCompound data) {
 		super.readFromNBT(data);
-		this.lastState = StargateControllerState.values()[data.getInteger("state")];
+		this.state = StargateControllerState.values()[data.getInteger("state")];
 		this.dialingAddress = data.getByteArray("address");
 		this.currentGlyphIndex = data.getInteger("glyph");
 	}

@@ -130,7 +130,7 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 		world.setBlockMetadataWithNotify(x, y, z, direction, 2);
 		
 		TileEntityStargateController controllerTileEntity = (TileEntityStargateController) world.getTileEntity(x, y, z);
-		controllerTileEntity.lastState = BlockStargateController.getCurrentState(world, x, y, z);
+		controllerTileEntity.state = BlockStargateController.getCurrentState(world, x, y, z);
 	}
 	
 	@Override
@@ -213,11 +213,11 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 		// Set the states of both stargates
 		TileEntityStargateController srcTileEntity = (TileEntityStargateController) world.getTileEntity(srcX, srcY, srcZ);
 		if (srcTileEntity != null) {
-			srcTileEntity.lastState = StargateControllerState.ACTIVE_OUTGOING;
+			srcTileEntity.state = StargateControllerState.ACTIVE_OUTGOING;
 		}
 		TileEntityStargateController dstTileEntity = (TileEntityStargateController) world.getTileEntity(dstX, dstY, dstZ);
 		if (dstTileEntity != null) {
-			dstTileEntity.lastState = StargateControllerState.ACTIVE_INCOMING;
+			dstTileEntity.state = StargateControllerState.ACTIVE_INCOMING;
 		}
 		world.markBlockForUpdate(srcX, srcY, srcZ);
 		world.markBlockForUpdate(dstX, dstY, dstZ);
@@ -323,7 +323,7 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 		int facing = world.getBlockMetadata(x, y, z);
 		TileEntityStargateController tileEntity = (TileEntityStargateController) world.getTileEntity(x, y, z);
 		if (side == facing) {
-			switch (tileEntity.lastState) {
+			switch (tileEntity.state) {
 			case NO_CONNECTED_STARGATE:
 				return this.controllerOff;
 			case READY:
