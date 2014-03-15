@@ -25,7 +25,12 @@ public class GuiDHDButton extends GuiButton {
 	public void drawButton(Minecraft mc, int par1, int par2) {
 		if (this.visible) {
 			if (this.isActivated) {
-				GL11.glColor4f(1, 0.5f, 0, 1);
+				// all glyphs are orange, except for the special center button (which is red)
+				if (this.glyphID == 39) {
+					GL11.glColor4f(1, 0, 0, 1);
+				} else {
+					GL11.glColor4f(1, 0.5f, 0, 1);
+				}
 			} else {
 				GL11.glColor4f(0.25f, 0.25f, 0.25f, 1);
 			}

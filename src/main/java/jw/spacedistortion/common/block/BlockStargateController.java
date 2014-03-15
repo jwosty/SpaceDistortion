@@ -199,14 +199,17 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 			return;
 		}
 		// Get the source and target stargate center coordinates
-		Pair<Axis, ArrayList<Triplet<Integer, Integer, Integer>>> dstPlaneBlocks = this
-				.getStargateCenterBlocks(world, targetX, targetY, targetZ);
+		Pair<Axis, ArrayList<Triplet<Integer, Integer, Integer>>> dstPlaneBlocks = this.getStargateCenterBlocks(world, targetX, targetY, targetZ);
+		Pair<Axis, ArrayList<Triplet<Integer, Integer, Integer>>> srcPlaneBlocks = this.getStargateCenterBlocks(world, srcX, srcY, srcZ);
+		if (dstPlaneBlocks == null || srcPlaneBlocks == null) {
+			return;
+		}
 		Axis dstAxis = dstPlaneBlocks.X;
 		ArrayList<Triplet<Integer, Integer, Integer>> dstBlocks = dstPlaneBlocks.Y;
-		Pair<Axis, ArrayList<Triplet<Integer, Integer, Integer>>> srcPlaneBlocks = this
-				.getStargateCenterBlocks(world, srcX, srcY, srcZ);
 		Axis srcAxis = srcPlaneBlocks.X;
 		ArrayList<Triplet<Integer, Integer, Integer>> srcBlocks = srcPlaneBlocks.Y;
+		
+		
 		
 		// Fill the dialing stargate
 		for (int i = 0; i < srcBlocks.size(); i++) {
@@ -247,7 +250,7 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 
 	/**
 	 * Returns the coordinates of all the center blocks at the given stargate,
-	 * or an empty ArrayList if there's no stargate there.
+	 * or null if there's no stargate there.
 	 * 
 	 * @param world
 	 *            The world that the stargate is located in
@@ -262,11 +265,11 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 	public Pair<Axis, ArrayList<Triplet<Integer, Integer, Integer>>> getStargateCenterBlocks(World world, int x, int y, int z) {
 		ArrayList<Triplet<Integer, Integer, Integer>> results = new ArrayList();
 		// See if there's really a stargate here
-		DetectStructureResults stargate = this.getStargateBlocks(
-				world, x, y, z);
-		Triplet<Integer, Integer, Integer> relativeOrigin = this
-				.templateToWorldCoordinates(-stargate.xOffset,
-						stargate.yOffset, stargate.axis);
+		DetectStructureResults stargate = this.getStargateBlocks(world, x, y, z);
+		if (stargate == null) {
+			return null;
+		}
+		Triplet<Integer, Integer, Integer> relativeOrigin = this.templateToWorldCoordinates(-stargate.xOffset, stargate.yOffset, stargate.axis);
 		Triplet<Integer, Integer, Integer> origin = new Triplet<Integer, Integer, Integer>(
 				stargate.firstNeighbor.X + relativeOrigin.X,
 				stargate.firstNeighbor.Y + relativeOrigin.Y,

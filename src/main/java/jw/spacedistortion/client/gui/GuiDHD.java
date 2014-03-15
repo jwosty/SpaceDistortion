@@ -49,7 +49,7 @@ public class GuiDHD extends GuiScreen {
 
 	@Override
 	public boolean doesGuiPauseGame() {
-		return true;
+		return false;
 	}
 
 	@Override
@@ -67,8 +67,7 @@ public class GuiDHD extends GuiScreen {
 			// Use a button for simplicity instead of a whole new Gui element
 			// for this, setting the glyph to the empty slot so it doesn't draw
 			// yet (b.drawButton doesn't seem to allow one to change it later)
-			GuiDHDButton b = new GuiDHDButton(this.getPanelX() + (gw * c),
-					this.getPanelY(), this.glyphTexture, (byte) 39);
+			GuiDHDButton b = new GuiDHDButton(this.getPanelX() + (gw * c), this.getPanelY(), this.glyphTexture, (byte) 40);
 			b.isActivated = true;
 			b.enabled = false;
 			// b.drawButton = false;
@@ -76,12 +75,21 @@ public class GuiDHD extends GuiScreen {
 		}
 
 		// Create the buttons
-		for (int glyphID = 0; glyphID < 39; glyphID++) {
+		for (int glyphID = 0; glyphID < 40; glyphID++) {
 			// Calculate the x and y position of the glyph (in the order of
 			// appearance on the sprite sheet), offsetting the y by 1 glyph
-			// in order to display the button panel lower
-			int x = this.getPanelX() + (glyphID % (gsw / gw) * gw);
-			int y = this.getPanelY() + (glyphID / (gsw / gw) * gh) + (gh * 2);
+			// in order to display the button panel lower.
+			int g;
+			if (glyphID < 19) {
+				g = glyphID;
+			} else if (glyphID == 39) {
+				g = 19;
+			} else {
+				g = glyphID + 1;
+			}
+			// Calculate the x and y position
+			int x = this.getPanelX() + (g % (gsw / gw) * gw);
+			int y = this.getPanelY() + (g / (gsw / gw) * gh) + (gh * 2);
 			// Finally, add the button
 			this.buttonList.add(new GuiDHDButton(x, y, this.glyphTexture, (byte) glyphID));
 		}
@@ -93,17 +101,18 @@ public class GuiDHD extends GuiScreen {
 			GuiDHDButton b = (GuiDHDButton) guiButton;
 			// First, apply the FX: make the button glow orange
 			b.isActivated = true;
-			// Encode the selected coordinate into the address (note that
-			// the glyph is pretty much a base 39 number)
-			address[currentCoordinate] = b.glyphID;
-			// Set the appropriate display button's glyph and show it
-			GuiDHDButton display = (GuiDHDButton) this.buttonList
-					.get(currentCoordinate);
-			display.glyphID = b.glyphID;
-			currentCoordinate++;
-			if (currentCoordinate == 7) {
-				((BlockStargateController)SDBlock.stargateController).addressReceived(address, this.dhdX, this.dhdY, this.dhdZ);
+			if (currentCoordinate < 7) {
+				// Encode the selected coordinate into the address (note that
+				// the glyph is pretty much a base 39 number)
+				address[currentCoordinate] = b.glyphID;
+				// Set the appropriate display button's glyph and show it
+				GuiDHDButton display = (GuiDHDButton) this.buttonList.get(currentCoordinate);
+				display.glyphID = b.glyphID;
+				currentCoordinate++;
+			}
+			if (b.glyphID == 39) {
 				this.mc.displayGuiScreen((GuiScreen) null);
+				((BlockStargateController)SDBlock.stargateController).addressReceived(address, this.dhdX, this.dhdY, this.dhdZ);
 			}
 		}
 	}
