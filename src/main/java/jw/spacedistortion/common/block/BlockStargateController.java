@@ -149,7 +149,7 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 		StargateControllerState state = BlockStargateController.getCurrentState(world, x, y, z);
 		TileEntityStargateController controllerTileEntity = (TileEntityStargateController) world.getTileEntity(x, y, z);
 		if (controllerTileEntity != null) {
-			controllerTileEntity.lastState = state;
+			//controllerTileEntity.lastState = state;
 			SDBlock.syncTileEntity(controllerTileEntity);
 			//world.markBlockForUpdate(x, y, z);
 		}
@@ -177,8 +177,8 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 	}
 
 	@SideOnly(Side.CLIENT)
-	public void addressReceived(byte[] address, int dhdX, int dhdY, int dhdZ) {
-		IPacket packet = new OutgoingWormholePacket(dhdX, dhdY, dhdZ, address);
+	public void addressReceived(TileEntityStargateController tileEntity) {
+		IPacket packet = new OutgoingWormholePacket(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord, tileEntity.dialingAddress);
 		ChannelHandler.clientSendPacket(packet);
 	}
 	
@@ -186,16 +186,17 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 	 * Activate the stargate attached to the given controller coordinates
 	 */
 	public void serverActivateStargatePair(World world, int srcX, int srcY, int srcZ,
-			int targetX, int targetY, int targetZ) {
+			int dstX, int dstY, int dstZ) {
 		Side side = FMLCommonHandler.instance().getEffectiveSide();
-		// If there's no controller block, don't continue
-		if (world.getBlock(srcX, srcY, srcZ) != SDBlock.stargateController) {
+		if (world.getBlock(srcX, srcY, srcZ) != SDBlock.stargateController || world.getBlock(dstX, dstY, dstZ) != SDBlock.stargateController) {
+			// stop; there's no stargate controller
 			return;
 		}
 		// Get the source and target stargate center coordinates
-		Pair<Axis, ArrayList<Triplet<Integer, Integer, Integer>>> dstPlaneBlocks = this.getStargateCenterBlocks(world, targetX, targetY, targetZ);
+		Pair<Axis, ArrayList<Triplet<Integer, Integer, Integer>>> dstPlaneBlocks = this.getStargateCenterBlocks(world, dstX, dstY, dstZ);
 		Pair<Axis, ArrayList<Triplet<Integer, Integer, Integer>>> srcPlaneBlocks = this.getStargateCenterBlocks(world, srcX, srcY, srcZ);
-		if (dstPlaneBlocks == null || srcPlaneBlocks == null) {
+		if (srcPlaneBlocks == null || dstPlaneBlocks == null) {
+			// stop; one of the stargate controllers isn't connected to a stargate
 			return;
 		}
 		Axis dstAxis = dstPlaneBlocks.X;
@@ -203,13 +204,23 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 		Axis srcAxis = srcPlaneBlocks.X;
 		ArrayList<Triplet<Integer, Integer, Integer>> srcBlocks = srcPlaneBlocks.Y;
 		
-		
-		
 		// Fill the dialing stargate
 		for (int i = 0; i < srcBlocks.size(); i++) {
 			basicUnsafeFillStargateCenter(world, dstAxis, dstBlocks, srcAxis,
 					srcBlocks, i);
 		}
+		
+		// Set the states of both stargates
+		TileEntityStargateController srcTileEntity = (TileEntityStargateController) world.getTileEntity(srcX, srcY, srcZ);
+		if (srcTileEntity != null) {
+			srcTileEntity.lastState = StargateControllerState.ACTIVE_OUTGOING;
+		}
+		TileEntityStargateController dstTileEntity = (TileEntityStargateController) world.getTileEntity(dstX, dstY, dstZ);
+		if (dstTileEntity != null) {
+			dstTileEntity.lastState = StargateControllerState.ACTIVE_INCOMING;
+		}
+		world.markBlockForUpdate(srcX, srcY, srcZ);
+		world.markBlockForUpdate(dstX, dstY, dstZ);
 	}
 
 	private void basicUnsafeFillStargateCenter(World world, Axis dstAxis,
@@ -312,12 +323,15 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 		int facing = world.getBlockMetadata(x, y, z);
 		TileEntityStargateController tileEntity = (TileEntityStargateController) world.getTileEntity(x, y, z);
 		if (side == facing) {
-			if (tileEntity.lastState == StargateControllerState.READY) {
-				return this.controllerIdle;
-			} else if (tileEntity.lastState == StargateControllerState.ACTIVE) {
-				return this.controllerActive;
-			} else {
+			switch (tileEntity.lastState) {
+			case NO_CONNECTED_STARGATE:
 				return this.controllerOff;
+			case READY:
+				return this.controllerIdle;
+			case ACTIVE_OUTGOING:
+				return this.controllerActive;
+			case ACTIVE_INCOMING:
+				return this.controllerActive;
 			}
 		}
 		return this.blockIcon;

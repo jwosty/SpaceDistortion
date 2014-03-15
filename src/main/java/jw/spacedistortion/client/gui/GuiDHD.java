@@ -97,10 +97,8 @@ public class GuiDHD extends GuiScreen {
 				this.tileEntity.currentGlyphIndex++;
 			}
 			if (b.glyphID == 39) {
-				this.mc.displayGuiScreen((GuiScreen) null);
-				((BlockStargateController)SDBlock.stargateController).addressReceived(
-						this.tileEntity.dialingAddress, this.tileEntity.xCoord,
-						this.tileEntity.yCoord, this.tileEntity.zCoord);
+				this.mc.displayGuiScreen(null);
+				SDBlock.stargateController.addressReceived(this.tileEntity);
 				this.tileEntity.resetAddress();
 			}
 		}
