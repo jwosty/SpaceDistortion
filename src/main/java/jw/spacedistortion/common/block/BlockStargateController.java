@@ -130,7 +130,7 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 		world.setBlockMetadataWithNotify(x, y, z, direction, 2);
 		
 		TileEntityStargateController controllerTileEntity = (TileEntityStargateController) world.getTileEntity(x, y, z);
-		controllerTileEntity.state = BlockStargateController.getCurrentState(world, x, y, z);
+		controllerTileEntity.lastState = BlockStargateController.getCurrentState(world, x, y, z);
 	}
 	
 	@Override
@@ -138,7 +138,8 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 	public boolean onBlockActivated(World world, int x, int y, int z,
 			EntityPlayer player, int par1, float par2, float par3, float par4) {
 		if (!world.isRemote) {
-			Minecraft.getMinecraft().displayGuiScreen(new GuiDHD(x, y, z));
+			TileEntityStargateController tileEntity = (TileEntityStargateController) world.getTileEntity(x, y, z);
+			Minecraft.getMinecraft().displayGuiScreen(new GuiDHD(tileEntity));
 		}
 		return true;
 	}
@@ -148,20 +149,13 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 		StargateControllerState state = BlockStargateController.getCurrentState(world, x, y, z);
 		TileEntityStargateController controllerTileEntity = (TileEntityStargateController) world.getTileEntity(x, y, z);
 		if (controllerTileEntity != null) {
-			controllerTileEntity.state = state;
+			controllerTileEntity.lastState = state;
 			SDBlock.syncTileEntity(controllerTileEntity);
 			//world.markBlockForUpdate(x, y, z);
 		}
 	}
 	
 	public Triplet<Integer, Integer, Integer> decodeAddress(byte[] address) {
-		for (int i = 0; i < 7; i++) {
-			if (i < 6) {
-				System.out.print(address[i] + " ");
-			} else {
-				System.out.print("(" + Integer.toBinaryString(address[i]) + ")\n");
-			}
-		}
 		// Building base 39 numbers using powers of 3
 		int chunkX = (int) ((address[0] * 1521) + (address[1] * 39) + address[2]);
 		int chunkZ = (int) ((address[3] * 1521) + (address[4] * 39) + address[5]);
@@ -318,9 +312,9 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 		int facing = world.getBlockMetadata(x, y, z);
 		TileEntityStargateController tileEntity = (TileEntityStargateController) world.getTileEntity(x, y, z);
 		if (side == facing) {
-			if (tileEntity.state == StargateControllerState.READY) {
+			if (tileEntity.lastState == StargateControllerState.READY) {
 				return this.controllerIdle;
-			} else if (tileEntity.state == StargateControllerState.ACTIVE) {
+			} else if (tileEntity.lastState == StargateControllerState.ACTIVE) {
 				return this.controllerActive;
 			} else {
 				return this.controllerOff;
