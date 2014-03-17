@@ -10,7 +10,7 @@ import jw.spacedistortion.Triplet;
 import jw.spacedistortion.client.gui.GuiDHD;
 import jw.spacedistortion.common.network.ChannelHandler;
 import jw.spacedistortion.common.network.packet.IPacket;
-import jw.spacedistortion.common.network.packet.OutgoingWormholePacket;
+import jw.spacedistortion.common.network.packet.WormholePacket;
 import jw.spacedistortion.common.tileentity.StargateControllerState;
 import jw.spacedistortion.common.tileentity.TileEntityEventHorizon;
 import jw.spacedistortion.common.tileentity.TileEntityStargateController;
@@ -22,6 +22,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
@@ -177,13 +178,25 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 	}
 
 	@SideOnly(Side.CLIENT)
-	public void addressReceived(TileEntityStargateController tileEntity) {
-		IPacket packet = new OutgoingWormholePacket(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord, tileEntity.dialingAddress);
-		ChannelHandler.clientSendPacket(packet);
+	public void connectionCreate(TileEntityStargateController tileEntity) {
+		if (Minecraft.getMinecraft().theWorld.isRemote) {
+			ChannelHandler.clientSendPacket(new WormholePacket(
+				tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord, 
+				tileEntity.dialingAddress, true));
+		}
+	}
+	
+	@SideOnly(Side.CLIENT)
+	public void connectionSever(TileEntityStargateController tileEntity) {
+		if (Minecraft.getMinecraft().theWorld.isRemote) {
+			ChannelHandler.clientSendPacket(new WormholePacket(
+				tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord,
+				tileEntity.dialingAddress, false));
+		}
 	}
 	
 	/**
-	 * Activate the stargate attached to the given controller coordinates
+	 * Activate the stargates attached to the given controllers
 	 */
 	public void serverActivateStargatePair(World world, int srcX, int srcY, int srcZ,
 			int dstX, int dstY, int dstZ) {
@@ -206,50 +219,85 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 		
 		// Fill the dialing stargate
 		for (int i = 0; i < srcBlocks.size(); i++) {
-			basicUnsafeFillStargateCenter(world, dstAxis, dstBlocks, srcAxis,
-					srcBlocks, i);
+			basicUnsafeFillStargateCenter(world, dstAxis, dstBlocks, srcAxis, srcBlocks, i, SDBlock.eventHorizon);
 		}
 		
 		// Set the states of both stargates
 		TileEntityStargateController srcTileEntity = (TileEntityStargateController) world.getTileEntity(srcX, srcY, srcZ);
 		if (srcTileEntity != null) {
 			srcTileEntity.state = StargateControllerState.ACTIVE_OUTGOING;
+			world.markBlockForUpdate(srcX, srcY, srcZ);
 		}
 		TileEntityStargateController dstTileEntity = (TileEntityStargateController) world.getTileEntity(dstX, dstY, dstZ);
 		if (dstTileEntity != null) {
 			dstTileEntity.state = StargateControllerState.ACTIVE_INCOMING;
+			world.markBlockForUpdate(dstX, dstY, dstZ);
 		}
-		world.markBlockForUpdate(srcX, srcY, srcZ);
-		world.markBlockForUpdate(dstX, dstY, dstZ);
 	}
 
+	/**
+	 * Deactivate the stargates attached to the given controllers
+	 */
+	public void serverDeactivateStargatePair(World world, int srcX, int srcY, int srcZ,
+			int dstX, int dstY, int dstZ) {
+		Pair<Axis, ArrayList<Triplet<Integer, Integer, Integer>>> dstPlaneBlocks = this.getStargateCenterBlocks(world, dstX, dstY, dstZ);
+		Pair<Axis, ArrayList<Triplet<Integer, Integer, Integer>>> srcPlaneBlocks = this.getStargateCenterBlocks(world, srcX, srcY, srcZ);
+		if (srcPlaneBlocks == null || dstPlaneBlocks == null) {
+			// stop; one of the stargate controllers isn't connected to a stargate
+			return;
+		}
+		Axis dstAxis = dstPlaneBlocks.X;
+		ArrayList<Triplet<Integer, Integer, Integer>> dstBlocks = dstPlaneBlocks.Y;
+		Axis srcAxis = srcPlaneBlocks.X;
+		ArrayList<Triplet<Integer, Integer, Integer>> srcBlocks = srcPlaneBlocks.Y;
+		
+		// Fill the dialing stargate
+		for (int i = 0; i < srcBlocks.size(); i++) {
+			basicUnsafeFillStargateCenter(world, dstAxis, dstBlocks, srcAxis, srcBlocks, i, Blocks.air);
+		}
+
+		TileEntityStargateController srcTileEntity = (TileEntityStargateController) world.getTileEntity(srcX, srcY, srcZ);
+		if (srcTileEntity != null) {
+			srcTileEntity.state = StargateControllerState.READY;
+			world.markBlockForUpdate(srcX, srcY, srcZ);
+		}
+		
+		TileEntityStargateController dstTileEntity = (TileEntityStargateController) world.getTileEntity(srcX, srcY, srcZ);
+		if (dstTileEntity != null) {
+			dstTileEntity.state = StargateControllerState.READY;
+			world.markBlockForUpdate(dstX, dstY, dstZ);
+		}
+	}
+	
 	private void basicUnsafeFillStargateCenter(World world, Axis dstAxis,
-			ArrayList<Triplet<Integer, Integer, Integer>> dstBlocks,
-			Axis srcAxis,
-			ArrayList<Triplet<Integer, Integer, Integer>> srcBlocks, int i) {
+			ArrayList<Triplet<Integer, Integer, Integer>> dstBlocks, Axis srcAxis,
+			ArrayList<Triplet<Integer, Integer, Integer>> srcBlocks, int i,
+			Block fillMaterial) {
 		Triplet<Integer, Integer, Integer> srcBlockCoords = srcBlocks.get(i);
 		Triplet<Integer, Integer, Integer> dstBlockCoords = dstBlocks.get(i);
-		// Set the destination blocks
-		world.setBlock(srcBlockCoords.X, srcBlockCoords.Y, srcBlockCoords.Z, SDBlock.eventHorizon);
-		// Set the tile entity that stores the specific destination coordinates
-		TileEntityEventHorizon srcTileEntity = (TileEntityEventHorizon) world
-				.getTileEntity(srcBlockCoords.X, srcBlockCoords.Y,
-						srcBlockCoords.Z);
-		if (srcTileEntity != null) {
-			srcTileEntity.isOutgoing = true;
-			srcTileEntity.axis = srcAxis;
-			srcTileEntity.destX = dstBlockCoords.X;
-			srcTileEntity.destY = dstBlockCoords.Y;
-			srcTileEntity.destZ = dstBlockCoords.Z;
-		}
-		// Fill the target stargate with do-nothing event horizon blocks
-		world.setBlock(dstBlockCoords.X, dstBlockCoords.Y,
-				dstBlockCoords.Z, SDBlock.eventHorizon);
-		TileEntityEventHorizon dstTileEntity = (TileEntityEventHorizon) world.getTileEntity(dstBlockCoords.X, dstBlockCoords.Y, dstBlockCoords.Z);
-		// Set tile entity info. Mainly empty.
-		if (dstTileEntity != null) {
-			dstTileEntity.isOutgoing = false;
-			dstTileEntity.axis = dstAxis;
+		// Set the destination block
+		world.setBlock(srcBlockCoords.X, srcBlockCoords.Y, srcBlockCoords.Z, fillMaterial);
+		// Fill the target stargate with the block
+		world.setBlock(dstBlockCoords.X, dstBlockCoords.Y, dstBlockCoords.Z, fillMaterial);
+		
+		// When the fill block is event horizon, set the tile entity info
+		if (fillMaterial == SDBlock.eventHorizon) {
+			// Set the tile entity that stores the specific destination coordinates
+			TileEntityEventHorizon srcTileEntity = (TileEntityEventHorizon) world.getTileEntity(srcBlockCoords.X, srcBlockCoords.Y,srcBlockCoords.Z);
+			if (srcTileEntity != null) {
+				srcTileEntity.isOutgoing = true;
+				srcTileEntity.axis = srcAxis;
+				srcTileEntity.destX = dstBlockCoords.X;
+				srcTileEntity.destY = dstBlockCoords.Y;
+				srcTileEntity.destZ = dstBlockCoords.Z;
+			}
+			
+			TileEntityEventHorizon dstTileEntity = (TileEntityEventHorizon) world.getTileEntity(dstBlockCoords.X, dstBlockCoords.Y, dstBlockCoords.Z);
+			// Blank out the target's tile entity data if the fill is eventHorizon
+			if (dstTileEntity != null) {
+				dstTileEntity.isOutgoing = false;
+				dstTileEntity.axis = dstAxis;
+			}
 		}
 	}
 

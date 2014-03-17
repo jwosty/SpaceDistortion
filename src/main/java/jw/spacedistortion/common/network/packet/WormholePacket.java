@@ -3,6 +3,7 @@ package jw.spacedistortion.common.network.packet;
 import jw.spacedistortion.Triplet;
 import jw.spacedistortion.common.block.BlockStargateController;
 import jw.spacedistortion.common.block.SDBlock;
+import jw.spacedistortion.common.tileentity.TileEntityStargateController;
 import cpw.mods.fml.relauncher.Side;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
@@ -12,22 +13,25 @@ import net.minecraft.util.IChatComponent;
 import net.minecraft.world.World;
 import io.netty.buffer.ByteBuf;
 
-public class OutgoingWormholePacket implements IPacket {
-	
+/**
+ * Connects or disconnects two stargates
+ */
+public class WormholePacket implements IPacket {
 	public int dhdX;
 	public int dhdY;
 	public int dhdZ;
-	/* Destination chunk address */
 	public byte[] address = new byte[7];
+	public boolean createConnection;
 	
-	public OutgoingWormholePacket(int dhdX, int dhdY, int dhdZ, byte[] address) {
+	public WormholePacket(int dhdX, int dhdY, int dhdZ, byte[] address, boolean createConnection) {
 		this.dhdX = dhdX;
 		this.dhdY = dhdY;
 		this.dhdZ = dhdZ;
 		this.address = address;
+		this.createConnection = createConnection;
 	}
 
-	public OutgoingWormholePacket() { }
+	public WormholePacket() { }
 	
 	@Override
 	public void readBytes(ByteBuf bytes) {
@@ -35,6 +39,7 @@ public class OutgoingWormholePacket implements IPacket {
 		this.dhdY = bytes.readInt();
 		this.dhdZ = bytes.readInt();
 		bytes.readBytes(this.address);
+		this.createConnection = bytes.readBoolean();
 	}
 	
 	@Override
@@ -43,11 +48,12 @@ public class OutgoingWormholePacket implements IPacket {
 		bytes.writeInt(this.dhdY);
 		bytes.writeInt(this.dhdZ);
 		bytes.writeBytes(this.address);
+		bytes.writeBoolean(this.createConnection);
 	}
 	
 	@Override
 	public void onReceive(EntityPlayer player, Side side) {
-		Triplet<Integer, Integer, Integer> decodedAddress = SDBlock.stargateController.decodeAddress(this.address);
+		Triplet<Integer, Integer, Integer> decodedAddress = SDBlock.stargateController.decodeAddress(address);
 		int destDimension = decodedAddress.X;
 		int destX = decodedAddress.Y;
 		int destZ = decodedAddress.Z;
@@ -55,15 +61,17 @@ public class OutgoingWormholePacket implements IPacket {
 			player.addChatMessage(new ChatComponentText("dhdX = " + dhdX + ", dhdY = " + dhdY + ", dhdZ = " + dhdZ));
 			player.addChatMessage(new ChatComponentText("destX = " + destX + ", destZ = " + destZ + ", destDimension = " + destDimension));
 			player.addChatMessage(new ChatComponentText("side = " + side));
-			World world = Minecraft.getMinecraft().theWorld;
-			int[] coords = BlockStargateController.getDominantController(world, destX, destZ);
+			int[] coords = BlockStargateController.getDominantController(player.worldObj, destX, destZ);
 			if (coords != null) {
-				System.out.println("Locked onto destination Stargate");
-				SDBlock.stargateController.serverActivateStargatePair(
-				player.worldObj, dhdX, dhdY, dhdZ, coords[0],
-				coords[1], coords[2]);
-			} else {
-				System.out.println("No destination Stargate detected");
+				if (this.createConnection) {
+					SDBlock.stargateController.serverActivateStargatePair(
+							player.worldObj, dhdX, dhdY, dhdZ,
+							coords[0], coords[1], coords[2]);
+				} else {
+					SDBlock.stargateController.serverDeactivateStargatePair(
+							player.worldObj, dhdX, dhdY, dhdZ,
+							coords[0], coords[1], coords[2]);
+				}
 			}
 		}
 	}

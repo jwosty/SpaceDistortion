@@ -48,7 +48,7 @@ public class BlockEventHorizon extends SDBlock implements ITileEntityProvider {
 		TileEntityEventHorizon dstTileEntity = (TileEntityEventHorizon) world
 				.getTileEntity(srcTileEntity.destX, srcTileEntity.destY,
 						srcTileEntity.destZ);
-		if (!world.isRemote && srcTileEntity.isOutgoing
+		if (!world.isRemote && srcTileEntity.isOutgoing && dstTileEntity != null
 				&& Math.floor(entity.posX) == x && Math.floor(entity.posY) == y
 				&& Math.floor(entity.posZ) == z) {
 			// Planes of source and target stargates

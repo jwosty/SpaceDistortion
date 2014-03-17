@@ -26,6 +26,11 @@ public class GuiDHD extends GuiScreen {
 	public GuiDHD(TileEntityStargateController controllerTileEntity) {
 		this.tileEntity = controllerTileEntity;
 	}
+	
+	@Override
+	public boolean doesGuiPauseGame() {
+		return false;
+	}
 
 	// The x screen position of the DHD panel top corner
 	public int getPanelX() {
@@ -88,7 +93,9 @@ public class GuiDHD extends GuiScreen {
 			GuiDHDButton b = (GuiDHDButton) guiButton;
 			// First, apply the FX: make the button glow orange
 			b.isActivated = true;
-			if (this.tileEntity.currentGlyphIndex < 7) {
+			if (this.tileEntity.currentGlyphIndex < 7
+					&& tileEntity.state != StargateControllerState.ACTIVE_INCOMING
+					&& tileEntity.state != StargateControllerState.ACTIVE_OUTGOING) {
 				// Encode the selected coordinate into the address (note that the glyph is pretty much a base 39 number)
 				this.tileEntity.dialingAddress[this.tileEntity.currentGlyphIndex] = b.glyphID;
 				// Set the appropriate display button's glyph and show it
@@ -97,9 +104,15 @@ public class GuiDHD extends GuiScreen {
 				this.tileEntity.currentGlyphIndex++;
 			}
 			if (b.glyphID == 39) {
-				this.mc.displayGuiScreen(null);
-				SDBlock.stargateController.addressReceived(this.tileEntity);
-				this.tileEntity.resetAddress();
+				//this.mc.displayGuiScreen(null);
+				switch (this.tileEntity.state) {
+				case READY:
+					SDBlock.stargateController.connectionCreate(this.tileEntity);
+				case ACTIVE_OUTGOING:
+					SDBlock.stargateController.connectionSever(this.tileEntity);
+				default:
+				}
+				//this.tileEntity.resetAddress();
 			}
 		}
 	}
