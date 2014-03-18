@@ -6,6 +6,7 @@ import io.netty.channel.ChannelHandlerContext;
 import java.util.EnumMap;
 
 import jw.spacedistortion.common.network.packet.IPacket;
+import jw.spacedistortion.common.network.packet.PacketDHDEnterGlyph;
 import jw.spacedistortion.common.network.packet.PacketWormhole;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
@@ -23,6 +24,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class ChannelHandler extends FMLIndexedMessageToMessageCodec<IPacket> {
 	public ChannelHandler() {
 		this.addDiscriminator(0, PacketWormhole.class);
+		this.addDiscriminator(1, PacketDHDEnterGlyph.class);
 	}
 
 	public static EnumMap<Side, FMLEmbeddedChannel> channels;

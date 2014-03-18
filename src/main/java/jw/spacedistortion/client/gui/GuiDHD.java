@@ -2,8 +2,11 @@ package jw.spacedistortion.client.gui;
 
 import jw.spacedistortion.common.CommonProxy;
 import jw.spacedistortion.common.block.SDBlock;
+import jw.spacedistortion.common.network.ChannelHandler;
+import jw.spacedistortion.common.network.packet.PacketDHDEnterGlyph;
 import jw.spacedistortion.common.tileentity.StargateControllerState;
 import jw.spacedistortion.common.tileentity.TileEntityStargateController;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.ResourceLocation;
@@ -86,32 +89,15 @@ public class GuiDHD extends GuiScreen {
 	
 	@Override
 	public void actionPerformed(GuiButton guiButton) {
-		if (guiButton.enabled && guiButton instanceof GuiDHDButton) {
-			GuiDHDButton b = (GuiDHDButton) guiButton;
-			// First, apply the FX: make the button glow orange
-			b.isActivated = true;
-			if (this.tileEntity.currentGlyphIndex < 7
-					&& tileEntity.state != StargateControllerState.ACTIVE_INCOMING
-					&& tileEntity.state != StargateControllerState.ACTIVE_OUTGOING) {
-				// Encode the selected coordinate into the address (note that the glyph is pretty much a base 39 number)
-				this.tileEntity.dialingAddress[this.tileEntity.currentGlyphIndex] = b.glyphID;
-				// Set the appropriate display button's glyph and show it
-				GuiDHDButton display = (GuiDHDButton) this.buttonList.get(this.tileEntity.currentGlyphIndex);
-				display.glyphID = b.glyphID;
-				this.tileEntity.currentGlyphIndex++;
-			}
-			if (b.glyphID == 39) {
-				//this.mc.displayGuiScreen(null);
-				switch (this.tileEntity.state) {
-				case READY:
-					SDBlock.stargateController.connectionCreate(this.tileEntity);
-				case ACTIVE_OUTGOING:
-					SDBlock.stargateController.connectionSever(this.tileEntity);
-				default:
-				}
-				//this.tileEntity.resetAddress();
-			}
-		}
+		GuiDHDButton b = (GuiDHDButton) guiButton;
+		if (this.tileEntity.currentGlyphIndex < 7) {
+			// Update the GUI elements before sending to the server
+			((GuiDHDButton) this.buttonList.get(this.tileEntity.currentGlyphIndex)).glyphID = b.glyphID;
+			b.isActivated = true; }
+			
+		// Kindly ask the server to input another glyph into the stargate controller tile entity
+		ChannelHandler.clientSendPacket(new PacketDHDEnterGlyph(
+				this.tileEntity.xCoord, this.tileEntity.yCoord, this.tileEntity.zCoord, b.glyphID));
 	}
 
 	@Override
