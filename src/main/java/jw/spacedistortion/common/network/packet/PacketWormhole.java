@@ -16,14 +16,14 @@ import io.netty.buffer.ByteBuf;
 /**
  * Connects or disconnects two stargates
  */
-public class WormholePacket implements IPacket {
+public class PacketWormhole implements IPacket {
 	public int dhdX;
 	public int dhdY;
 	public int dhdZ;
 	public byte[] address = new byte[7];
 	public boolean createConnection;
 	
-	public WormholePacket(int dhdX, int dhdY, int dhdZ, byte[] address, boolean createConnection) {
+	public PacketWormhole(int dhdX, int dhdY, int dhdZ, byte[] address, boolean createConnection) {
 		this.dhdX = dhdX;
 		this.dhdY = dhdY;
 		this.dhdZ = dhdZ;
@@ -31,7 +31,7 @@ public class WormholePacket implements IPacket {
 		this.createConnection = createConnection;
 	}
 
-	public WormholePacket() { }
+	public PacketWormhole() { }
 	
 	@Override
 	public void readBytes(ByteBuf bytes) {

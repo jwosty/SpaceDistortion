@@ -10,7 +10,7 @@ import jw.spacedistortion.Triplet;
 import jw.spacedistortion.client.gui.GuiDHD;
 import jw.spacedistortion.common.network.ChannelHandler;
 import jw.spacedistortion.common.network.packet.IPacket;
-import jw.spacedistortion.common.network.packet.WormholePacket;
+import jw.spacedistortion.common.network.packet.PacketWormhole;
 import jw.spacedistortion.common.tileentity.StargateControllerState;
 import jw.spacedistortion.common.tileentity.TileEntityEventHorizon;
 import jw.spacedistortion.common.tileentity.TileEntityStargateController;
@@ -180,7 +180,7 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 	@SideOnly(Side.CLIENT)
 	public void connectionCreate(TileEntityStargateController tileEntity) {
 		if (Minecraft.getMinecraft().theWorld.isRemote) {
-			ChannelHandler.clientSendPacket(new WormholePacket(
+			ChannelHandler.clientSendPacket(new PacketWormhole(
 				tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord, 
 				tileEntity.dialingAddress, true));
 		}
@@ -189,7 +189,7 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 	@SideOnly(Side.CLIENT)
 	public void connectionSever(TileEntityStargateController tileEntity) {
 		if (Minecraft.getMinecraft().theWorld.isRemote) {
-			ChannelHandler.clientSendPacket(new WormholePacket(
+			ChannelHandler.clientSendPacket(new PacketWormhole(
 				tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord,
 				tileEntity.dialingAddress, false));
 		}

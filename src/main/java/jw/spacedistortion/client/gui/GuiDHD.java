@@ -1,9 +1,6 @@
 package jw.spacedistortion.client.gui;
 
-import java.util.Arrays;
-
 import jw.spacedistortion.common.CommonProxy;
-import jw.spacedistortion.common.block.BlockStargateController;
 import jw.spacedistortion.common.block.SDBlock;
 import jw.spacedistortion.common.tileentity.StargateControllerState;
 import jw.spacedistortion.common.tileentity.TileEntityStargateController;
