@@ -90,12 +90,13 @@ public class GuiDHD extends GuiScreen {
 	@Override
 	public void actionPerformed(GuiButton guiButton) {
 		GuiDHDButton b = (GuiDHDButton) guiButton;
-		if (this.tileEntity.currentGlyphIndex < 7) {
+		if (this.tileEntity.currentGlyphIndex < 7 && b.glyphID != 39) {
 			// Update the GUI elements before sending to the server
 			((GuiDHDButton) this.buttonList.get(this.tileEntity.currentGlyphIndex)).glyphID = b.glyphID;
 			b.isActivated = true; }
 			
-		// Kindly ask the server to input another glyph into the stargate controller tile entity
+		// Kindly ask the server to input another glyph into the stargate controller tile entity (see
+		// PacketDHDEnterGlyph#onReceive for more info)
 		ChannelHandler.clientSendPacket(new PacketDHDEnterGlyph(
 				this.tileEntity.xCoord, this.tileEntity.yCoord, this.tileEntity.zCoord, b.glyphID));
 	}

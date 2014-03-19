@@ -1,6 +1,8 @@
 package jw.spacedistortion.common.network.packet;
 
 import io.netty.buffer.ByteBuf;
+import jw.spacedistortion.Triplet;
+import jw.spacedistortion.common.block.BlockStargateController;
 import jw.spacedistortion.common.block.SDBlock;
 import jw.spacedistortion.common.tileentity.TileEntityStargateController;
 import net.minecraft.entity.player.EntityPlayer;
@@ -43,14 +45,37 @@ public class PacketDHDEnterGlyph implements IPacket {
 
 	@Override
 	public void onReceive(EntityPlayer player, Side side) {
-		// Add another glyph into the dialing address
 		TileEntityStargateController tileEntity = (TileEntityStargateController) player.worldObj.getTileEntity(this.x, this.y, this.z);
-		if (tileEntity.currentGlyphIndex < 7) {
-			tileEntity.dialingAddress[tileEntity.currentGlyphIndex] = this.glyphID;
-			tileEntity.currentGlyphIndex++;
+		if (this.glyphID == 39) {
+			Triplet<Integer, Integer, Integer> decodedAddress = SDBlock.stargateController.decodeAddress(tileEntity.dialingAddress);
+			int dstDimension = decodedAddress.X;
+			// Get chunk coordinates
+			int dstChunkX = decodedAddress.Y;
+			int dstChunkZ = decodedAddress.Z;
+			int[] dstCoords = BlockStargateController.getDominantController(player.worldObj, dstChunkX, dstChunkZ);
+			if (dstCoords == null) {
+				return;
+			}
+			TileEntityStargateController dstTileEntity = (TileEntityStargateController) player.worldObj.getTileEntity(dstCoords[0], dstCoords[1], dstCoords[2]);
+			
+			if (dstCoords != null) {
+				switch (tileEntity.state) {
+				case READY:
+					SDBlock.stargateController.serverActivateStargatePair(player.worldObj, this.x, this.y, this.z, dstCoords[0], dstCoords[1], dstCoords[2]);
+					break;
+				case ACTIVE_OUTGOING:
+					SDBlock.stargateController.serverDeactivateStargatePair(player.worldObj, this.x, this.y, this.z, dstCoords[0], dstCoords[1], dstCoords[2]);
+					tileEntity.resetAddress();
+					break;
+				default:
+				}
+			}
+		} else {
+			// Add another glyph into the dialing address
+			if (tileEntity.currentGlyphIndex < 7) {
+				tileEntity.dialingAddress[tileEntity.currentGlyphIndex] = this.glyphID;
+				tileEntity.currentGlyphIndex++;
+			}
 		}
-		
-		// Send an update for the block and tile entity to all clients
-		player.worldObj.markBlockForUpdate(this.x, this.y, this.z);
 	}
 }

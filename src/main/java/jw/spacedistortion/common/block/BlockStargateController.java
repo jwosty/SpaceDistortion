@@ -90,8 +90,6 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 	 */
 	public static int[] getDominantController(World world, int chunkX,
 			int chunkZ) {
-		System.out.println("Searching for Stargate at chunk (" + chunkX + ", "
-				+ chunkZ + ")");
 		Chunk chunk = world.getChunkFromChunkCoords(chunkX, chunkZ);
 		for (int x = 0; x < 16; x++) {
 			for (int z = 0; z < 16; z++) {
@@ -173,7 +171,6 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 		if (zSign == 0) {
 			chunkZ = -chunkZ;
 		}
-		System.out.println("chunkX = " + chunkX + ", chunkZ = " + chunkZ + ", dimension = " + dimension);
 		return new Triplet(dimension, chunkX, chunkZ);
 	}
 
@@ -200,7 +197,6 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 	 */
 	public void serverActivateStargatePair(World world, int srcX, int srcY, int srcZ,
 			int dstX, int dstY, int dstZ) {
-		Side side = FMLCommonHandler.instance().getEffectiveSide();
 		if (world.getBlock(srcX, srcY, srcZ) != SDBlock.stargateController || world.getBlock(dstX, dstY, dstZ) != SDBlock.stargateController) {
 			// stop; there's no stargate controller
 			return;
@@ -226,11 +222,13 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 		TileEntityStargateController srcTileEntity = (TileEntityStargateController) world.getTileEntity(srcX, srcY, srcZ);
 		if (srcTileEntity != null) {
 			srcTileEntity.state = StargateControllerState.ACTIVE_OUTGOING;
+			srcTileEntity.resetAddress();
 			world.markBlockForUpdate(srcX, srcY, srcZ);
 		}
 		TileEntityStargateController dstTileEntity = (TileEntityStargateController) world.getTileEntity(dstX, dstY, dstZ);
 		if (dstTileEntity != null) {
 			dstTileEntity.state = StargateControllerState.ACTIVE_INCOMING;
+			dstTileEntity.resetAddress();
 			world.markBlockForUpdate(dstX, dstY, dstZ);
 		}
 	}
