@@ -1,8 +1,20 @@
 {
-  "stargate.dhd.glyph": {
+  "stargate.glyph": {
     "catagory": "gui",
     "sounds": [
-      {"name": "stargate/dhd/glyph", "stream": false}
+      {"name": "stargate/glyph", "stream": false}
+    ]
+  },
+  "stargate.kawoosh": {
+    "catagory": "block",
+    "sounds": [
+      {"name": "stargate/kawoosh", "stream": false}
+    ]
+  },
+  "stargate.close": {
+    "catagory": "block",
+    "sounds": [
+      {"name": "stargate/close", "stream": false}
     ]
   }
 }
