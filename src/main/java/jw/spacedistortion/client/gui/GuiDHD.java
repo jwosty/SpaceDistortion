@@ -1,5 +1,6 @@
 package jw.spacedistortion.client.gui;
 
+import jw.spacedistortion.client.SDSoundHandler;
 import jw.spacedistortion.common.CommonProxy;
 import jw.spacedistortion.common.block.SDBlock;
 import jw.spacedistortion.common.network.ChannelHandler;
@@ -14,9 +15,6 @@ import net.minecraft.util.ResourceLocation;
 import org.apache.commons.lang3.ArrayUtils;
 import org.lwjgl.opengl.GL11;
 
-/*
- * Class written using GuiEditSign as a template
- */
 public class GuiDHD extends GuiScreen {
 	public static ResourceLocation glyphTexture = new ResourceLocation(CommonProxy.MOD_ID + ":" + "textures/gui/glyphs.png");
 	public static ResourceLocation backgroundTexture = new ResourceLocation(CommonProxy.MOD_ID + ":" + "textures/gui/DHD.png");
@@ -93,8 +91,13 @@ public class GuiDHD extends GuiScreen {
 		if (this.tileEntity.currentGlyphIndex < 7 && b.glyphID != 39) {
 			// Update the GUI elements before sending to the server
 			((GuiDHDButton) this.buttonList.get(this.tileEntity.currentGlyphIndex)).glyphID = b.glyphID;
-			b.isActivated = true; }
-			
+			/*
+			SDSoundHandler.playSoundAtBlock(
+					this.tileEntity.getWorldObj(), this.tileEntity.xCoord,
+					this.tileEntity.yCoord, this.tileEntity.zCoord, "stargate.dhd.glyph");
+			*/
+		}
+		b.isActivated = true;
 		// Kindly ask the server to input another glyph into the stargate controller tile entity (see
 		// PacketDHDEnterGlyph#onReceive for more info)
 		ChannelHandler.clientSendPacket(new PacketDHDEnterGlyph(

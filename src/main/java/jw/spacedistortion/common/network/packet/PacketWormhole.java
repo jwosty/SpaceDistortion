@@ -58,9 +58,6 @@ public class PacketWormhole implements IPacket {
 		int destX = decodedAddress.Y;
 		int destZ = decodedAddress.Z;
 		if (side == Side.SERVER) {
-			player.addChatMessage(new ChatComponentText("dhdX = " + dhdX + ", dhdY = " + dhdY + ", dhdZ = " + dhdZ));
-			player.addChatMessage(new ChatComponentText("destX = " + destX + ", destZ = " + destZ + ", destDimension = " + destDimension));
-			player.addChatMessage(new ChatComponentText("side = " + side));
 			int[] coords = BlockStargateController.getDominantController(player.worldObj, destX, destZ);
 			if (coords != null) {
 				if (this.createConnection) {

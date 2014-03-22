@@ -7,6 +7,7 @@ import jw.spacedistortion.Axis;
 import jw.spacedistortion.Pair;
 import jw.spacedistortion.StringGrid;
 import jw.spacedistortion.Triplet;
+import jw.spacedistortion.client.SDSoundHandler;
 import jw.spacedistortion.client.gui.GuiDHD;
 import jw.spacedistortion.common.network.ChannelHandler;
 import jw.spacedistortion.common.network.packet.IPacket;
@@ -173,24 +174,6 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 		}
 		return new Triplet(dimension, chunkX, chunkZ);
 	}
-
-	@SideOnly(Side.CLIENT)
-	public void connectionCreate(TileEntityStargateController tileEntity) {
-		if (Minecraft.getMinecraft().theWorld.isRemote) {
-			ChannelHandler.clientSendPacket(new PacketWormhole(
-				tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord, 
-				tileEntity.dialingAddress, true));
-		}
-	}
-	
-	@SideOnly(Side.CLIENT)
-	public void connectionSever(TileEntityStargateController tileEntity) {
-		if (Minecraft.getMinecraft().theWorld.isRemote) {
-			ChannelHandler.clientSendPacket(new PacketWormhole(
-				tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord,
-				tileEntity.dialingAddress, false));
-		}
-	}
 	
 	/**
 	 * Activate the stargates attached to the given controllers
@@ -222,13 +205,11 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 		TileEntityStargateController srcTileEntity = (TileEntityStargateController) world.getTileEntity(srcX, srcY, srcZ);
 		if (srcTileEntity != null) {
 			srcTileEntity.state = StargateControllerState.ACTIVE_OUTGOING;
-			srcTileEntity.resetAddress();
 			world.markBlockForUpdate(srcX, srcY, srcZ);
 		}
 		TileEntityStargateController dstTileEntity = (TileEntityStargateController) world.getTileEntity(dstX, dstY, dstZ);
 		if (dstTileEntity != null) {
 			dstTileEntity.state = StargateControllerState.ACTIVE_INCOMING;
-			dstTileEntity.resetAddress();
 			world.markBlockForUpdate(dstX, dstY, dstZ);
 		}
 	}
@@ -257,12 +238,14 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 		TileEntityStargateController srcTileEntity = (TileEntityStargateController) world.getTileEntity(srcX, srcY, srcZ);
 		if (srcTileEntity != null) {
 			srcTileEntity.state = StargateControllerState.READY;
+			srcTileEntity.resetAddress();
 			world.markBlockForUpdate(srcX, srcY, srcZ);
 		}
 		
 		TileEntityStargateController dstTileEntity = (TileEntityStargateController) world.getTileEntity(srcX, srcY, srcZ);
 		if (dstTileEntity != null) {
 			dstTileEntity.state = StargateControllerState.READY;
+			dstTileEntity.resetAddress();
 			world.markBlockForUpdate(dstX, dstY, dstZ);
 		}
 	}

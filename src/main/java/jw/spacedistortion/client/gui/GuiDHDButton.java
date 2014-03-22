@@ -1,8 +1,11 @@
 package jw.spacedistortion.client.gui;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
 
 import org.lwjgl.opengl.GL11;
 
@@ -41,5 +44,15 @@ public class GuiDHDButton extends GuiButton {
 					this.glyphID % (GlyphSheetWidth / GlyphWidth) * GlyphWidth, this.glyphID / (GlyphSheetWidth / GlyphWidth) * GlyphHeight,
 					GlyphWidth, GlyphHeight);
 		}
+	}
+	
+	@Override
+	public void func_146113_a(SoundHandler soundHandler) {
+		EntityPlayer player = Minecraft.getMinecraft().thePlayer;
+		/*
+		jw.spacedistortion.client.SoundHandler.playSoundAtPosition(
+				(World) Minecraft.getMinecraft().theWorld, (int) player.posX,
+				(int) player.posY, (int) player.posZ, "");
+		*/
 	}
 }

@@ -1,0 +1,8 @@
+{
+  "stargate.dhd.glyph": {
+    "catagory": "gui",
+    "sounds": [
+      {"name": "stargate/dhd/glyph", "stream": false}
+    ]
+  }
+}
