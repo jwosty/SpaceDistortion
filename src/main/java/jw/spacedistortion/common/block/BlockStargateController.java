@@ -134,7 +134,6 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 		if (world.isRemote) {
 			TileEntityStargateController tileEntity = (TileEntityStargateController) world.getTileEntity(x, y, z);
 			player.openGui(SpaceDistortion.instance, 0, world, x, y, z);
-			//Minecraft.getMinecraft().displayGuiScreen(new GuiDHD(tileEntity));
 		}
 		return true;
 	}
@@ -144,9 +143,7 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 		StargateControllerState state = BlockStargateController.getCurrentState(world, x, y, z);
 		TileEntityStargateController controllerTileEntity = (TileEntityStargateController) world.getTileEntity(x, y, z);
 		if (controllerTileEntity != null) {
-			//controllerTileEntity.lastState = state;
 			SDBlock.syncTileEntity(controllerTileEntity);
-			//world.markBlockForUpdate(x, y, z);
 		}
 	}
 	

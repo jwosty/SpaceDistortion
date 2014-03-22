@@ -88,7 +88,7 @@ public class GuiDHD extends GuiScreen {
 	@Override
 	public void actionPerformed(GuiButton guiButton) {
 		GuiDHDButton b = (GuiDHDButton) guiButton;
-		if (this.tileEntity.currentGlyphIndex < 7 && b.glyphID != 39) {
+		if (this.tileEntity.currentGlyphIndex < 7) {
 			// Update the GUI elements before sending to the server
 			((GuiDHDButton) this.buttonList.get(this.tileEntity.currentGlyphIndex)).glyphID = b.glyphID;
 		}
