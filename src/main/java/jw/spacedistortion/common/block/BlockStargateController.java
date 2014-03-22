@@ -7,11 +7,7 @@ import jw.spacedistortion.Axis;
 import jw.spacedistortion.Pair;
 import jw.spacedistortion.StringGrid;
 import jw.spacedistortion.Triplet;
-import jw.spacedistortion.client.SDSoundHandler;
-import jw.spacedistortion.client.gui.GuiDHD;
-import jw.spacedistortion.common.network.ChannelHandler;
-import jw.spacedistortion.common.network.packet.IPacket;
-import jw.spacedistortion.common.network.packet.PacketWormhole;
+import jw.spacedistortion.common.SpaceDistortion;
 import jw.spacedistortion.common.tileentity.StargateControllerState;
 import jw.spacedistortion.common.tileentity.TileEntityEventHorizon;
 import jw.spacedistortion.common.tileentity.TileEntityStargateController;
@@ -19,7 +15,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockPistonBase;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -30,7 +25,6 @@ import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
-import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -137,9 +131,10 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 	/** Called when the block is right-clicked on **/
 	public boolean onBlockActivated(World world, int x, int y, int z,
 			EntityPlayer player, int par1, float par2, float par3, float par4) {
-		if (!world.isRemote) {
+		if (world.isRemote) {
 			TileEntityStargateController tileEntity = (TileEntityStargateController) world.getTileEntity(x, y, z);
-			Minecraft.getMinecraft().displayGuiScreen(new GuiDHD(tileEntity));
+			player.openGui(SpaceDistortion.instance, 0, world, x, y, z);
+			//Minecraft.getMinecraft().displayGuiScreen(new GuiDHD(tileEntity));
 		}
 		return true;
 	}
@@ -350,17 +345,19 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 	@Override
 	public IIcon getIcon(IBlockAccess world, int x, int y, int z, int side) {
 		int facing = world.getBlockMetadata(x, y, z);
-		TileEntityStargateController tileEntity = (TileEntityStargateController) world.getTileEntity(x, y, z);
 		if (side == facing) {
-			switch (tileEntity.state) {
-			case NO_CONNECTED_STARGATE:
-				return this.controllerOff;
-			case READY:
-				return this.controllerIdle;
-			case ACTIVE_OUTGOING:
-				return this.controllerActive;
-			case ACTIVE_INCOMING:
-				return this.controllerActive;
+			TileEntityStargateController tileEntity = (TileEntityStargateController) world.getTileEntity(x, y, z);
+			if (tileEntity != null && tileEntity.state != null) {
+				switch (tileEntity.state) {
+				case NO_CONNECTED_STARGATE:
+					return this.controllerOff;
+				case READY:
+					return this.controllerIdle;
+				case ACTIVE_OUTGOING:
+					return this.controllerActive;
+				case ACTIVE_INCOMING:
+					return this.controllerActive;
+				}
 			}
 		}
 		return this.blockIcon;

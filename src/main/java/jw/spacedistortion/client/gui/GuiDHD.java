@@ -91,11 +91,6 @@ public class GuiDHD extends GuiScreen {
 		if (this.tileEntity.currentGlyphIndex < 7 && b.glyphID != 39) {
 			// Update the GUI elements before sending to the server
 			((GuiDHDButton) this.buttonList.get(this.tileEntity.currentGlyphIndex)).glyphID = b.glyphID;
-			/*
-			SDSoundHandler.playSoundAtBlock(
-					this.tileEntity.getWorldObj(), this.tileEntity.xCoord,
-					this.tileEntity.yCoord, this.tileEntity.zCoord, "stargate.dhd.glyph");
-			*/
 		}
 		b.isActivated = true;
 		// Kindly ask the server to input another glyph into the stargate controller tile entity (see

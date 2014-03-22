@@ -1,5 +1,6 @@
 package jw.spacedistortion.common;
 
+import jw.spacedistortion.client.gui.SDGuiHandler;
 import jw.spacedistortion.common.block.SDBlock;
 import jw.spacedistortion.common.network.ChannelHandler;
 import jw.spacedistortion.common.tileentity.TileEntityEventHorizon;
@@ -13,11 +14,12 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
+import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 
 @Mod(modid = CommonProxy.MOD_ID, name = CommonProxy.MOD_NAME, version = CommonProxy.MOD_VERSION)
 public class SpaceDistortion {
-	@Instance("SpaceDistortion")
+	@Instance(CommonProxy.MOD_ID)
 	public static SpaceDistortion instance;
 	
 	@SidedProxy(clientSide="jw.spacedistortion.client.ClientProxy", serverSide="jw.spacedistortion.common.CommonProxy")
@@ -41,8 +43,9 @@ public class SpaceDistortion {
 	public void init(FMLInitializationEvent event) {
 		GameRegistry.registerTileEntity(TileEntityEventHorizon.class, "tileEntityEventHorizon");
 		GameRegistry.registerTileEntity(TileEntityStargateController.class, "tileEntityStargateController");
+		NetworkRegistry.INSTANCE.registerGuiHandler(SpaceDistortion.instance, new SDGuiHandler());
 	}
 	
 	@EventHandler
-	public void postInit(FMLPostInitializationEvent event) {}
+	public void postInit(FMLPostInitializationEvent event) { }
 }

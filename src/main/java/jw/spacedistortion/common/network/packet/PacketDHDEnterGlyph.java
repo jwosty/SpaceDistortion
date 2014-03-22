@@ -75,12 +75,15 @@ public class PacketDHDEnterGlyph implements IPacket {
 					default:
 					}
 				}
+				
+				
 			} else {
 				// Add another glyph into the dialing address
 				if (tileEntity.currentGlyphIndex < 7) {
 					tileEntity.dialingAddress[tileEntity.currentGlyphIndex] = this.glyphID;
 					tileEntity.currentGlyphIndex++;
 				}
+				
 				// Play sounds to all players
 				for (int i = 0; i < player.worldObj.playerEntities.size(); i++) {
 					EntityPlayerMP p = (EntityPlayerMP) player.worldObj.playerEntities.get(i);
@@ -88,8 +91,10 @@ public class PacketDHDEnterGlyph implements IPacket {
 							CommonProxy.MOD_ID + ":stargate.dhd.glyph",
 							(double) tileEntity.xCoord, (double) tileEntity.yCoord, (double) tileEntity.zCoord,
 							1.0F, 1.0F));
-				}
+				}				
 			}
+			// Send changes on the stargate controller block and tile entity to all clients
+			player.worldObj.markBlockForUpdate(this.x, this.y, this.z);
 		}
 	}
 }
