@@ -2,6 +2,9 @@ package jw.spacedistortion.common.block;
 
 import jw.spacedistortion.Axis;
 import jw.spacedistortion.Pair;
+import jw.spacedistortion.client.SDSoundHandler;
+import jw.spacedistortion.common.network.ChannelHandler;
+import jw.spacedistortion.common.network.packet.PacketPlayLoopableTileEntitySound;
 import jw.spacedistortion.common.tileentity.TileEntityEventHorizon;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
@@ -18,6 +21,11 @@ public class BlockEventHorizon extends SDBlock implements ITileEntityProvider {
 	
 	public BlockEventHorizon() {
 		super(Material.portal);
+	}
+	
+	@Override
+	public boolean hasTileEntity() {
+		return true;
 	}
 	
 	@Override
@@ -38,6 +46,13 @@ public class BlockEventHorizon extends SDBlock implements ITileEntityProvider {
 	@Override
 	public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int x, int y, int z) {
 		return null;
+	}
+	
+	@Override
+	public void onBlockAdded(World world, int x, int y, int z) {
+		if (!world.isRemote) {
+			//ChannelHandler.serverSendPacketAllClients(new PacketPlayLoopableTileEntitySound(x, y, z));
+		}
 	}
 	
 	@Override
@@ -69,6 +84,7 @@ public class BlockEventHorizon extends SDBlock implements ITileEntityProvider {
 			float entityPitch = entity.rotationPitch;
 			float entityYaw = (srcRotation.Y - (entity.rotationYaw + 180)) + dstRotation.Y;
 			
+			
 			if (entity instanceof EntityPlayerMP) {
 				// Teleport the entity as a player
 				EntityPlayer player = (EntityPlayer) entity;
@@ -79,6 +95,9 @@ public class BlockEventHorizon extends SDBlock implements ITileEntityProvider {
 				// Teleport the entity as anything else
 				entity.setPositionAndRotation(entityX, entityY, entityZ, entityYaw, entityPitch);
 			}
+			// Play the stargate enter/exit sound at both stargates
+			SDSoundHandler.serverPlaySoundToPlayers(world.playerEntities, "stargate.enter", 1F, 1F, x, y, z);
+			SDSoundHandler.serverPlaySoundToPlayers(world.playerEntities, "stargate.enter", 1F, 1F, entityX, entityY, entityZ);
 		}
 	}
 	

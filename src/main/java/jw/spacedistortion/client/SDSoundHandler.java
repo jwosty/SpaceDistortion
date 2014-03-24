@@ -3,6 +3,8 @@ package jw.spacedistortion.client;
 import java.util.List;
 
 import jw.spacedistortion.common.CommonProxy;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.play.server.S29PacketSoundEffect;
 import net.minecraft.world.World;

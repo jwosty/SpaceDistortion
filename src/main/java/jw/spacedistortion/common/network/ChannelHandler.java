@@ -7,12 +7,11 @@ import java.util.EnumMap;
 
 import jw.spacedistortion.common.network.packet.IPacket;
 import jw.spacedistortion.common.network.packet.PacketDHDEnterGlyph;
-import jw.spacedistortion.common.network.packet.PacketWormhole;
+import jw.spacedistortion.common.network.packet.PacketPlayLoopableTileEntitySound;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.NetHandlerPlayServer;
-import net.minecraft.network.NetworkManager;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.FMLEmbeddedChannel;
 import cpw.mods.fml.common.network.FMLIndexedMessageToMessageCodec;
@@ -23,8 +22,8 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class ChannelHandler extends FMLIndexedMessageToMessageCodec<IPacket> {
 	public ChannelHandler() {
-		this.addDiscriminator(0, PacketWormhole.class);
-		this.addDiscriminator(1, PacketDHDEnterGlyph.class);
+		this.addDiscriminator(0, PacketDHDEnterGlyph.class);
+		this.addDiscriminator(1, PacketPlayLoopableTileEntitySound.class);
 	}
 
 	public static EnumMap<Side, FMLEmbeddedChannel> channels;
@@ -57,11 +56,11 @@ public class ChannelHandler extends FMLIndexedMessageToMessageCodec<IPacket> {
 		channel.writeOutbound(packet);
 	}
 	
+	//@SideOnly(Side.SERVER)
 	/**
 	 * Sends a packet from the server to all clients
 	 * @param packet An IPacket to send
 	 */
-	@SideOnly(Side.SERVER)
 	public static void serverSendPacketAllClients(IPacket packet) {
 		FMLEmbeddedChannel channel = ChannelHandler.channels.get(Side.SERVER);
 		channel.attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.ALL);

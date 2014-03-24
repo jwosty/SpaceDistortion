@@ -1,20 +1,22 @@
 {
   "stargate.glyph": {
     "catagory": "gui",
-    "sounds": [
-      {"name": "stargate/glyph", "stream": false}
-    ]
+    "sounds": [{"name": "stargate/glyph", "stream": false}]
   },
   "stargate.kawoosh": {
     "catagory": "block",
-    "sounds": [
-      {"name": "stargate/kawoosh", "stream": false}
-    ]
+    "sounds": [{"name": "stargate/kawoosh", "stream": false}]
   },
   "stargate.close": {
     "catagory": "block",
-    "sounds": [
-      {"name": "stargate/close", "stream": false}
-    ]
+    "sounds": [{"name": "stargate/close", "stream": false}]
+  },
+  "stargate.eventhorizon": {
+    "catagory": "portal",
+    "sounds": [{"name": "stargate/eventhorizon", "stream": false}]
+  },
+  "stargate.enter": {
+    "catagory": "portal",
+    "sounds": [{"name": "stargate/enter", "stream": false}]
   }
 }
