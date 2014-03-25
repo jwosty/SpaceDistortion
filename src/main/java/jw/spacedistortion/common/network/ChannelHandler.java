@@ -7,12 +7,10 @@ import java.util.EnumMap;
 
 import jw.spacedistortion.common.network.packet.IPacket;
 import jw.spacedistortion.common.network.packet.PacketDHDEnterGlyph;
-import jw.spacedistortion.common.network.packet.PacketPlayLoopingSound;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.NetHandlerPlayServer;
-import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.FMLEmbeddedChannel;
 import cpw.mods.fml.common.network.FMLIndexedMessageToMessageCodec;
 import cpw.mods.fml.common.network.FMLOutboundHandler;
@@ -23,7 +21,6 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class ChannelHandler extends FMLIndexedMessageToMessageCodec<IPacket> {
 	public ChannelHandler() {
 		this.addDiscriminator(0, PacketDHDEnterGlyph.class);
-		this.addDiscriminator(1, PacketPlayLoopingSound.class);
 	}
 
 	public static EnumMap<Side, FMLEmbeddedChannel> channels;

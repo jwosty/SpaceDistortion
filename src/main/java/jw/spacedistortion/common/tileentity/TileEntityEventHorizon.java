@@ -57,12 +57,11 @@ public class TileEntityEventHorizon extends TileEntity {
 	public void validate() {
 		if (this.shouldPlaySound) {
 			if (this.soundLoop == null) {
-				this.soundLoop = new LoopingSound("spacedistortion:stargate.eventhorizon", 0.5F, 1, this.xCoord, this.yCoord, this.zCoord);
+				this.soundLoop = new LoopingSound("spacedistortion:stargate.eventhorizon", 1F, 1, this.xCoord, this.yCoord, this.zCoord);
 			}
 			SoundHandler soundHandler = Minecraft.getMinecraft().getSoundHandler();
 			if (!soundHandler.isSoundPlaying(this.soundLoop)) {
 				soundHandler.playSound(this.soundLoop);
-				System.out.println("Sound stopped");
 			}
 		}
 	}
@@ -71,7 +70,6 @@ public class TileEntityEventHorizon extends TileEntity {
 	public void invalidate() {
 		if (this.soundLoop != null) {
 			Minecraft.getMinecraft().getSoundHandler().stopSound(this.soundLoop);
-			System.out.println("Event horizon loop stopped");
 		}
 		super.invalidate();
 	}
