@@ -3,12 +3,15 @@ package jw.spacedistortion.common.block;
 import jw.spacedistortion.Axis;
 import jw.spacedistortion.Pair;
 import jw.spacedistortion.client.SDSoundHandler;
+import jw.spacedistortion.client.audio.LoopingSound;
+import jw.spacedistortion.common.CommonProxy;
 import jw.spacedistortion.common.network.ChannelHandler;
-import jw.spacedistortion.common.network.packet.PacketPlayLoopableTileEntitySound;
+import jw.spacedistortion.common.network.packet.PacketPlayLoopingSound;
 import jw.spacedistortion.common.tileentity.TileEntityEventHorizon;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -30,7 +33,7 @@ public class BlockEventHorizon extends SDBlock implements ITileEntityProvider {
 	
 	@Override
 	public TileEntity createNewTileEntity(World world, int metadata) {
-		return new TileEntityEventHorizon();
+		return new TileEntityEventHorizon(metadata == 1);
 	}
 	
 	@Override

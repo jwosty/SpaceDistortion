@@ -1,8 +1,12 @@
 package jw.spacedistortion.common.tileentity;
 
 import jw.spacedistortion.Axis;
+import jw.spacedistortion.client.audio.LoopingSound;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ResourceLocation;
 
 public class TileEntityEventHorizon extends TileEntity {
 	public boolean isOutgoing = false;
@@ -11,8 +15,15 @@ public class TileEntityEventHorizon extends TileEntity {
 	public int destX;
 	public int destY;
 	public int destZ;
+	
+	public boolean shouldPlaySound = false;
+	public LoopingSound soundLoop;
 
-	public TileEntityEventHorizon() { }
+	public TileEntityEventHorizon() { };
+	
+	public TileEntityEventHorizon(boolean shouldPlaySound) {
+		this.shouldPlaySound = shouldPlaySound;
+	}
 	
 	@Override
 	public void writeToNBT(NBTTagCompound data) {
@@ -22,6 +33,7 @@ public class TileEntityEventHorizon extends TileEntity {
 			data.setInteger("axis", this.axis.toInt());
 		}
 		data.setIntArray("destCoords", new int[]{this.destX, this.destY, this.destZ});
+		data.setBoolean("shouldPlaySound", this.shouldPlaySound);
 	}
 	
 	@Override
@@ -33,8 +45,34 @@ public class TileEntityEventHorizon extends TileEntity {
 			this.axis = Axis.ofInt(a);
 		}
 		int[] destCoords = data.getIntArray("destCoords");
-		destX = destCoords[0];
-		destY = destCoords[1];
-		destZ = destCoords[2];
+		this.destX = destCoords[0];
+		this.destY = destCoords[1];
+		this.destZ = destCoords[2];
+		
+		//this.shouldPlaySound = data.getBoolean("shouldPlaySound");
+		this.shouldPlaySound = false;
+	}
+	
+	@Override
+	public void validate() {
+		if (this.shouldPlaySound) {
+			if (this.soundLoop == null) {
+				this.soundLoop = new LoopingSound("spacedistortion:stargate.eventhorizon", 0.5F, 1, this.xCoord, this.yCoord, this.zCoord);
+			}
+			SoundHandler soundHandler = Minecraft.getMinecraft().getSoundHandler();
+			if (!soundHandler.isSoundPlaying(this.soundLoop)) {
+				soundHandler.playSound(this.soundLoop);
+				System.out.println("Sound stopped");
+			}
+		}
+	}
+	
+	@Override
+	public void invalidate() {
+		if (this.soundLoop != null) {
+			Minecraft.getMinecraft().getSoundHandler().stopSound(this.soundLoop);
+			System.out.println("Event horizon loop stopped");
+		}
+		super.invalidate();
 	}
 }

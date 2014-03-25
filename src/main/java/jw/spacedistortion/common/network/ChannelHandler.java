@@ -7,7 +7,7 @@ import java.util.EnumMap;
 
 import jw.spacedistortion.common.network.packet.IPacket;
 import jw.spacedistortion.common.network.packet.PacketDHDEnterGlyph;
-import jw.spacedistortion.common.network.packet.PacketPlayLoopableTileEntitySound;
+import jw.spacedistortion.common.network.packet.PacketPlayLoopingSound;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.INetHandler;
@@ -23,7 +23,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class ChannelHandler extends FMLIndexedMessageToMessageCodec<IPacket> {
 	public ChannelHandler() {
 		this.addDiscriminator(0, PacketDHDEnterGlyph.class);
-		this.addDiscriminator(1, PacketPlayLoopableTileEntitySound.class);
+		this.addDiscriminator(1, PacketPlayLoopingSound.class);
 	}
 
 	public static EnumMap<Side, FMLEmbeddedChannel> channels;
@@ -77,17 +77,18 @@ public class ChannelHandler extends FMLIndexedMessageToMessageCodec<IPacket> {
 		// read the packet
 		packet.readBytes(data);
 		
-		// handle the packet by calling IPacket#onReceive
-		Side side = FMLCommonHandler.instance().getEffectiveSide();
+		Side side = context.channel().attr(NetworkRegistry.CHANNEL_SOURCE).get();
 		EntityPlayer player;
 		switch (side) {
 			case CLIENT:
 				player = Minecraft.getMinecraft().thePlayer;
-				packet.onReceive(player, side);
+					packet.onReceive(player, side);
+				break;
 			case SERVER:
 				INetHandler net = context.channel().attr(NetworkRegistry.NET_HANDLER).get();
 				player = ((NetHandlerPlayServer) net).playerEntity;
 				packet.onReceive(player, side);
+				break;
 		}
 	}
 }

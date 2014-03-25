@@ -1,7 +1,7 @@
 package jw.spacedistortion.common.network.packet;
 
 import io.netty.buffer.ByteBuf;
-import jw.spacedistortion.client.audio.LoopableTileEntitySound;
+import jw.spacedistortion.client.audio.LoopingSound;
 import jw.spacedistortion.common.CommonProxy;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.ISound;
@@ -9,22 +9,22 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import cpw.mods.fml.relauncher.Side;
 
-public class PacketPlayLoopableTileEntitySound implements IPacket {
+public class PacketPlayLoopingSound implements IPacket {
 	private int x;
 	private int y;
 	private int z;
 	
-	public PacketPlayLoopableTileEntitySound(int x, int y, int z) {
+	public PacketPlayLoopingSound(int x, int y, int z) {
 		this.x = x;
 		this.y = y;
 		this.z = z;
 	}
 	
-	public PacketPlayLoopableTileEntitySound(TileEntity tileEntity) {
+	public PacketPlayLoopingSound(TileEntity tileEntity) {
 		this(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord);
 	}
 	
-	public PacketPlayLoopableTileEntitySound() { };
+	public PacketPlayLoopingSound() { };
 	
 	@Override
 	public void readBytes(ByteBuf bytes) {
@@ -43,11 +43,8 @@ public class PacketPlayLoopableTileEntitySound implements IPacket {
 	@Override
 	public void onReceive(EntityPlayer player, Side side) {
 		if (player.worldObj.isRemote) {
-			TileEntity tileEntity = player.worldObj.getTileEntity(this.x, this.y, this.z);
-			if (tileEntity != null) {
-				ISound eventHorizonSound = new LoopableTileEntitySound(CommonProxy.MOD_ID + ":stargate.eventhorizon", tileEntity, 1F, 1);
-				Minecraft.getMinecraft().getSoundHandler().playSound(eventHorizonSound);
-			}
+			Minecraft.getMinecraft().getSoundHandler().playSound(new LoopingSound(
+					CommonProxy.MOD_ID + ":stargate.eventhorizon", 1, 1, this.x, this.y, this.z));
 		}
 	}
 }
