@@ -6,7 +6,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ResourceLocation;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class TileEntityEventHorizon extends TileEntity {
 	public boolean isOutgoing = false;
@@ -17,6 +18,7 @@ public class TileEntityEventHorizon extends TileEntity {
 	public int destZ;
 	
 	public boolean shouldPlaySound = false;
+	@SideOnly(Side.CLIENT)
 	public LoopingSound soundLoop;
 
 	public TileEntityEventHorizon() { };
@@ -49,13 +51,13 @@ public class TileEntityEventHorizon extends TileEntity {
 		this.destY = destCoords[1];
 		this.destZ = destCoords[2];
 		
-		//this.shouldPlaySound = data.getBoolean("shouldPlaySound");
-		this.shouldPlaySound = false;
+		this.shouldPlaySound = data.getBoolean("shouldPlaySound");
 	}
 	
 	@Override
 	public void validate() {
-		if (this.shouldPlaySound) {
+		super.validate();
+		if (this.worldObj.isRemote && this.shouldPlaySound) {
 			if (this.soundLoop == null) {
 				this.soundLoop = new LoopingSound("spacedistortion:stargate.eventhorizon", 1F, 1, this.xCoord, this.yCoord, this.zCoord);
 			}
@@ -68,9 +70,9 @@ public class TileEntityEventHorizon extends TileEntity {
 	
 	@Override
 	public void invalidate() {
-		if (this.soundLoop != null) {
+		super.invalidate();
+		if (this.worldObj.isRemote && this.soundLoop != null) {
 			Minecraft.getMinecraft().getSoundHandler().stopSound(this.soundLoop);
 		}
-		super.invalidate();
 	}
 }
