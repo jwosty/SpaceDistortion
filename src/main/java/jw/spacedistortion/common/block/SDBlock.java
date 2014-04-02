@@ -1,6 +1,7 @@
 package jw.spacedistortion.common.block;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import jw.spacedistortion.Axis;
@@ -145,7 +146,7 @@ public class SDBlock extends Block {
 	// Returns all blocks in a structure if this block is part of it
 	public static DetectStructureResults detectStructure(IBlockAccess world,
 			StringGrid template, int xOrigin, int yOrigin, int zOrigin,
-			Block block) {
+			HashMap<Character, Block> charBlockKey) {
 		DetectStructureResults results = null;
 		// boolean[][] blocks = null;
 		// For now, assume its on the xy plane
@@ -155,9 +156,9 @@ public class SDBlock extends Block {
 				for (int yOffset = 0; yOffset < template.height; yOffset++) {
 					if (template.get(xOffset, yOffset) != ' ') {
 						// Test the template with this offset.
-						boolean[][] blocks = SDBlock.detectStructureAtLocation(
+						Block[][] blocks = SDBlock.detectStructureAtLocation(
 								world, template, xOrigin, yOrigin, zOrigin,
-								axis, xOffset, yOffset, block);
+								axis, xOffset, yOffset, charBlockKey);
 						if (blocks != null) {
 							results = new DetectStructureResults(blocks,
 									new Triplet(xOrigin, yOrigin, zOrigin),
@@ -190,13 +191,13 @@ public class SDBlock extends Block {
 	 *            The plane the structure lies on (-1 = x-y, 0 = x-z, 1 = y-z)
 	 * @return
 	 */
-	public static boolean[][] detectStructureAtLocation(IBlockAccess world,
+	public static Block[][] detectStructureAtLocation(IBlockAccess world,
 			StringGrid template, int x, int y, int z, Axis axis,
 			int xTemplateOffset, int yTemplateOffset,
-			Block block) {
+			HashMap<Character, Block> charBlockKey) {
 		Triplet<Integer, Integer, Integer> p = new Triplet(x, y, z);
 		// To keep track of the found blocks, if any
-		boolean[][] blocks = new boolean[template.height][template.width];
+		Block[][] blocks = new Block[template.height][template.width];
 		match:
 			for (int gridY = 0; gridY < template.height; gridY++) {
 			for (int gridX = 0; gridX < template.width; gridX++) {
@@ -204,21 +205,22 @@ public class SDBlock extends Block {
 				Triplet<Integer, Integer, Integer> coords = SDBlock.getBlockInStructure(world, x, y, z,
 						gridX - xTemplateOffset, -gridY + yTemplateOffset,
 						axis);
-				Block b = world.getBlock(coords.X, coords.Y, coords.Z);
-				// Test it
-				if (template.get(gridX, gridY) != ' ') {
-					// Expecting this block
-					if (b == block) {
-						// We matched a block on the structure, so add it to the
-						// list
-						blocks[gridY][gridX] = true;
+				Block currentBlock = world.getBlock(coords.X, coords.Y, coords.Z);
+				
+				Character tChar = template.get(gridX, gridY);
+				if (charBlockKey.containsKey(tChar)) {
+					if (currentBlock == charBlockKey.get(tChar)) {
+						// This block matches the template, so add it to the results
+						blocks[gridX][gridY] = currentBlock;
 					} else {
-						// This match evidently didn't work, so fail
+						// This block doesn't match, so it is a failure
 						blocks = null;
 						break match;
 					}
-				} // No 'else' clause as blocks not part of the structure don't
-					// matter
+				} else {
+					// Treat any character not in charBlockKey as a wildcard
+					blocks[gridX][gridY] = currentBlock;
+				}
 			}
 		}
 		return blocks;

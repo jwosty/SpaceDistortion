@@ -1,10 +1,14 @@
 package jw.spacedistortion.common;
 
+import java.util.HashMap;
+
+import jw.spacedistortion.StringGrid;
 import jw.spacedistortion.client.gui.SDGuiHandler;
 import jw.spacedistortion.common.block.SDBlock;
 import jw.spacedistortion.common.network.ChannelHandler;
 import jw.spacedistortion.common.tileentity.TileEntityEventHorizon;
 import jw.spacedistortion.common.tileentity.TileEntityStargateController;
+import net.minecraft.block.Block;
 import net.minecraftforge.common.config.Configuration;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -25,6 +29,24 @@ public class SpaceDistortion {
 	@SidedProxy(clientSide="jw.spacedistortion.client.ClientProxy", serverSide="jw.spacedistortion.common.CommonProxy")
 	public static CommonProxy proxy;
 	
+	public static StringGrid stargateRingShape = new StringGrid(
+			"  RRR  ",
+			" R   R ",
+			"R     R",
+			"R     R",
+			"R     R",
+			" R   R ",
+			"  RRR  ");
+	public static StringGrid stargateEventHorizonShape = new StringGrid(
+			"       ",
+			"  EEE  ",
+			" EEEEE ",
+			" EEEEE ",
+			" EEEEE ",
+			"  EEE  ",
+			"       ");
+	public static HashMap<Character, Block> stargateRingCharBlockKey = null;
+	
 	@EventHandler
 	public void serverLoad(FMLServerStartingEvent event) {
 		ChannelHandler.initChannels();
@@ -37,6 +59,9 @@ public class SpaceDistortion {
 		SDBlock.configureBlocks(config);
 		SDBlock.registerBlocks();
 		config.save();
+		
+		stargateRingCharBlockKey = new HashMap<Character, Block>();
+		stargateRingCharBlockKey.put('R', SDBlock.stargateRing);
 	}
 	
 	@EventHandler

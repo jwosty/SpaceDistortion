@@ -1,6 +1,7 @@
 package jw.spacedistortion.common.block;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import jw.spacedistortion.Axis;
@@ -29,23 +30,6 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockStargateController extends SDBlock implements ITileEntityProvider {
-	public static StringGrid stargateRingShape = new StringGrid(
-			"  XXX  ",
-			" X   X ",
-			"X     X",
-			"X     X",
-			"X     X",
-			" X   X ",
-			"  XXX  ");
-	public static StringGrid stargateEventHorizonShape = new StringGrid(
-			"       ",
-			"  XXX  ",
-			" XXXXX ",
-			" XXXXX ",
-			" XXXXX ",
-			"  XXX  ",
-			"       ");
-
 	@SideOnly(Side.CLIENT)
 	private IIcon controllerOff;
 	@SideOnly(Side.CLIENT)
@@ -312,14 +296,15 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 				stargate.firstNeighbor.X + relativeOrigin.X,
 				stargate.firstNeighbor.Y + relativeOrigin.Y,
 				stargate.firstNeighbor.Z + relativeOrigin.Z);
-		for (int templateX = 0; templateX <= stargateEventHorizonShape.width; templateX++) {
-			for (int templateY = 0; templateY <= stargateEventHorizonShape.height; templateY++) {
-				if (stargateEventHorizonShape.get(templateX, templateY) == 'X') {
+		for (int templateX = 0; templateX <= SpaceDistortion.stargateEventHorizonShape.width; templateX++) {
+			for (int templateY = 0; templateY <= SpaceDistortion.stargateEventHorizonShape.height; templateY++) {
+				if (SpaceDistortion.stargateEventHorizonShape.get(templateX, templateY) == 'E') {
 					Triplet<Integer, Integer, Integer> coords = this
 							.getBlockInStructure(world, origin.X, origin.Y,
 									origin.Z, templateX, -templateY,
 									stargate.axis);
 					results.add(new Triplet(coords.X, coords.Y, coords.Z));
+					System.out.println("added event horizon at (" + coords.X + ", " + coords.Y + ", " + coords.Z + ")");
 				}
 			}
 		}
@@ -340,8 +325,8 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 			Block type = blockInfo.Y;
 			if (type == SDBlock.stargateRing) {
 				DetectStructureResults results = SDBlock.detectStructure(world,
-						stargateRingShape, coords[0], coords[1],
-						coords[2], SDBlock.stargateRing);
+						SpaceDistortion.stargateRingShape, coords[0], coords[1],
+						coords[2], SpaceDistortion.stargateRingCharBlockKey);
 				if (results != null) {
 					return results;
 				}
