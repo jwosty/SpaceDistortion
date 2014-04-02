@@ -304,7 +304,6 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 									origin.Z, templateX, -templateY,
 									stargate.axis);
 					results.add(new Triplet(coords.X, coords.Y, coords.Z));
-					System.out.println("added event horizon at (" + coords.X + ", " + coords.Y + ", " + coords.Z + ")");
 				}
 			}
 		}
