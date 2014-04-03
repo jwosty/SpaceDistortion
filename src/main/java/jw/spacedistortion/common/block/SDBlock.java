@@ -25,8 +25,9 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 public class SDBlock extends Block {
-	public static BlockStargateRing stargateRing;
 	public static BlockStargateController stargateController;
+	public static BlockStargateRing stargateRing;
+	public static BlockStargateRingChevron stargateRingChevron;
 	public static BlockEventHorizon eventHorizon;
 
 	/**
@@ -34,12 +35,16 @@ public class SDBlock extends Block {
 	 * @param config The configuration file to use
 	 */
 	public static void configureBlocks(Configuration config) {
+		stargateController = (BlockStargateController) new BlockStargateController()
+				.setBlockName("stargateController")
+				.setCreativeTab(CreativeTabs.tabBlock)
+				.setStepSound(Block.soundTypeStone);
 		stargateRing = (BlockStargateRing) new BlockStargateRing()
 				.setBlockName("stargateRing")
 				.setCreativeTab(CreativeTabs.tabBlock)
 				.setStepSound(Block.soundTypeStone);
-		stargateController = (BlockStargateController) new BlockStargateController()
-				.setBlockName("stargateController")
+		stargateRingChevron = (BlockStargateRingChevron) new BlockStargateRingChevron()
+				.setBlockName("stargateRingChevron")
 				.setCreativeTab(CreativeTabs.tabBlock)
 				.setStepSound(Block.soundTypeStone);
 		eventHorizon = (BlockEventHorizon) new BlockEventHorizon()
@@ -74,12 +79,10 @@ public class SDBlock extends Block {
 	 * Registers all blocks in the mod and the names for the blocks
 	 */
 	public static void registerBlocks() {
+		GameRegistry.registerBlock(stargateController, stargateController.getUnlocalizedName());
 		GameRegistry.registerBlock(stargateRing, stargateRing.getUnlocalizedName());
-		LanguageRegistry.addName(stargateRing, "Stargate Ring");
-		GameRegistry.registerBlock(stargateController, "stargateController");
-		LanguageRegistry.addName(stargateController, "Stargate Controller");
-		// Don't need to set a tooltip name as this can't be obtained in the inventory without commands
-		GameRegistry.registerBlock(eventHorizon, "eventHorizon");
+		GameRegistry.registerBlock(stargateRingChevron, stargateRingChevron.getUnlocalizedName());
+		GameRegistry.registerBlock(eventHorizon, eventHorizon.getUnlocalizedName());
 	}
 
 	/**

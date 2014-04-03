@@ -30,13 +30,13 @@ public class SpaceDistortion {
 	public static CommonProxy proxy;
 	
 	public static StringGrid stargateRingShape = new StringGrid(
-			"  RRR  ",
-			" R   R ",
+			"  RCR  ",
+			" C   C ",
 			"R     R",
+			"C     C",
 			"R     R",
-			"R     R",
-			" R   R ",
-			"  RRR  ");
+			" C   C ",
+			"  RCR  ");
 	public static StringGrid stargateEventHorizonShape = new StringGrid(
 			"       ",
 			"  EEE  ",
@@ -62,6 +62,7 @@ public class SpaceDistortion {
 		
 		stargateRingCharBlockKey = new HashMap<Character, Block>();
 		stargateRingCharBlockKey.put('R', SDBlock.stargateRing);
+		stargateRingCharBlockKey.put('C', SDBlock.stargateRingChevron);
 	}
 	
 	@EventHandler
