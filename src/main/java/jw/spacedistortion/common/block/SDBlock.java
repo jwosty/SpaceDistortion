@@ -19,6 +19,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.common.util.ForgeDirection;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.relauncher.Side;
@@ -149,7 +150,7 @@ public class SDBlock extends Block {
 	// Returns all blocks in a structure if this block is part of it
 	public static DetectStructureResults detectStructure(IBlockAccess world,
 			StringGrid template, int xOrigin, int yOrigin, int zOrigin,
-			HashMap<Character, Block> charBlockKey) {
+			HashMap<Character, Pair<Block, Boolean>> charAndBlockDirectionMetadataKey) {
 		DetectStructureResults results = null;
 		// boolean[][] blocks = null;
 		// For now, assume its on the xy plane
@@ -159,13 +160,14 @@ public class SDBlock extends Block {
 				for (int yOffset = 0; yOffset < template.height; yOffset++) {
 					if (template.get(xOffset, yOffset) != ' ') {
 						// Test the template with this offset.
-						Block[][] blocks = SDBlock.detectStructureAtLocation(
+						Pair<Block[][], HashMap<Block, ForgeDirection>> blocksDirections = SDBlock.detectStructureAtLocation(
 								world, template, xOrigin, yOrigin, zOrigin,
-								axis, xOffset, yOffset, charBlockKey);
+								axis, xOffset, yOffset, charAndBlockDirectionMetadataKey);
+						Block[][] blocks = blocksDirections.X;
+						HashMap<Block, ForgeDirection> blockDirections = blocksDirections.Y;
 						if (blocks != null) {
-							results = new DetectStructureResults(blocks,
-									new Triplet(xOrigin, yOrigin, zOrigin),
-									axis, xOffset, yOffset);
+							results = new DetectStructureResults(blocks, blockDirections,
+									new Triplet(xOrigin, yOrigin, zOrigin), axis, xOffset, yOffset);
 							break match;
 						}
 					}
@@ -177,8 +179,11 @@ public class SDBlock extends Block {
 	}
 
 	/**
-	 * Find a structure using a StringGrid and the given position. If no
-	 * structure is found at the location provided, return value will be null
+	 * Find a structure using a StringGrid and the given position. Optionally,
+	 * check if the directional metadata of certain blocks is the same and
+	 * include this in the result. If no structure matches at the location
+	 * provided or metadata of specified blocks is not all the same, the
+	 * return value will be null
 	 * 
 	 * @param world
 	 *            The world to detect the structure in
@@ -190,17 +195,21 @@ public class SDBlock extends Block {
 	 *            The y ...
 	 * @param z
 	 *            The z ...
-	 * @param plane
-	 *            The plane the structure lies on (-1 = x-y, 0 = x-z, 1 = y-z)
+	 * @param axis
+	 *            The axis the structure lies on (-1 = x-y, 0 = x-z, 1 = y-z)
+	 * @param charAndBlockDirectionMetadataKey
+	 *            A HashMap of characters to match with their blocks (and
+	 *            whether or not the block has directional metadata) in the template
 	 * @return
 	 */
-	public static Block[][] detectStructureAtLocation(IBlockAccess world,
+	public static Pair<Block[][], HashMap<Block, ForgeDirection>> detectStructureAtLocation(IBlockAccess world,
 			StringGrid template, int x, int y, int z, Axis axis,
 			int xTemplateOffset, int yTemplateOffset,
-			HashMap<Character, Block> charBlockKey) {
+			HashMap<Character, Pair<Block, Boolean>> charAndBlockDirectionMetadataKey) {
 		Triplet<Integer, Integer, Integer> p = new Triplet(x, y, z);
 		// To keep track of the found blocks, if any
 		Block[][] blocks = new Block[template.height][template.width];
+		HashMap<Block, ForgeDirection> directionalMetadata = new HashMap();
 		match:
 			for (int gridY = 0; gridY < template.height; gridY++) {
 			for (int gridX = 0; gridX < template.width; gridX++) {
@@ -211,12 +220,28 @@ public class SDBlock extends Block {
 				Block currentBlock = world.getBlock(coords.X, coords.Y, coords.Z);
 				
 				Character tChar = template.get(gridX, gridY);
-				if (charBlockKey.containsKey(tChar)) {
-					if (currentBlock == charBlockKey.get(tChar)) {
+				if (charAndBlockDirectionMetadataKey.containsKey(tChar)) {
+					Pair<Block, Boolean> item = charAndBlockDirectionMetadataKey.get(tChar);
+					Block templateBlock = item.X;
+					if (currentBlock == templateBlock) {
+						// Check for metadata
+						if (item.Y) {
+							ForgeDirection currentBlockDirection = ForgeDirection.getOrientation(world.getBlockMetadata(coords.X, coords.Y, coords.Z));
+							if (directionalMetadata.containsKey(templateBlock)) {
+								if (currentBlockDirection != directionalMetadata.get(templateBlock)) {
+									// Metadata doesn't match, so fail
+									blocks = null;
+									break match;
+								}
+							} else {
+								directionalMetadata.put(templateBlock, currentBlockDirection);
+							}
+						}
 						// This block matches the template, so add it to the results
 						blocks[gridX][gridY] = currentBlock;
+						ForgeDirection d = ForgeDirection.getOrientation(0);
 					} else {
-						// This block doesn't match, so it is a failure
+						// Block doesn't match, so fail
 						blocks = null;
 						break match;
 					}
@@ -226,7 +251,7 @@ public class SDBlock extends Block {
 				}
 			}
 		}
-		return blocks;
+		return new Pair(blocks, directionalMetadata);
 	}
 	
 	/**

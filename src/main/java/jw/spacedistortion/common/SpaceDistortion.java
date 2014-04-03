@@ -2,6 +2,7 @@ package jw.spacedistortion.common;
 
 import java.util.HashMap;
 
+import jw.spacedistortion.Pair;
 import jw.spacedistortion.StringGrid;
 import jw.spacedistortion.client.gui.SDGuiHandler;
 import jw.spacedistortion.common.block.SDBlock;
@@ -45,7 +46,7 @@ public class SpaceDistortion {
 			" EEEEE ",
 			"  EEE  ",
 			"       ");
-	public static HashMap<Character, Block> stargateRingCharBlockKey = null;
+	public static HashMap<Character,Pair<Block,Boolean>> stargateRingShapeInfo = null;
 	
 	@EventHandler
 	public void serverLoad(FMLServerStartingEvent event) {
@@ -60,9 +61,9 @@ public class SpaceDistortion {
 		SDBlock.registerBlocks();
 		config.save();
 		
-		stargateRingCharBlockKey = new HashMap<Character, Block>();
-		stargateRingCharBlockKey.put('R', SDBlock.stargateRing);
-		stargateRingCharBlockKey.put('C', SDBlock.stargateRingChevron);
+		stargateRingShapeInfo = new HashMap();
+		stargateRingShapeInfo.put('R', new Pair(SDBlock.stargateRing, false));
+		stargateRingShapeInfo.put('C', new Pair(SDBlock.stargateRingChevron, true));
 	}
 	
 	@EventHandler

@@ -325,7 +325,7 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 			if (type == SDBlock.stargateRing) {
 				DetectStructureResults results = SDBlock.detectStructure(world,
 						SpaceDistortion.stargateRingShape, coords[0], coords[1],
-						coords[2], SpaceDistortion.stargateRingCharBlockKey);
+						coords[2], SpaceDistortion.stargateRingShapeInfo);
 				if (results != null) {
 					return results;
 				}
