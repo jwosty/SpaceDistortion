@@ -9,18 +9,16 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 public class DetectStructureResults {
 	Block[][] blocks;
-	HashMap<Block, ForgeDirection> blockDirections;
 	Triplet<Integer, Integer, Integer> firstNeighbor;
-	Axis axis;
+	ForgeDirection facing;
 	int xOffset;
 	int yOffset;
 	
-	public DetectStructureResults(Block[][] blocks, HashMap<Block, ForgeDirection> blockDirections,
-			Triplet<Integer, Integer, Integer> firstNeighbor, Axis axis, int xOffset, int yOffset) {
+	public DetectStructureResults(Block[][] blocks,
+			Triplet<Integer, Integer, Integer> firstNeighbor, ForgeDirection facing, int xOffset, int yOffset) {
 		this.blocks = blocks;
-		this.blockDirections = blockDirections;
 		this.firstNeighbor = firstNeighbor;
-		this.axis = axis;
+		this.facing = facing;
 		this.xOffset = xOffset;
 		this.yOffset = yOffset;
 	}

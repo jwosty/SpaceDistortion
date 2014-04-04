@@ -1,6 +1,5 @@
 package jw.spacedistortion.common.block;
 
-import jw.spacedistortion.Axis;
 import jw.spacedistortion.Pair;
 import jw.spacedistortion.client.SDSoundHandler;
 import jw.spacedistortion.common.tileentity.TileEntityEventHorizon;
@@ -14,6 +13,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public class BlockEventHorizon extends SDBlock implements ITileEntityProvider {
 	
@@ -65,9 +65,9 @@ public class BlockEventHorizon extends SDBlock implements ITileEntityProvider {
 				&& Math.floor(entity.posX) == x && Math.floor(entity.posY) == y
 				&& Math.floor(entity.posZ) == z) {
 			// Planes of source and target stargates
-			Axis srcPlane = srcTileEntity.axis;
-			Axis dstPlane = dstTileEntity.axis;
-			System.out.println("srcPlane -> " + srcPlane + ", dstPlane -> " + dstPlane);
+			ForgeDirection srcFacing = srcTileEntity.facing;
+			ForgeDirection dstFacing = dstTileEntity.facing;
+			System.out.println("srcPlane -> " + srcFacing + ", dstPlane -> " + dstFacing);
 			// Calculate position
 			double entityX = srcTileEntity.destX
 					+ (entity.posX - Math.floor(entity.posX));
@@ -77,8 +77,8 @@ public class BlockEventHorizon extends SDBlock implements ITileEntityProvider {
 					+ (entity.posZ - Math.floor(entity.posZ));
 			
 			// Calculate rotation
-			Pair<Integer, Integer> srcRotation = srcPlane.getPitchAndYaw();
-			Pair<Integer, Integer> dstRotation = dstPlane.getPitchAndYaw();
+			Pair<Integer, Integer> dstRotation = new Pair(0, 0); //dstFacing.getPitchAndYaw();
+			Pair<Integer, Integer> srcRotation = new Pair(0, 0); //srcFacing.getPitchAndYaw();
 			float entityPitch = entity.rotationPitch;
 			float entityYaw = (srcRotation.Y - (entity.rotationYaw + 180)) + dstRotation.Y;
 			

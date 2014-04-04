@@ -6,12 +6,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.util.ForgeDirection;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 public class TileEntityEventHorizon extends TileEntity {
 	public boolean isOutgoing = false;
-	public Axis axis;
+	public ForgeDirection facing;
 	// Coordinates of the destination stargate controller
 	public int destX;
 	public int destY;
@@ -31,8 +32,8 @@ public class TileEntityEventHorizon extends TileEntity {
 	public void writeToNBT(NBTTagCompound data) {
 		super.writeToNBT(data);
 		data.setBoolean("outgoing", isOutgoing);
-		if (axis != null) {
-			data.setInteger("axis", this.axis.toInt());
+		if (facing != null) {
+			data.setInteger("facing", this.facing.ordinal());
 		}
 		data.setIntArray("destCoords", new int[]{this.destX, this.destY, this.destZ});
 		data.setBoolean("shouldPlaySound", this.shouldPlaySound);
@@ -42,9 +43,9 @@ public class TileEntityEventHorizon extends TileEntity {
 	public void readFromNBT(NBTTagCompound data) {
 		super.readFromNBT(data);
 		this.isOutgoing = data.getBoolean("outgoing");
-		Integer a = data.getInteger("axis");
-		if (a != null) {
-			this.axis = Axis.ofInt(a);
+		Integer f = data.getInteger("facing");
+		if (f != null) {
+			this.facing = ForgeDirection.getOrientation(f);
 		}
 		int[] destCoords = data.getIntArray("destCoords");
 		this.destX = destCoords[0];

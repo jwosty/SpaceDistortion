@@ -46,7 +46,7 @@ public class SpaceDistortion {
 			" EEEEE ",
 			"  EEE  ",
 			"       ");
-	public static HashMap<Character,Pair<Block,Boolean>> stargateRingShapeInfo = null;
+	public static HashMap<Character, Pair<Block, Boolean>> stargateRingShapeInfo = null;
 	
 	@EventHandler
 	public void serverLoad(FMLServerStartingEvent event) {

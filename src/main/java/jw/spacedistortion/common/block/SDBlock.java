@@ -3,12 +3,14 @@ package jw.spacedistortion.common.block;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 
 import jw.spacedistortion.Axis;
 import jw.spacedistortion.Pair;
 import jw.spacedistortion.StringGrid;
 import jw.spacedistortion.Triplet;
 import jw.spacedistortion.common.CommonProxy;
+import jw.spacedistortion.common.SpaceDistortion;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -146,33 +148,43 @@ public class SDBlock extends Block {
 		}
 		return blocks;
 	}
-
+	
 	// Returns all blocks in a structure if this block is part of it
 	public static DetectStructureResults detectStructure(IBlockAccess world,
 			StringGrid template, int xOrigin, int yOrigin, int zOrigin,
-			HashMap<Character, Pair<Block, Boolean>> charAndBlockDirectionMetadataKey) {
+			HashMap<Character, Pair<Block, Boolean>> charToBlock) {
+		
+		// Initialize a clone of the character to block and direction HashMap, using directions when needed
+		HashMap<Character, Pair<Block, Integer>> charToBlockAndMetadata = new HashMap();
+		for (Entry<Character, Pair<Block, Boolean>> e : charToBlock.entrySet()) {
+			charToBlockAndMetadata.put(e.getKey(), new Pair(e.getValue().X, e.getValue().Y ? ForgeDirection.UNKNOWN : null));
+		}
+		
 		DetectStructureResults results = null;
-		// boolean[][] blocks = null;
-		// For now, assume its on the xy plane
 		// Move the template over each possible position
-		match: for (Axis axis : Axis.values()) {
+		match: for (ForgeDirection facing : ForgeDirection.VALID_DIRECTIONS) {
+			// Update metadata
+			for (Entry<Character, Pair<Block, Integer>> e : charToBlockAndMetadata.entrySet()) {
+				if (e.getValue().Y != null) {
+					charToBlockAndMetadata.put(e.getKey(), new Pair(e.getValue().X, facing.ordinal()));
+				}
+			}
 			for (int xOffset = 0; xOffset < template.width; xOffset++) {
 				for (int yOffset = 0; yOffset < template.height; yOffset++) {
-					if (template.get(xOffset, yOffset) != ' ') {
+					// It's pointless to test for a structure here if the current block match is a wildcard
+					if (charToBlockAndMetadata.containsKey(template.get(xOffset, yOffset))) {
 						// Test the template with this offset.
-						Pair<Block[][], HashMap<Block, ForgeDirection>> blocksDirections = SDBlock.detectStructureAtLocation(
+						Block[][] blocks = SDBlock.detectStructureAtLocation(
 								world, template, xOrigin, yOrigin, zOrigin,
-								axis, xOffset, yOffset, charAndBlockDirectionMetadataKey);
-						Block[][] blocks = blocksDirections.X;
-						HashMap<Block, ForgeDirection> blockDirections = blocksDirections.Y;
+								facing, xOffset, yOffset, charToBlockAndMetadata);
 						if (blocks != null) {
-							results = new DetectStructureResults(blocks, blockDirections,
-									new Triplet(xOrigin, yOrigin, zOrigin), axis, xOffset, yOffset);
+							results = new DetectStructureResults(
+									blocks, new Triplet(xOrigin, yOrigin, zOrigin),
+									facing, xOffset, yOffset);
 							break match;
 						}
 					}
 				}
-
 			}
 		}
 		return results;
@@ -195,63 +207,58 @@ public class SDBlock extends Block {
 	 *            The y ...
 	 * @param z
 	 *            The z ...
-	 * @param axis
-	 *            The axis the structure lies on (-1 = x-y, 0 = x-z, 1 = y-z)
+	 * @param facing
+	 *            The direction the structure is facing
 	 * @param charAndBlockDirectionMetadataKey
 	 *            A HashMap of characters to match with their blocks (and
 	 *            whether or not the block has directional metadata) in the template
 	 * @return
 	 */
-	public static Pair<Block[][], HashMap<Block, ForgeDirection>> detectStructureAtLocation(IBlockAccess world,
-			StringGrid template, int x, int y, int z, Axis axis,
+	public static Block[][] detectStructureAtLocation(IBlockAccess world,
+			StringGrid template, int x, int y, int z, ForgeDirection facing,
 			int xTemplateOffset, int yTemplateOffset,
-			HashMap<Character, Pair<Block, Boolean>> charAndBlockDirectionMetadataKey) {
+			HashMap<Character, Pair<Block, Integer>> charToBlockAndMetadata) {
+		
 		Triplet<Integer, Integer, Integer> p = new Triplet(x, y, z);
 		// To keep track of the found blocks, if any
 		Block[][] blocks = new Block[template.height][template.width];
-		HashMap<Block, ForgeDirection> directionalMetadata = new HashMap();
 		match:
 			for (int gridY = 0; gridY < template.height; gridY++) {
-			for (int gridX = 0; gridX < template.width; gridX++) {
-				// Get the correct block
-				Triplet<Integer, Integer, Integer> coords = SDBlock.getBlockInStructure(world, x, y, z,
-						gridX - xTemplateOffset, -gridY + yTemplateOffset,
-						axis);
-				Block currentBlock = world.getBlock(coords.X, coords.Y, coords.Z);
-				
-				Character tChar = template.get(gridX, gridY);
-				if (charAndBlockDirectionMetadataKey.containsKey(tChar)) {
-					Pair<Block, Boolean> item = charAndBlockDirectionMetadataKey.get(tChar);
-					Block templateBlock = item.X;
-					if (currentBlock == templateBlock) {
-						// Check for metadata
-						if (item.Y) {
-							ForgeDirection currentBlockDirection = ForgeDirection.getOrientation(world.getBlockMetadata(coords.X, coords.Y, coords.Z));
-							if (directionalMetadata.containsKey(templateBlock)) {
-								if (currentBlockDirection != directionalMetadata.get(templateBlock)) {
-									// Metadata doesn't match, so fail
-									blocks = null;
-									break match;
-								}
-							} else {
-								directionalMetadata.put(templateBlock, currentBlockDirection);
+				for (int gridX = 0; gridX < template.width; gridX++) {
+					// Find the position of the block in the structure
+					Triplet<Integer, Integer, Integer> coords = SDBlock.getBlockInStructure(world, x, y, z,
+							gridX - xTemplateOffset, -gridY + yTemplateOffset,
+							facing);
+					//Triplet<Integer, Integer, Integer> coords = new Triplet(x + facing.offsetX, y + facing.offsetY, z + facing.offsetZ);
+					Block currentBlock = world.getBlock(coords.X, coords.Y, coords.Z);
+					
+					Character tChar = template.get(gridX, gridY);
+					if (charToBlockAndMetadata.containsKey(tChar)) {
+						Pair<Block, Integer> bm = charToBlockAndMetadata.get(tChar);
+						Block templateBlock = bm.X;
+						Integer metadataTemplate = bm.Y;
+						if (currentBlock == templateBlock) {
+							// Check for metadata
+							if (metadataTemplate != null && world.getBlockMetadata(coords.X, coords.Y, coords.Z) != metadataTemplate) {
+								// Metadata doesn't match template, so fail
+								blocks = null;
+								break match;
 							}
+							// This block matches the template, so add it to the results
+							blocks[gridX][gridY] = currentBlock;
+							ForgeDirection d = ForgeDirection.getOrientation(0);
+						} else {
+							// Block doesn't match, so fail
+							blocks = null;
+							break match;
 						}
-						// This block matches the template, so add it to the results
-						blocks[gridX][gridY] = currentBlock;
-						ForgeDirection d = ForgeDirection.getOrientation(0);
 					} else {
-						// Block doesn't match, so fail
-						blocks = null;
-						break match;
+						// Treat any character not in charBlockKey as a wildcard
+						blocks[gridX][gridY] = currentBlock;
 					}
-				} else {
-					// Treat any character not in charBlockKey as a wildcard
-					blocks[gridX][gridY] = currentBlock;
 				}
-			}
 		}
-		return new Pair(blocks, directionalMetadata);
+		return blocks;
 	}
 	
 	/**
@@ -275,28 +282,45 @@ public class SDBlock extends Block {
 	 */
 	public static Triplet<Integer, Integer, Integer> getBlockInStructure(
 			IBlockAccess world, int x, int y, int z, int gridX, int gridY,
-			Axis axis) {
-		Triplet<Integer, Integer, Integer> offset = templateToWorldCoordinates(gridX, gridY, axis);
+			ForgeDirection facing) {
+		Triplet<Integer, Integer, Integer> offset = templateToWorldCoordinates(gridX, gridY, facing);
 		return new Triplet(x + offset.X, y + offset.Y, z + offset.Z);
 	}
 	
-	public static Triplet<Integer, Integer, Integer> templateToWorldCoordinates(int tx, int ty, Axis axis) {
-		int x;
-		int y;
-		int z;
-		if (axis == Axis.X) {
-			x = 0;
+	public static Triplet<Integer, Integer, Integer> templateToWorldCoordinates(int tx, int ty, ForgeDirection facing) {
+		int x = 0;
+		int y = 0;
+		int z = 0;
+		
+		switch (facing) {
+		case NORTH:
+			x = -tx;
+			y = ty;
+			break;
+		case SOUTH:
+			x = tx;
+			y = ty;
+			break;
+		case EAST:
+			y = ty;
+			z = -tx;
+			break;
+		case WEST:
 			y = ty;
 			z = tx;
-		} else if (axis == Axis.Y) {
+			break;
+		case UP:
 			x = tx;
-			y = 0;
 			z = ty;
-		} else { // axis == Axis.Z
-			x = tx;
-			y = ty;
-			z = 0;
+			break;
+		case DOWN:
+			x = -tx;
+			z = ty;
+			break;
+		case UNKNOWN:
+			throw new RuntimeException("Unknown forge direction");
 		}
+		
 		return new Triplet(x, y, z);
 	}
 }

@@ -1,12 +1,10 @@
 package jw.spacedistortion.common.block;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import jw.spacedistortion.Axis;
 import jw.spacedistortion.Pair;
-import jw.spacedistortion.StringGrid;
 import jw.spacedistortion.Triplet;
 import jw.spacedistortion.common.SpaceDistortion;
 import jw.spacedistortion.common.tileentity.StargateControllerState;
@@ -26,6 +24,7 @@ import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraftforge.common.util.ForgeDirection;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -161,20 +160,20 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 			return;
 		}
 		// Get the source and target stargate center coordinates
-		Pair<Axis, ArrayList<Triplet<Integer, Integer, Integer>>> dstPlaneBlocks = this.getStargateCenterBlocks(world, dstX, dstY, dstZ);
-		Pair<Axis, ArrayList<Triplet<Integer, Integer, Integer>>> srcPlaneBlocks = this.getStargateCenterBlocks(world, srcX, srcY, srcZ);
+		Pair<ForgeDirection, ArrayList<Triplet<Integer, Integer, Integer>>> dstPlaneBlocks = this.getStargateCenterBlocks(world, dstX, dstY, dstZ);
+		Pair<ForgeDirection, ArrayList<Triplet<Integer, Integer, Integer>>> srcPlaneBlocks = this.getStargateCenterBlocks(world, srcX, srcY, srcZ);
 		if (srcPlaneBlocks == null || dstPlaneBlocks == null) {
 			// stop; one of the stargate controllers isn't connected to a stargate
 			return;
 		}
-		Axis dstAxis = dstPlaneBlocks.X;
+		ForgeDirection dstFacing = dstPlaneBlocks.X;
 		ArrayList<Triplet<Integer, Integer, Integer>> dstBlocks = dstPlaneBlocks.Y;
-		Axis srcAxis = srcPlaneBlocks.X;
+		ForgeDirection srcFacing = srcPlaneBlocks.X;
 		ArrayList<Triplet<Integer, Integer, Integer>> srcBlocks = srcPlaneBlocks.Y;
 		
 		// Fill the dialing stargate
 		for (int i = 0; i < srcBlocks.size(); i++) {
-			basicUnsafeFillStargateCenter(world, dstAxis, dstBlocks, srcAxis, srcBlocks, i, SDBlock.eventHorizon);
+			basicUnsafeFillStargateCenter(world, dstFacing, dstBlocks, srcFacing, srcBlocks, i, SDBlock.eventHorizon);
 		}
 		
 		// Set the states of both stargates
@@ -196,20 +195,20 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 	 */
 	public void serverDeactivateStargatePair(World world, int srcX, int srcY, int srcZ,
 			int dstX, int dstY, int dstZ) {
-		Pair<Axis, ArrayList<Triplet<Integer, Integer, Integer>>> dstPlaneBlocks = this.getStargateCenterBlocks(world, dstX, dstY, dstZ);
-		Pair<Axis, ArrayList<Triplet<Integer, Integer, Integer>>> srcPlaneBlocks = this.getStargateCenterBlocks(world, srcX, srcY, srcZ);
+		Pair<ForgeDirection, ArrayList<Triplet<Integer, Integer, Integer>>> dstPlaneBlocks = this.getStargateCenterBlocks(world, dstX, dstY, dstZ);
+		Pair<ForgeDirection, ArrayList<Triplet<Integer, Integer, Integer>>> srcPlaneBlocks = this.getStargateCenterBlocks(world, srcX, srcY, srcZ);
 		if (srcPlaneBlocks == null || dstPlaneBlocks == null) {
 			// stop; one of the stargate controllers isn't connected to a stargate
 			return;
 		}
-		Axis dstAxis = dstPlaneBlocks.X;
+		ForgeDirection dstFacing = dstPlaneBlocks.X;
 		ArrayList<Triplet<Integer, Integer, Integer>> dstBlocks = dstPlaneBlocks.Y;
-		Axis srcAxis = srcPlaneBlocks.X;
+		ForgeDirection srcFacing = srcPlaneBlocks.X;
 		ArrayList<Triplet<Integer, Integer, Integer>> srcBlocks = srcPlaneBlocks.Y;
 		
 		// Fill the dialing stargate
 		for (int i = 0; i < srcBlocks.size(); i++) {
-			basicUnsafeFillStargateCenter(world, dstAxis, dstBlocks, srcAxis, srcBlocks, i, Blocks.air);
+			basicUnsafeFillStargateCenter(world, dstFacing, dstBlocks, srcFacing, srcBlocks, i, Blocks.air);
 		}
 
 		TileEntityStargateController srcTileEntity = (TileEntityStargateController) world.getTileEntity(srcX, srcY, srcZ);
@@ -222,8 +221,8 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 		dstTileEntity.resetAddress();
 	}
 	
-	private void basicUnsafeFillStargateCenter(World world, Axis dstAxis,
-			ArrayList<Triplet<Integer, Integer, Integer>> dstBlocks, Axis srcAxis,
+	private void basicUnsafeFillStargateCenter(World world, ForgeDirection dstFacing,
+			ArrayList<Triplet<Integer, Integer, Integer>> dstBlocks, ForgeDirection srcFacing,
 			ArrayList<Triplet<Integer, Integer, Integer>> srcBlocks, int i,
 			Block fillMaterial) {
 		Triplet<Integer, Integer, Integer> srcBlockCoords = srcBlocks.get(i);
@@ -246,14 +245,14 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 			}
 			
 			srcTileEntity.isOutgoing = true;
-			srcTileEntity.axis = srcAxis;
+			srcTileEntity.facing = srcFacing;
 			srcTileEntity.destX = dstBlockCoords.X;
 			srcTileEntity.destY = dstBlockCoords.Y;
 			srcTileEntity.destZ = dstBlockCoords.Z;
 			
 			// Blank out the target's tile entity data
 			dstTileEntity.isOutgoing = false;
-			dstTileEntity.axis = dstAxis;
+			dstTileEntity.facing = dstFacing;
 			
 			if (i == srcBlocks.size() / 2) {
 				
@@ -284,14 +283,14 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 	 *            The z coordinate of the stargate controller
 	 * @return
 	 */
-	public Pair<Axis, ArrayList<Triplet<Integer, Integer, Integer>>> getStargateCenterBlocks(World world, int x, int y, int z) {
+	public Pair<ForgeDirection, ArrayList<Triplet<Integer, Integer, Integer>>> getStargateCenterBlocks(World world, int x, int y, int z) {
 		ArrayList<Triplet<Integer, Integer, Integer>> results = new ArrayList();
 		// See if there's really a stargate here
 		DetectStructureResults stargate = this.getStargateBlocks(world, x, y, z);
 		if (stargate == null) {
 			return null;
 		}
-		Triplet<Integer, Integer, Integer> relativeOrigin = this.templateToWorldCoordinates(-stargate.xOffset, stargate.yOffset, stargate.axis);
+		Triplet<Integer, Integer, Integer> relativeOrigin = this.templateToWorldCoordinates(-stargate.xOffset, stargate.yOffset, stargate.facing);
 		Triplet<Integer, Integer, Integer> origin = new Triplet<Integer, Integer, Integer>(
 				stargate.firstNeighbor.X + relativeOrigin.X,
 				stargate.firstNeighbor.Y + relativeOrigin.Y,
@@ -302,12 +301,12 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 					Triplet<Integer, Integer, Integer> coords = this
 							.getBlockInStructure(world, origin.X, origin.Y,
 									origin.Z, templateX, -templateY,
-									stargate.axis);
+									stargate.facing);
 					results.add(new Triplet(coords.X, coords.Y, coords.Z));
 				}
 			}
 		}
-		return new Pair(stargate.axis, results);
+		return new Pair(stargate.facing, results);
 	}
 
 	/**
@@ -321,8 +320,8 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 		for (int i = 0; i < neighbors.size(); i++) {
 			Pair<Integer[], Block> blockInfo = neighbors.get(i);
 			Integer[] coords = blockInfo.X;
-			Block type = blockInfo.Y;
-			if (type == SDBlock.stargateRing) {
+			Block block = blockInfo.Y;
+			if (block == SDBlock.stargateRing) {
 				DetectStructureResults results = SDBlock.detectStructure(world,
 						SpaceDistortion.stargateRingShape, coords[0], coords[1],
 						coords[2], SpaceDistortion.stargateRingShapeInfo);
