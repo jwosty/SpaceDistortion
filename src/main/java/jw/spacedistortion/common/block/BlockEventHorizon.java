@@ -83,7 +83,7 @@ public class BlockEventHorizon extends SDBlock implements ITileEntityProvider {
 			float srcPitch = ForgeDirectionHelper.getPitch(srcFacing);
 			float srcYaw = ForgeDirectionHelper.getYaw(srcFacing);
 			
-			float entityYaw = (entity.rotationYaw - srcYaw) - dstYaw;
+			float entityYaw = entity.rotationYaw + (dstYaw - srcYaw) - 180;
 			float entityPitch = dstPitch;
 			
 			if (entity instanceof EntityPlayerMP) {
@@ -91,10 +91,10 @@ public class BlockEventHorizon extends SDBlock implements ITileEntityProvider {
 				EntityPlayer player = (EntityPlayer) entity;
 				((EntityPlayerMP) player).playerNetServerHandler
 						.setPlayerLocation(entityX, entityY, entityZ,
-								entityYaw, dstPitch);
+								entityYaw, entityPitch);
 			} else {
 				// Teleport the entity as anything else
-				entity.setPositionAndRotation(entityX, entityY, entityZ, entityYaw, dstPitch);
+				entity.setPositionAndRotation(entityX, entityY, entityZ, entityYaw, entityPitch);
 			}
 			// Play the stargate enter/exit sound at both stargates
 			SDSoundHandler.serverPlaySoundToPlayers(world.playerEntities, "stargate.enter", 1F, 1F, x, y, z);
