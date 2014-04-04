@@ -2,6 +2,7 @@ package jw.spacedistortion.common.block;
 
 import jw.spacedistortion.Pair;
 import jw.spacedistortion.client.SDSoundHandler;
+import jw.spacedistortion.common.ForgeDirectionHelper;
 import jw.spacedistortion.common.tileentity.TileEntityEventHorizon;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
@@ -77,21 +78,23 @@ public class BlockEventHorizon extends SDBlock implements ITileEntityProvider {
 					+ (entity.posZ - Math.floor(entity.posZ));
 			
 			// Calculate rotation
-			Pair<Integer, Integer> dstRotation = new Pair(0, 0); //dstFacing.getPitchAndYaw();
-			Pair<Integer, Integer> srcRotation = new Pair(0, 0); //srcFacing.getPitchAndYaw();
-			float entityPitch = entity.rotationPitch;
-			float entityYaw = (srcRotation.Y - (entity.rotationYaw + 180)) + dstRotation.Y;
+			float dstPitch = ForgeDirectionHelper.getPitch(dstFacing);//dstFacing.getPitchAndYaw();
+			float dstYaw = ForgeDirectionHelper.getYaw(dstFacing);
+			float srcPitch = ForgeDirectionHelper.getPitch(srcFacing);
+			float srcYaw = ForgeDirectionHelper.getYaw(srcFacing);
 			
+			float entityYaw = (entity.rotationYaw - srcYaw) - dstYaw;
+			float entityPitch = dstPitch;
 			
 			if (entity instanceof EntityPlayerMP) {
 				// Teleport the entity as a player
 				EntityPlayer player = (EntityPlayer) entity;
 				((EntityPlayerMP) player).playerNetServerHandler
-						.setPlayerLocation(entityX, entityY, entityZ, entityYaw,
-								entityPitch);
+						.setPlayerLocation(entityX, entityY, entityZ,
+								entityYaw, dstPitch);
 			} else {
 				// Teleport the entity as anything else
-				entity.setPositionAndRotation(entityX, entityY, entityZ, entityYaw, entityPitch);
+				entity.setPositionAndRotation(entityX, entityY, entityZ, entityYaw, dstPitch);
 			}
 			// Play the stargate enter/exit sound at both stargates
 			SDSoundHandler.serverPlaySoundToPlayers(world.playerEntities, "stargate.enter", 1F, 1F, x, y, z);
