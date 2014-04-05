@@ -360,7 +360,7 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 			Pair<Integer[], Block> blockInfo = neighbors.get(i);
 			Integer[] coords = blockInfo.X;
 			Block block = blockInfo.Y;
-			if (block == SDBlock.stargateRing) {
+			if (block == SDBlock.stargateRing || block == SDBlock.stargateRingChevron) {
 				DetectStructureResults results = SDBlock.detectStructure(world,
 						SpaceDistortion.stargateRingShape, coords[0], coords[1],
 						coords[2], SpaceDistortion.stargateRingShapeInfo);
