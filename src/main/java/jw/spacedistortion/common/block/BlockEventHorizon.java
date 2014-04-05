@@ -84,7 +84,9 @@ public class BlockEventHorizon extends SDBlock implements ITileEntityProvider {
 			float srcYaw = ForgeDirectionHelper.getYaw(srcFacing);
 			
 			float entityYaw = entity.rotationYaw + (dstYaw - srcYaw) - 180;
-			float entityPitch = dstPitch;
+			// For now, pitch doesn't work
+			float entityPitch = entity.rotationPitch;
+			
 			
 			if (entity instanceof EntityPlayerMP) {
 				// Teleport the entity as a player

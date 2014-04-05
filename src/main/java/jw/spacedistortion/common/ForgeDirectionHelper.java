@@ -14,6 +14,10 @@ public class ForgeDirectionHelper {
 	}
 	
 	public static int getPitch(ForgeDirection direction) {
-		return 0;
+		switch (direction) {
+		case UP: return -90;
+		case DOWN: return 90;
+		default: return 0;
+		}
 	}
 }
