@@ -1,6 +1,6 @@
 package jw.spacedistortion.common.block;
 
-import jw.spacedistortion.Pair;
+import jw.spacedistortion.Triplet;
 import jw.spacedistortion.client.SDSoundHandler;
 import jw.spacedistortion.common.ForgeDirectionHelper;
 import jw.spacedistortion.common.tileentity.TileEntityEventHorizon;
@@ -87,6 +87,7 @@ public class BlockEventHorizon extends SDBlock implements ITileEntityProvider {
 			// For now, pitch doesn't work
 			float entityPitch = entity.rotationPitch;
 			
+			Triplet<Double, Double, Double> motion = new Triplet(entity.motionX, entity.motionY, entity.motionZ);
 			
 			if (entity instanceof EntityPlayerMP) {
 				// Teleport the entity as a player
@@ -98,6 +99,7 @@ public class BlockEventHorizon extends SDBlock implements ITileEntityProvider {
 				// Teleport the entity as anything else
 				entity.setPositionAndRotation(entityX, entityY, entityZ, entityYaw, entityPitch);
 			}
+			entity.setVelocity(motion.X, motion.Y, motion.Z);
 			// Play the stargate enter/exit sound at both stargates
 			SDSoundHandler.serverPlaySoundToPlayers(world.playerEntities, "stargate.enter", 1F, 1F, x, y, z);
 			SDSoundHandler.serverPlaySoundToPlayers(world.playerEntities, "stargate.enter", 1F, 1F, entityX, entityY, entityZ);
