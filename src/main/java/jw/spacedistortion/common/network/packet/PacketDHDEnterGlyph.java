@@ -79,9 +79,13 @@ public class PacketDHDEnterGlyph implements IPacket {
 		// Get chunk coordinates
 		int dstChunkX = decodedAddress.Y;
 		int dstChunkZ = decodedAddress.Z;
+		if (dstChunkX == tileEntity.xCoord >> 4 && dstChunkZ == tileEntity.zCoord >> 4) {
+			// A stargate can't dial to its own chunk
+			return false;
+		}
 		int[] dstCoords = BlockStargateController.getDominantController(player.worldObj, dstChunkX, dstChunkZ);
 		if (dstCoords == null) {
-			return true;
+			return false;
 		}
 		TileEntityStargateController dstTileEntity = (TileEntityStargateController) player.worldObj.getTileEntity(dstCoords[0], dstCoords[1], dstCoords[2]);
 		
@@ -89,17 +93,11 @@ public class PacketDHDEnterGlyph implements IPacket {
 		if (dstCoords != null) {
 			switch (tileEntity.state) {
 			case READY:
-				SDSoundHandler.serverPlaySoundToPlayers(
-						player.worldObj.playerEntities, "stargate.kawoosh", 1F, 1F,
-						(double) tileEntity.xCoord, (double) tileEntity.yCoord, (double) tileEntity.zCoord);
 				SDBlock.stargateController.serverActivateStargatePair(
 						player.worldObj, tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord,
 						dstCoords[0], dstCoords[1], dstCoords[2]);
 				break;
 			case ACTIVE_OUTGOING:
-				SDSoundHandler.serverPlaySoundToPlayers(
-						player.worldObj.playerEntities, "stargate.close", 1F, 1F,
-						(double) tileEntity.xCoord, (double) tileEntity.yCoord, (double) tileEntity.zCoord);
 				SDBlock.stargateController.serverDeactivateStargatePair(
 						player.worldObj, tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord,
 						dstCoords[0], dstCoords[1], dstCoords[2]);
@@ -107,6 +105,6 @@ public class PacketDHDEnterGlyph implements IPacket {
 			default:
 			}
 		}
-		return false;
+		return true;
 	}
 }

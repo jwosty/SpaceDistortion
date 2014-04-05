@@ -6,6 +6,7 @@ import java.util.List;
 import jw.spacedistortion.Axis;
 import jw.spacedistortion.Pair;
 import jw.spacedistortion.Triplet;
+import jw.spacedistortion.client.SDSoundHandler;
 import jw.spacedistortion.common.SpaceDistortion;
 import jw.spacedistortion.common.tileentity.StargateControllerState;
 import jw.spacedistortion.common.tileentity.TileEntityEventHorizon;
@@ -58,7 +59,7 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 	public BlockStargateController() {
 		super(Material.rock);
 	}
-
+	
 	/**
 	 * Finds the dominant stargate in a chunk
 	 * @param world the world to search in
@@ -162,9 +163,18 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 		// Get the source and target stargate center coordinates
 		Pair<ForgeDirection, ArrayList<Triplet<Integer, Integer, Integer>>> dstPlaneBlocks = this.getStargateCenterBlocks(world, dstX, dstY, dstZ);
 		Pair<ForgeDirection, ArrayList<Triplet<Integer, Integer, Integer>>> srcPlaneBlocks = this.getStargateCenterBlocks(world, srcX, srcY, srcZ);
-		if (srcPlaneBlocks == null || dstPlaneBlocks == null) {
-			// stop; one of the stargate controllers isn't connected to a stargate
+		TileEntityStargateController srcTileEntity = null;
+		TileEntityStargateController dstTileEntity = null;
+		if (srcPlaneBlocks == null) {
 			return;
+		} else {
+			srcTileEntity = (TileEntityStargateController) world.getTileEntity(srcX, srcY, srcZ);
+			if (dstPlaneBlocks == null) {
+				srcTileEntity.resetAddress();
+				return;
+			} else {
+				dstTileEntity = (TileEntityStargateController) world.getTileEntity(dstX, dstY, dstZ);
+			}
 		}
 		ForgeDirection dstFacing = dstPlaneBlocks.X;
 		ArrayList<Triplet<Integer, Integer, Integer>> dstBlocks = dstPlaneBlocks.Y;
@@ -176,18 +186,20 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 			basicUnsafeFillStargateCenter(world, dstFacing, dstBlocks, srcFacing, srcBlocks, i, SDBlock.eventHorizon);
 		}
 		
-		// Set the states of both stargates
-		TileEntityStargateController srcTileEntity = (TileEntityStargateController) world.getTileEntity(srcX, srcY, srcZ);
-		if (srcTileEntity != null) {
-			srcTileEntity.state = StargateControllerState.ACTIVE_OUTGOING;
-			world.markBlockForUpdate(srcX, srcY, srcZ);
-		}
-		TileEntityStargateController dstTileEntity = (TileEntityStargateController) world.getTileEntity(dstX, dstY, dstZ);
-		if (dstTileEntity != null) {
-			dstTileEntity.state = StargateControllerState.ACTIVE_INCOMING;
-			world.markBlockForUpdate(dstX, dstY, dstZ);
-			
-		}
+		// Change the states of both stargates
+		srcTileEntity.state = StargateControllerState.ACTIVE_OUTGOING;
+		world.markBlockForUpdate(srcX, srcY, srcZ);
+		dstTileEntity.state = StargateControllerState.ACTIVE_INCOMING;
+		world.markBlockForUpdate(dstX, dstY, dstZ);
+		
+		// Play kawoosh sounds at both stargates
+		SDSoundHandler.serverPlaySoundToPlayers(
+				world.playerEntities, "stargate.kawoosh", 1F, 1F,
+				(double) srcTileEntity.xCoord, (double) srcTileEntity.yCoord, (double) srcTileEntity.zCoord);
+		
+		SDSoundHandler.serverPlaySoundToPlayers(
+				world.playerEntities, "stargate.kawoosh", 1F, 1F,
+				(double) dstTileEntity.xCoord, (double) dstTileEntity.yCoord, (double) dstTileEntity.zCoord);
 	}
 
 	/**
@@ -197,74 +209,101 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 			int dstX, int dstY, int dstZ) {
 		Pair<ForgeDirection, ArrayList<Triplet<Integer, Integer, Integer>>> dstPlaneBlocks = this.getStargateCenterBlocks(world, dstX, dstY, dstZ);
 		Pair<ForgeDirection, ArrayList<Triplet<Integer, Integer, Integer>>> srcPlaneBlocks = this.getStargateCenterBlocks(world, srcX, srcY, srcZ);
-		if (srcPlaneBlocks == null || dstPlaneBlocks == null) {
-			// stop; one of the stargate controllers isn't connected to a stargate
-			return;
+		
+		ForgeDirection srcFacing;
+		ArrayList<Triplet<Integer, Integer, Integer>> srcBlocks;
+		ForgeDirection dstFacing;
+		ArrayList<Triplet<Integer, Integer, Integer>> dstBlocks;
+		
+		if (srcPlaneBlocks == null) {
+			srcFacing = null;
+			srcBlocks = null;
+		} else {
+			srcBlocks = srcPlaneBlocks.Y;
+			srcFacing = srcPlaneBlocks.X;
 		}
-		ForgeDirection dstFacing = dstPlaneBlocks.X;
-		ArrayList<Triplet<Integer, Integer, Integer>> dstBlocks = dstPlaneBlocks.Y;
-		ForgeDirection srcFacing = srcPlaneBlocks.X;
-		ArrayList<Triplet<Integer, Integer, Integer>> srcBlocks = srcPlaneBlocks.Y;
+		if (dstPlaneBlocks == null) {
+			dstFacing = null;
+			dstBlocks = null;
+		} else {
+			dstFacing = dstPlaneBlocks.X;
+			dstBlocks = dstPlaneBlocks.Y;			
+		}
 		
 		// Fill the dialing stargate
 		for (int i = 0; i < srcBlocks.size(); i++) {
 			basicUnsafeFillStargateCenter(world, dstFacing, dstBlocks, srcFacing, srcBlocks, i, Blocks.air);
 		}
 
-		TileEntityStargateController srcTileEntity = (TileEntityStargateController) world.getTileEntity(srcX, srcY, srcZ);
-		TileEntityStargateController dstTileEntity = (TileEntityStargateController) world.getTileEntity(srcX, srcY, srcZ);
+		if (srcPlaneBlocks != null) {
+			TileEntityStargateController srcTileEntity = (TileEntityStargateController) world.getTileEntity(srcX, srcY, srcZ);		
+			srcTileEntity.state = StargateControllerState.READY;
+			srcTileEntity.resetAddress();
+			world.markBlockForUpdate(dstX, dstY, dstZ);
+			
+			// Play deactivation sound at outgoing stargate
+			SDSoundHandler.serverPlaySoundToPlayers(
+					world.playerEntities, "stargate.close", 1F, 1F,
+					(double) srcTileEntity.xCoord, (double) srcTileEntity.yCoord, (double) srcTileEntity.zCoord);
+		}
 		
-		srcTileEntity.state = StargateControllerState.READY;
-		srcTileEntity.resetAddress();
-		
-		dstTileEntity.state = StargateControllerState.READY;
-		dstTileEntity.resetAddress();
+		if (dstPlaneBlocks != null) {
+			TileEntityStargateController dstTileEntity = (TileEntityStargateController) world.getTileEntity(srcX, srcY, srcZ);
+			dstTileEntity.state = StargateControllerState.READY;
+			dstTileEntity.resetAddress();
+			world.markBlockForUpdate(dstX, dstY, dstZ);
+			
+			// Play deactivation sound at incoming stargate
+			SDSoundHandler.serverPlaySoundToPlayers(
+					world.playerEntities, "stargate.close", 1F, 1F,
+					(double) dstTileEntity.xCoord, (double) dstTileEntity.yCoord, (double) dstTileEntity.zCoord);
+		}
 	}
 	
 	private void basicUnsafeFillStargateCenter(World world, ForgeDirection dstFacing,
 			ArrayList<Triplet<Integer, Integer, Integer>> dstBlocks, ForgeDirection srcFacing,
 			ArrayList<Triplet<Integer, Integer, Integer>> srcBlocks, int i,
 			Block fillMaterial) {
-		Triplet<Integer, Integer, Integer> srcBlockCoords = srcBlocks.get(i);
-		Triplet<Integer, Integer, Integer> dstBlockCoords = dstBlocks.get(i);
-		// Set the destination block
-		world.setBlock(srcBlockCoords.X, srcBlockCoords.Y, srcBlockCoords.Z, fillMaterial);
-		// Fill the target stargate with the block
-		world.setBlock(dstBlockCoords.X, dstBlockCoords.Y, dstBlockCoords.Z, fillMaterial);
+		Triplet<Integer, Integer, Integer> srcBlockCoords;
+		Triplet<Integer, Integer, Integer> dstBlockCoords;
+		if (srcBlocks == null) {
+			srcBlockCoords = null;
+		} else {
+			srcBlockCoords = srcBlocks.get(i);
+			world.setBlock(srcBlockCoords.X, srcBlockCoords.Y, srcBlockCoords.Z, fillMaterial);
+		}
+		if (dstBlocks == null) {
+			dstBlockCoords = null;
+		} else {
+			dstBlockCoords = dstBlocks.get(i);
+			world.setBlock(dstBlockCoords.X, dstBlockCoords.Y, dstBlockCoords.Z, fillMaterial);			
+		}
 		
 		// When the fill block is event horizon, set the tile entity info
 		if (fillMaterial == SDBlock.eventHorizon) {
 			// Set the tile entity that stores the specific destination coordinates
-			TileEntityEventHorizon srcTileEntity = (TileEntityEventHorizon) world.getTileEntity(srcBlockCoords.X, srcBlockCoords.Y,srcBlockCoords.Z);
-			TileEntityEventHorizon dstTileEntity = (TileEntityEventHorizon) world.getTileEntity(dstBlockCoords.X, dstBlockCoords.Y, dstBlockCoords.Z);
-			
-			if (i == srcBlocks.size() / 2) {
-				// Event horizon blocks with metadata of 1 play a loop sound
-				world.setBlockMetadataWithNotify(srcTileEntity.xCoord, srcTileEntity.yCoord, srcTileEntity.zCoord, 1, 3);
-				world.setBlockMetadataWithNotify(dstTileEntity.xCoord, dstTileEntity.yCoord, dstTileEntity.zCoord, 1, 3);
+			if (srcBlockCoords != null) {
+				TileEntityEventHorizon srcTileEntity = (TileEntityEventHorizon) world.getTileEntity(srcBlockCoords.X, srcBlockCoords.Y,srcBlockCoords.Z);
+				srcTileEntity.isOutgoing = true;
+				srcTileEntity.facing = srcFacing;
+				srcTileEntity.destX = dstBlockCoords.X;
+				srcTileEntity.destY = dstBlockCoords.Y;
+				srcTileEntity.destZ = dstBlockCoords.Z;
+				if (i == srcBlocks.size() / 2 ) {
+					// Event horizon blocks with metadata of 1 play a loop sound
+					world.setBlockMetadataWithNotify(srcTileEntity.xCoord, srcTileEntity.yCoord, srcTileEntity.zCoord, 1, 3);
+				}
 			}
 			
-			srcTileEntity.isOutgoing = true;
-			srcTileEntity.facing = srcFacing;
-			srcTileEntity.destX = dstBlockCoords.X;
-			srcTileEntity.destY = dstBlockCoords.Y;
-			srcTileEntity.destZ = dstBlockCoords.Z;
-			
-			// Blank out the target's tile entity data
-			dstTileEntity.isOutgoing = false;
-			dstTileEntity.facing = dstFacing;
-			
-			if (i == srcBlocks.size() / 2) {
-				
-				/*
-				for (int pi = 1; pi < world.playerEntities.size(); pi++) {
-					EntityPlayerMP player = (EntityPlayerMP) world.playerEntities.get(pi);
-					player.playerNetServerHandler.sendPacket(srcTileEntity.getDescriptionPacket());
-					player.playerNetServerHandler.sendPacket(dstTileEntity.getDescriptionPacket());
-					ChannelHandler.serverSendPacketAllClients(new PacketPlayLoopingSound(srcTileEntity));
-					ChannelHandler.serverSendPacketAllClients(new PacketPlayLoopingSound(dstTileEntity));
+			if (dstBlockCoords != null) {
+				TileEntityEventHorizon dstTileEntity = (TileEntityEventHorizon) world.getTileEntity(dstBlockCoords.X, dstBlockCoords.Y, dstBlockCoords.Z);
+				// Blank out the target's tile entity data
+				dstTileEntity.isOutgoing = false;
+				dstTileEntity.facing = dstFacing;
+				if (i == srcBlocks.size() / 2) {
+					// Event horizon blocks with metadata of 1 play a loop sound
+					world.setBlockMetadataWithNotify(dstTileEntity.xCoord, dstTileEntity.yCoord, dstTileEntity.zCoord, 1, 3);
 				}
-				*/
 			}
 		}
 	}

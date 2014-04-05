@@ -1,5 +1,7 @@
 package jw.spacedistortion.common.block;
 
+import java.util.Random;
+
 import jw.spacedistortion.Triplet;
 import jw.spacedistortion.client.SDSoundHandler;
 import jw.spacedistortion.common.ForgeDirectionHelper;
@@ -10,6 +12,8 @@ import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.IBlockAccess;
@@ -17,7 +21,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
 public class BlockEventHorizon extends SDBlock implements ITileEntityProvider {
-	
 	public BlockEventHorizon() {
 		super(Material.portal);
 	}
@@ -48,10 +51,8 @@ public class BlockEventHorizon extends SDBlock implements ITileEntityProvider {
 	}
 	
 	@Override
-	public void onBlockAdded(World world, int x, int y, int z) {
-		if (!world.isRemote) {
-			//ChannelHandler.serverSendPacketAllClients(new PacketPlayLoopableTileEntitySound(x, y, z));
-		}
+	public int quantityDropped(Random rand) {
+		return 0;
 	}
 	
 	@Override
