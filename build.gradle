@@ -17,9 +17,9 @@ buildscript {
 
 apply plugin: 'forge'
 
-version = "1.0"
-group= "com.yourname.modid" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "modid"
+version = "0.5-mc1.7.2"
+group= "jw.spacedistortion" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+archivesBaseName = "spacedistortion"
 
 minecraft {
     version = "1.7.2-10.12.0.1024"
