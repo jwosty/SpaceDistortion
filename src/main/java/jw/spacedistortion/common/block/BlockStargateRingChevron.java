@@ -12,13 +12,9 @@ import net.minecraft.world.World;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class BlockStargateRingChevron extends SDBlock {
+public class BlockStargateRingChevron extends BlockStargateRing {
 	@SideOnly(Side.CLIENT)
 	public IIcon chevronIcon;
-	
-	protected BlockStargateRingChevron() {
-		super(Material.rock);
-	}
 	
 	@Override
 	public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entity, ItemStack itemStack) {
