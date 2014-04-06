@@ -50,6 +50,7 @@ public class GuiDHD extends GuiScreen {
 		int gw = GuiDHDButton.GlyphWidth;
 		int gh = GuiDHDButton.GlyphHeight;
 
+		/*
 		// Create the address display at the top of the DHD
 		for (int c = 0; c < 7; c++) {
 			// Use a button for simplicity instead of a whole new Gui element for this
@@ -59,6 +60,7 @@ public class GuiDHD extends GuiScreen {
 			b.enabled = true;
 			this.buttonList.add(b);
 		}
+		*/
 
 		// Create the buttons
 		for (byte glyphID = 0; glyphID < 40; glyphID++) {
@@ -86,19 +88,28 @@ public class GuiDHD extends GuiScreen {
 	}
 	
 	@Override
-	public void actionPerformed(GuiButton guiButton) {
-		GuiDHDButton b = (GuiDHDButton) guiButton;
-		if (this.tileEntity.currentGlyphIndex < 7) {
-			// Update the GUI elements before sending to the server
-			((GuiDHDButton) this.buttonList.get(this.tileEntity.currentGlyphIndex)).glyphID = b.glyphID;
-		}
+	public void actionPerformed(GuiButton button) {
+		GuiDHDButton b = (GuiDHDButton) button;
 		b.isActivated = true;
-		// Kindly ask the server to input another glyph into the stargate controller tile entity (see
-		// PacketDHDEnterGlyph#onReceive for more info)
 		ChannelHandler.clientSendPacket(new PacketDHDEnterGlyph(
 				this.tileEntity.xCoord, this.tileEntity.yCoord, this.tileEntity.zCoord, b.glyphID));
 	}
-
+	
+	public void drawAddress() {
+		mc.getTextureManager().bindTexture(this.glyphTexture);
+		GL11.glColor4f(1, 0.5f, 0, 1);
+		GL11.glDisable(GL11.GL_LIGHTING);
+		GL11.glEnable(GL11.GL_BLEND);
+		for (int i = 0; i < this.tileEntity.currentGlyphIndex; i++) {
+			byte glyphID = this.tileEntity.dialingAddress[i];
+			int u = glyphID % (GuiDHDButton.GlyphSheetWidth / GuiDHDButton.GlyphWidth) * GuiDHDButton.GlyphWidth;
+			int v = glyphID / (GuiDHDButton.GlyphSheetWidth / GuiDHDButton.GlyphWidth) * GuiDHDButton.GlyphHeight;
+			this.drawTexturedModalRect(
+					this.getPanelX() + (GuiDHDButton.GlyphHeight * i), this.getPanelY(),
+					u, v, GuiDHDButton.GlyphWidth, GuiDHDButton.GlyphHeight);
+		}
+	}
+	
 	@Override
 	public void drawScreen(int par1, int par2, float par3) {
 		this.drawDefaultBackground();
@@ -106,6 +117,7 @@ public class GuiDHD extends GuiScreen {
 		mc.getTextureManager().bindTexture(this.backgroundTexture);
 		this.drawTexturedModalRect(this.getPanelX(), this.getPanelY(), 0, 0,
 				256, 256);
+		this.drawAddress();
 		super.drawScreen(par1, par2, par3);
 	}
 }

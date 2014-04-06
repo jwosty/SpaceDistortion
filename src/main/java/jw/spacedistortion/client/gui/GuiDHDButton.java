@@ -48,11 +48,6 @@ public class GuiDHDButton extends GuiButton {
 	
 	@Override
 	public void func_146113_a(SoundHandler soundHandler) {
-		EntityPlayer player = Minecraft.getMinecraft().thePlayer;
-		/*
-		jw.spacedistortion.client.SoundHandler.playSoundAtPosition(
-				(World) Minecraft.getMinecraft().theWorld, (int) player.posX,
-				(int) player.posY, (int) player.posZ, "");
-		*/
+		// Overrided to prevent the default button sound from playing
 	}
 }
