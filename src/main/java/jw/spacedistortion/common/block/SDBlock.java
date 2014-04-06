@@ -5,12 +5,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
-import jw.spacedistortion.Axis;
 import jw.spacedistortion.Pair;
 import jw.spacedistortion.StringGrid;
 import jw.spacedistortion.Triplet;
 import jw.spacedistortion.common.CommonProxy;
-import jw.spacedistortion.common.SpaceDistortion;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -23,7 +21,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.util.ForgeDirection;
 import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -116,38 +113,6 @@ public class SDBlock extends Block {
 		}
 	}
 	
-	/**
-	 * Returns 6 neighboring blocks on each of the faces, not including the corners
-	 * @param world
-	 *            The world in which to find the blocks
-	 * @param x
-	 *            The x coordinate
-	 * @param y
-	 *            The y coordinate
-	 * @param z
-	 *            The z coordinate
-	 * @return A list of blocks in the format of a list where the first 3
-	 *         elements are the x, y, and z and the last is the block id
-	 */
-	public static List<Pair<Integer[], Block>> getNeighboringBlocks(IBlockAccess world, int x,
-			int y, int z) {
-		List<Pair<Integer[], Block>> blocks = new ArrayList<Pair<Integer[], Block>>();
-		int[][] neighbors = { { -1, 0, 0 }, { 1, 0, 0 }, { 0, -1, 0 },
-				{ 0, 1, 0 }, { 0, 0, -1 }, { 0, 0, 1 } };
-		for (int i = 0; i < neighbors.length; i++) {
-			// Get information about the block
-			int[] neighbor = neighbors[i];
-			int bx = neighbor[0] + x;
-			int by = neighbor[1] + y;
-			int bz = neighbor[2] + z;
-			Block block = world.getBlock(bx, by, bz);
-			if (block != Blocks.air) {
-				// We found a neighbor, so add it to the list
-				blocks.add(new Pair(new Integer[] { bx, by, bz }, block ));
-			}
-		}
-		return blocks;
-	}
 	
 	// Returns all blocks in a structure if this block is part of it
 	public static DetectStructureResults detectStructure(IBlockAccess world,

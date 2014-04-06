@@ -353,17 +353,17 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 	 * stargate ring. Coordinates in returns are not relative to the given
 	 * coordinates
 	 **/
-	public DetectStructureResults getStargateBlocks(IBlockAccess world, int xOrigin,
-			int yOrigin, int zOrigin) {
-		List<Pair<Integer[], Block>> neighbors = this.getNeighboringBlocks(world, xOrigin, yOrigin, zOrigin);
-		for (int i = 0; i < neighbors.size(); i++) {
-			Pair<Integer[], Block> blockInfo = neighbors.get(i);
-			Integer[] coords = blockInfo.X;
-			Block block = blockInfo.Y;
+	public DetectStructureResults getStargateBlocks(IBlockAccess world, int x,
+			int y, int z) {
+		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
+			int bx = x + direction.offsetX;
+			int by = y + direction.offsetY;
+			int bz = z + direction.offsetZ;
+			Block block = world.getBlock(bx, by, bz);
 			if (block == SDBlock.stargateRing || block == SDBlock.stargateRingChevron) {
-				DetectStructureResults results = SDBlock.detectStructure(world,
-						SpaceDistortion.stargateRingShape, coords[0], coords[1],
-						coords[2], SpaceDistortion.stargateRingShapeInfo);
+				DetectStructureResults results = SDBlock.detectStructure(
+						world, SpaceDistortion.stargateRingShape, x, y, z,
+						SpaceDistortion.stargateRingShapeInfo);
 				if (results != null) {
 					return results;
 				}

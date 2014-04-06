@@ -3,12 +3,14 @@ package jw.spacedistortion.common.block;
 import java.util.List;
 
 import jw.spacedistortion.Pair;
+import jw.spacedistortion.Triplet;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public class BlockStargateRing extends SDBlock {
 	public BlockStargateRing() {
@@ -27,16 +29,14 @@ public class BlockStargateRing extends SDBlock {
 	
 	@Override
 	public boolean removedByPlayer(World world, EntityPlayer player, int x, int y, int z) {
-		boolean ret = super.removedByPlayer(world, player, x, y, z);
-		List<Pair<Integer[], Block>> neighbors = this.getNeighboringBlocks(world, x, y, z);
-		for (Pair<Integer[], Block> neighborAndCoords : neighbors) {
-			Block neighbor = neighborAndCoords.Y;
-			if (neighbor == SDBlock.eventHorizon) { 
+		boolean result = super.removedByPlayer(world, player, x, y, z);
+		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
+			if (world.getBlock(x + direction.offsetX, y + direction.offsetY, z + direction.offsetZ) == SDBlock.eventHorizon) { 
 				this.explode(world, player, x, y, z);
 				break;
 			}
 		}
-		return ret;
+		return result;
 	}
 	
 	@Override
