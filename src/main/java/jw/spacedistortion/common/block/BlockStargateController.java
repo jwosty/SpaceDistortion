@@ -1,9 +1,7 @@
 package jw.spacedistortion.common.block;
 
 import java.util.ArrayList;
-import java.util.List;
 
-import jw.spacedistortion.Axis;
 import jw.spacedistortion.Pair;
 import jw.spacedistortion.Triplet;
 import jw.spacedistortion.client.SDSoundHandler;
@@ -109,6 +107,20 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 		
 		TileEntityStargateController controllerTileEntity = (TileEntityStargateController) world.getTileEntity(x, y, z);
 		controllerTileEntity.state = BlockStargateController.getCurrentState(world, x, y, z);
+		
+		//System.out.println(x + " -> " + this.convertBase(x, 39));
+		///*
+		byte[] address = this.encodeAddress(x >> 4, z >> 4, 0);
+		System.out.print("coords: (" + x + ", " + z + "), address: ");
+		for (int i = 0; i < address.length; i++) {
+			System.out.print(address[i]);
+			if (i < address.length - 1) {
+				System.out.print(", ");
+			} else {
+				System.out.println();
+			}
+		}
+		//*/
 	}
 	
 	@Override
@@ -135,20 +147,55 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 		// Building base 39 numbers using powers of 3
 		int chunkX = (int) ((address[0] * 1521) + (address[1] * 39) + address[2]);
 		int chunkZ = (int) ((address[3] * 1521) + (address[4] * 39) + address[5]);
-		int last = (int) address[6];
-		// The dimension is stored in the last 2 bits of the last number/symbol (the mask is 0b11)
+		int last = address[6];
+		// dimension is last 2 bits (0b11)
 		int dimension = last & 3;
-		// The sign of the x coordinate is the 4rd to last bit (the mask is 0b1000)
-		int xSign = last & 8;
-		// The sign of the z coordinate is the 3th to last bit (the mask is 0b100)
-		int zSign = last & 4;
-		if (xSign == 0) {
+		// x coordinate sign is 4th to last bit (0b1000)
+		if ((last & 8) == 0) {
 			chunkX = -chunkX;
 		}
-		if (zSign == 0) {
+		// z coordinate sign is 3rd to last bit (the mask is 0b100)
+		if ((last & 4) == 0) {
 			chunkZ = -chunkZ;
 		}
 		return new Triplet(dimension, chunkX, chunkZ);
+	}
+	
+	private ArrayList<Integer> convertBase(int n, int base) {
+		ArrayList<Integer> ar = new ArrayList();
+		while (n > 0) {
+			ar.add(0, n % base);
+			n = n / base;
+		}
+		return ar;
+	}
+	
+	public byte[] encodeAddress(int chunkX, int chunkZ, int dimension) {
+		ArrayList<Integer> cx = this.convertBase(Math.abs(chunkX), 39);
+		ArrayList<Integer> cz = this.convertBase(Math.abs(chunkZ), 39);
+		ArrayList<Integer> dimAr = this.convertBase(dimension, 39);
+		while (cx.size() < 3) {
+			cx.add(0);
+		}
+		while (cz.size() < 3) {
+			cz.add(0);
+		}
+		while(dimAr.size() < 3) {
+			dimAr.add(0);
+		}
+		// Dimension is last two bits (0b11)
+		int d = (byte)(dimAr.get(0) & 3);
+		// x coordinate sign is 4th to last bit (0b1000)
+		if (chunkX >= 0) { d = d | 8; }
+		//if (chunkX < 0) { d += 8; };
+		// z coordinate sign is 3rd to last bit (0b100)
+		if (chunkZ >= 0) { d = d | 4; }
+		// Build result
+		return new byte[] {
+				(byte)(int)cx.get(2), (byte)(int)cx.get(1), (byte)(int)cx.get(0),
+				(byte)(int)cz.get(2), (byte)(int)cz.get(1), (byte)(int)cz.get(0),
+				(byte)d
+		};
 	}
 	
 	/**

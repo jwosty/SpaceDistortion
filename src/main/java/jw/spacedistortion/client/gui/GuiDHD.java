@@ -50,18 +50,6 @@ public class GuiDHD extends GuiScreen {
 		int gw = GuiDHDButton.GlyphWidth;
 		int gh = GuiDHDButton.GlyphHeight;
 
-		/*
-		// Create the address display at the top of the DHD
-		for (int c = 0; c < 7; c++) {
-			// Use a button for simplicity instead of a whole new Gui element for this
-			GuiDHDButton b = new GuiDHDButton(this.getPanelX() + (gw * c), this.getPanelY(), this.glyphTexture, this.tileEntity.dialingAddress[c]);
-			b.visible = true;
-			b.isActivated = true;
-			b.enabled = true;
-			this.buttonList.add(b);
-		}
-		*/
-
 		// Create the buttons
 		for (byte glyphID = 0; glyphID < 40; glyphID++) {
 			// Calculate the x and y position of the glyph (in the order of
@@ -95,19 +83,20 @@ public class GuiDHD extends GuiScreen {
 				this.tileEntity.xCoord, this.tileEntity.yCoord, this.tileEntity.zCoord, b.glyphID));
 	}
 	
-	public void drawAddress() {
+	/** Set up for drawing some glyphs */
+	public void prepareDrawGlyphs() {
 		mc.getTextureManager().bindTexture(this.glyphTexture);
 		GL11.glColor4f(1, 0.5f, 0, 1);
 		GL11.glDisable(GL11.GL_LIGHTING);
 		GL11.glEnable(GL11.GL_BLEND);
-		for (int i = 0; i < this.tileEntity.currentGlyphIndex; i++) {
-			byte glyphID = this.tileEntity.dialingAddress[i];
-			int u = glyphID % (GuiDHDButton.GlyphSheetWidth / GuiDHDButton.GlyphWidth) * GuiDHDButton.GlyphWidth;
-			int v = glyphID / (GuiDHDButton.GlyphSheetWidth / GuiDHDButton.GlyphWidth) * GuiDHDButton.GlyphHeight;
-			this.drawTexturedModalRect(
-					this.getPanelX() + (GuiDHDButton.GlyphHeight * i), this.getPanelY(),
-					u, v, GuiDHDButton.GlyphWidth, GuiDHDButton.GlyphHeight);
-		}
+	}
+	
+	public void drawGlyph(int x, int y, byte glyphID) {
+		this.drawTexturedModalRect(
+				x, y, 
+				glyphID % (GuiDHDButton.GlyphSheetWidth / GuiDHDButton.GlyphWidth) * GuiDHDButton.GlyphWidth,		// u coordinate
+				glyphID / (GuiDHDButton.GlyphSheetHeight / GuiDHDButton.GlyphHeight) * GuiDHDButton.GlyphHeight,	// v coordinate
+				GuiDHDButton.GlyphWidth, GuiDHDButton.GlyphHeight);
 	}
 	
 	@Override
@@ -117,7 +106,10 @@ public class GuiDHD extends GuiScreen {
 		mc.getTextureManager().bindTexture(this.backgroundTexture);
 		this.drawTexturedModalRect(this.getPanelX(), this.getPanelY(), 0, 0,
 				256, 256);
-		this.drawAddress();
+		this.prepareDrawGlyphs();
+		for (int i = 0; i < this.tileEntity.currentGlyphIndex; i++) {
+			this.drawGlyph(this.getPanelX() + (GuiDHDButton.GlyphHeight * i), this.getPanelY(), this.tileEntity.dialingAddress[i]);
+		}
 		super.drawScreen(par1, par2, par3);
 	}
 }
