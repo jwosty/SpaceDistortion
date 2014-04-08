@@ -1,13 +1,10 @@
 package jw.spacedistortion.client.gui;
 
-import jw.spacedistortion.client.SDSoundHandler;
 import jw.spacedistortion.common.CommonProxy;
 import jw.spacedistortion.common.block.SDBlock;
 import jw.spacedistortion.common.network.ChannelHandler;
 import jw.spacedistortion.common.network.packet.PacketDHDEnterGlyph;
-import jw.spacedistortion.common.tileentity.StargateControllerState;
 import jw.spacedistortion.common.tileentity.TileEntityStargateController;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.ResourceLocation;
@@ -88,19 +85,21 @@ public class GuiDHD extends GuiScreen {
 				this.tileEntity.xCoord, this.tileEntity.yCoord, this.tileEntity.zCoord, b.glyphID));
 	}
 	
-	/*
-	public void drawGlyph(int x, int y, byte glyphID, float red, float green, float blue, float alpha) {
-		mc.getTextureManager().bindTexture(this.glyphTexture);
-		GL11.glColor4f(red, green, blue, alpha);
-		GL11.glDisable(GL11.GL_LIGHTING);
-		GL11.glEnable(GL11.GL_BLEND);
-		this.drawTexturedModalRect(
-				x, y, 
-				glyphID * GuiDHDButton.GlyphWidth,
-				glyphID / (GuiDHDButton.GlyphSheetWidth / GuiDHDButton.GlyphWidth) * GuiDHDButton.GlyphWidth,
-				GuiDHDButton.GlyphWidth, GuiDHDButton.GlyphHeight);
+	@Override
+	public void keyTyped(char keyChar, int keyID) {
+		super.keyTyped(keyChar, keyID);
+		if (GlyphRenderer.glyphChars.containsValue(keyChar)) {
+			byte glyphID = GlyphRenderer.glyphChars.inverse().get(keyChar);
+			for (Object e : this.buttonList) {
+				GuiDHDButton b = (GuiDHDButton)e;
+				if (((byte)b.glyphID) == glyphID) {
+					b.isActivated = true;
+				}
+			}
+			ChannelHandler.clientSendPacket(new PacketDHDEnterGlyph(
+					this.tileEntity.xCoord, this.tileEntity.yCoord, this.tileEntity.zCoord, glyphID));
+		}
 	}
-	*/
 	
 	@Override
 	public void drawScreen(int par1, int par2, float par3) {
