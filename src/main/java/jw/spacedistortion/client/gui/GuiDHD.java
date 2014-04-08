@@ -56,24 +56,24 @@ public class GuiDHD extends GuiScreen {
 		int gh = GuiDHDButton.GlyphHeight;
 
 		// Create the buttons
-		for (byte glyphID = 0; glyphID < 40; glyphID++) {
+		for (byte i = 0; i < 40; i++) {
 			// Calculate the x and y position of the glyph (in the order of
 			// appearance on the sprite sheet), offsetting the y by 1 glyph
 			// in order to display the button panel lower.
-			int g;
-			if (glyphID < 19) {
-				g = glyphID;
-			} else if (glyphID == 39) {
-				g = 19;
+			int glyphID;
+			if (i < 19) {
+				glyphID = i;
+			} else if (i == 19) {
+				glyphID = 39;
 			} else {
-				g = glyphID + 1;
+				glyphID = i - 1;
 			}
 			// Calculate the x and y position
-			int x = this.getPanelX() + (g % (gsw / gw) * gw);
-			int y = this.getPanelY() + (g / (gsw / gw) * gh) + (gh * 2);
+			int x = this.getPanelX() + (i % (gsw / gw) * gw);
+			int y = this.getPanelY() + (i / (gsw / gw) * gh) + (gh * 2);
 			// Finally, add the button
-			GuiDHDButton button = new GuiDHDButton(x, y, this.glyphTexture, (byte) glyphID);
-			if (ArrayUtils.contains(this.tileEntity.dialingAddress, glyphID)) {
+			GuiDHDButton button = new GuiDHDButton(x, y, this.glyphTexture, (byte)glyphID);
+			if (ArrayUtils.contains(this.tileEntity.dialingAddress, (byte)glyphID)) {
 				button.isActivated = true;
 			}
 			this.buttonList.add(button);
@@ -99,8 +99,10 @@ public class GuiDHD extends GuiScreen {
 	public void drawGlyph(int x, int y, byte glyphID) {
 		this.drawTexturedModalRect(
 				x, y, 
-				glyphID % (GuiDHDButton.GlyphSheetWidth / GuiDHDButton.GlyphWidth) * GuiDHDButton.GlyphWidth,		// u coordinate
-				glyphID / (GuiDHDButton.GlyphSheetHeight / GuiDHDButton.GlyphHeight) * GuiDHDButton.GlyphHeight,	// v coordinate
+				//glyphID % (GuiDHDButton.GlyphSheetWidth / GuiDHDButton.GlyphWidth) * GuiDHDButton.GlyphWidth,		// u coordinate
+				//glyphID / (GuiDHDButton.GlyphSheetHeight / GuiDHDButton.GlyphHeight) * GuiDHDButton.GlyphHeight,	// v coordinate
+				glyphID * GuiDHDButton.GlyphWidth,
+				glyphID / (GuiDHDButton.GlyphSheetWidth / GuiDHDButton.GlyphWidth) * GuiDHDButton.GlyphWidth,
 				GuiDHDButton.GlyphWidth, GuiDHDButton.GlyphHeight);
 	}
 	
