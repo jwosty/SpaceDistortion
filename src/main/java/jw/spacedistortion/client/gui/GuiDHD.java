@@ -20,6 +20,8 @@ public class GuiDHD extends GuiScreen {
 	public static ResourceLocation backgroundTexture = new ResourceLocation(CommonProxy.MOD_ID + ":" + "textures/gui/DHD.png");
 	
 	public TileEntityStargateController tileEntity;
+	/** Memoizes the address of the stargate controller */
+	public byte[] addressMemoization;
 	
 	public GuiDHD(TileEntityStargateController controllerTileEntity) {
 		this.tileEntity = controllerTileEntity;
@@ -42,6 +44,9 @@ public class GuiDHD extends GuiScreen {
 
 	@Override
 	public void initGui() {
+		this.addressMemoization = SDBlock.stargateController.encodeAddress(
+				this.tileEntity.xCoord >> 4, this.tileEntity.zCoord >> 4, this.tileEntity.getWorldObj().provider.dimensionId);
+		
 		this.buttonList.clear();
 
 		// "Shortcuts" for frequently accessed constants
@@ -84,9 +89,9 @@ public class GuiDHD extends GuiScreen {
 	}
 	
 	/** Set up for drawing some glyphs */
-	public void prepareDrawGlyphs() {
+	public void prepareDrawGlyphs(float red, float green, float blue, float alpha) {
 		mc.getTextureManager().bindTexture(this.glyphTexture);
-		GL11.glColor4f(1, 0.5f, 0, 1);
+		GL11.glColor4f(red, green, blue, alpha);
 		GL11.glDisable(GL11.GL_LIGHTING);
 		GL11.glEnable(GL11.GL_BLEND);
 	}
@@ -102,13 +107,24 @@ public class GuiDHD extends GuiScreen {
 	@Override
 	public void drawScreen(int par1, int par2, float par3) {
 		this.drawDefaultBackground();
+		// Draw background
 		GL11.glDisable(GL11.GL_LIGHTING);
 		mc.getTextureManager().bindTexture(this.backgroundTexture);
 		this.drawTexturedModalRect(this.getPanelX(), this.getPanelY(), 0, 0,
 				256, 256);
-		this.prepareDrawGlyphs();
+		// Draw the address the user is dialing
+		this.prepareDrawGlyphs(1, 0.5f, 0, 1);
 		for (int i = 0; i < this.tileEntity.currentGlyphIndex; i++) {
-			this.drawGlyph(this.getPanelX() + (GuiDHDButton.GlyphHeight * i), this.getPanelY(), this.tileEntity.dialingAddress[i]);
+			this.drawGlyph(
+					this.getPanelX() + (GuiDHDButton.GlyphWidth * i), this.getPanelY(),
+					this.tileEntity.dialingAddress[i]);
+		}
+		// Draw the address of this GUI's tile entity
+		this.prepareDrawGlyphs(0.35f, 0.35f, 0.35f, 1);
+		for (int i = 0; i < this.addressMemoization.length; i++) {
+			this.drawGlyph(
+					this.getPanelX() + (GuiDHDButton.GlyphWidth * i), this.getPanelY() + GuiDHDButton.GlyphHeight,
+					this.addressMemoization[i]);
 		}
 		super.drawScreen(par1, par2, par3);
 	}
