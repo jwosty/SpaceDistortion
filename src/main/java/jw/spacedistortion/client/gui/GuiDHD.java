@@ -88,23 +88,19 @@ public class GuiDHD extends GuiScreen {
 				this.tileEntity.xCoord, this.tileEntity.yCoord, this.tileEntity.zCoord, b.glyphID));
 	}
 	
-	/** Set up for drawing some glyphs */
-	public void prepareDrawGlyphs(float red, float green, float blue, float alpha) {
+	/*
+	public void drawGlyph(int x, int y, byte glyphID, float red, float green, float blue, float alpha) {
 		mc.getTextureManager().bindTexture(this.glyphTexture);
 		GL11.glColor4f(red, green, blue, alpha);
 		GL11.glDisable(GL11.GL_LIGHTING);
 		GL11.glEnable(GL11.GL_BLEND);
-	}
-	
-	public void drawGlyph(int x, int y, byte glyphID) {
 		this.drawTexturedModalRect(
 				x, y, 
-				//glyphID % (GuiDHDButton.GlyphSheetWidth / GuiDHDButton.GlyphWidth) * GuiDHDButton.GlyphWidth,		// u coordinate
-				//glyphID / (GuiDHDButton.GlyphSheetHeight / GuiDHDButton.GlyphHeight) * GuiDHDButton.GlyphHeight,	// v coordinate
 				glyphID * GuiDHDButton.GlyphWidth,
 				glyphID / (GuiDHDButton.GlyphSheetWidth / GuiDHDButton.GlyphWidth) * GuiDHDButton.GlyphWidth,
 				GuiDHDButton.GlyphWidth, GuiDHDButton.GlyphHeight);
 	}
+	*/
 	
 	@Override
 	public void drawScreen(int par1, int par2, float par3) {
@@ -115,18 +111,20 @@ public class GuiDHD extends GuiScreen {
 		this.drawTexturedModalRect(this.getPanelX(), this.getPanelY(), 0, 0,
 				256, 256);
 		// Draw the address the user is dialing
-		this.prepareDrawGlyphs(1, 0.5f, 0, 1);
 		for (int i = 0; i < this.tileEntity.currentGlyphIndex; i++) {
-			this.drawGlyph(
+			GlyphRenderer.drawGlyph(
+					this, this.mc, this.glyphTexture, this.fontRendererObj,
 					this.getPanelX() + (GuiDHDButton.GlyphWidth * i), this.getPanelY(),
-					this.tileEntity.dialingAddress[i]);
+					this.tileEntity.dialingAddress[i],
+					1, 0.5f, 0, 1);
 		}
 		// Draw the address of this GUI's tile entity
-		this.prepareDrawGlyphs(0.35f, 0.35f, 0.35f, 1);
 		for (int i = 0; i < this.addressMemoization.length; i++) {
-			this.drawGlyph(
+			GlyphRenderer.drawGlyph(
+					this, this.mc, this.glyphTexture, this.fontRendererObj,
 					this.getPanelX() + (GuiDHDButton.GlyphWidth * i), this.getPanelY() + GuiDHDButton.GlyphHeight,
-					this.addressMemoization[i]);
+					this.addressMemoization[i],
+					0.35f, 0.35f, 0.35f, 1);
 		}
 		super.drawScreen(par1, par2, par3);
 	}

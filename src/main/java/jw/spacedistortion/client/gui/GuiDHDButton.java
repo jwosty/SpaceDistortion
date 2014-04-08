@@ -27,22 +27,23 @@ public class GuiDHDButton extends GuiButton {
 	@Override
 	public void drawButton(Minecraft mc, int par1, int par2) {
 		if (this.visible) {
+			float r;
+			float g;
+			float b;
 			if (this.isActivated) {
 				// all glyphs are orange, except for the special center button (which is red)
-				if (this.glyphID == 39) {
-					GL11.glColor4f(1, 0, 0, 1);
-				} else {
-					GL11.glColor4f(1, 0.5f, 0, 1);
-				}
+				r = 1;
+				b = 0;
+				g = (this.glyphID == 39) ? 0 : 0.5f;
 			} else {
-				GL11.glColor4f(0.25f, 0.25f, 0.25f, 1);
+				r = g = b = 0.25f;
 			}
 			GL11.glDisable(GL11.GL_LIGHTING);
 			GL11.glEnable(GL11.GL_BLEND);
 			mc.getTextureManager().bindTexture(this.glyphTexture);
-			this.drawTexturedModalRect(this.xPosition, this.yPosition,
-					this.glyphID % (GlyphSheetWidth / GlyphWidth) * GlyphWidth, this.glyphID / (GlyphSheetWidth / GlyphWidth) * GlyphHeight,
-					GlyphWidth, GlyphHeight);
+			GlyphRenderer.drawGlyph(
+					this, mc, this.glyphTexture, mc.fontRenderer,
+					this.xPosition, this.yPosition, this.glyphID, r, g, b, 1);
 		}
 	}
 	
