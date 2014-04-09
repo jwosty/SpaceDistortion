@@ -175,10 +175,10 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 		ArrayList<Integer> cz = this.convertBase(Math.abs(chunkZ), 39);
 		ArrayList<Integer> dimAr = this.convertBase(dimension, 39);
 		while (cx.size() < 3) {
-			cx.add(0);
+			cx.add(0, 0);
 		}
 		while (cz.size() < 3) {
-			cz.add(0);
+			cz.add(0, 0);
 		}
 		while(dimAr.size() < 3) {
 			dimAr.add(0);
@@ -192,8 +192,8 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 		if (chunkZ >= 0) { d = d | 4; }
 		// Build result
 		return new byte[] {
-				(byte)(int)cx.get(2), (byte)(int)cx.get(1), (byte)(int)cx.get(0),
-				(byte)(int)cz.get(2), (byte)(int)cz.get(1), (byte)(int)cz.get(0),
+				(byte)(int)cx.get(0), (byte)(int)cx.get(1), (byte)(int)cx.get(2),
+				(byte)(int)cz.get(0), (byte)(int)cz.get(1), (byte)(int)cz.get(2),
 				(byte)d
 		};
 	}
