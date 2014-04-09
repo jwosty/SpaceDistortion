@@ -45,7 +45,8 @@ public abstract class GlyphRenderer {
 				glyphID / (GuiDHDButton.GlyphSheetWidth / GuiDHDButton.GlyphWidth) * GuiDHDButton.GlyphWidth,
 				GuiDHDButton.GlyphWidth, GuiDHDButton.GlyphHeight);
 		if (glyphChars.containsKey(glyphID)) {
-			fontRenderer.drawString(Character.toString(glyphChars.get(glyphID)), x + 2, y + 2, 0xFFFFFF);
+			GL11.glEnable(GL11.GL_BLEND);
+			fontRenderer.drawString(Character.toString(glyphChars.get(glyphID)), x + 2, y + 2, 0x50FFFFFF);
 		}
 	}
 }
