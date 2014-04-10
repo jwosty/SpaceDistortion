@@ -203,7 +203,7 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 		} else {
 			srcTileEntity = (TileEntityStargateController) world.getTileEntity(srcX, srcY, srcZ);
 			if (dstPlaneBlocks == null) {
-				srcTileEntity.resetAddress();
+				srcTileEntity.reset(null);
 				return;
 			} else {
 				dstTileEntity = (TileEntityStargateController) world.getTileEntity(dstX, dstY, dstZ);
@@ -276,9 +276,8 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 		}
 
 		if (srcPlaneBlocks != null) {
-			TileEntityStargateController srcTileEntity = (TileEntityStargateController) world.getTileEntity(srcX, srcY, srcZ);		
-			srcTileEntity.state = StargateControllerState.READY;
-			srcTileEntity.resetAddress();
+			TileEntityStargateController srcTileEntity = (TileEntityStargateController) world.getTileEntity(srcX, srcY, srcZ);
+			srcTileEntity.reset(null);
 			world.markBlockForUpdate(dstX, dstY, dstZ);
 			
 			// Play deactivation sound at outgoing stargate
@@ -289,8 +288,7 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 		
 		if (dstPlaneBlocks != null) {
 			TileEntityStargateController dstTileEntity = (TileEntityStargateController) world.getTileEntity(srcX, srcY, srcZ);
-			dstTileEntity.state = StargateControllerState.READY;
-			dstTileEntity.resetAddress();
+			dstTileEntity.reset(null);
 			world.markBlockForUpdate(dstX, dstY, dstZ);
 			
 			// Play deactivation sound at incoming stargate
