@@ -70,7 +70,7 @@ public class GuiDHD extends GuiScreen {
 			int y = this.getPanelY() + (i / (gsw / gw) * gh) + (gh * 2);
 			// Finally, add the button
 			GuiDHDButton button = new GuiDHDButton(x, y, this.glyphTexture, (byte)glyphID);
-			if (ArrayUtils.contains(this.tileEntity.dialingAddress, (byte)glyphID)) {
+			if (ArrayUtils.contains(this.tileEntity.addressBuffer, (byte)glyphID)) {
 				button.isActivated = true;
 			}
 			this.buttonList.add(button);
@@ -114,7 +114,7 @@ public class GuiDHD extends GuiScreen {
 			GlyphRenderer.drawGlyph(
 					this, this.mc, this.glyphTexture, this.fontRendererObj,
 					this.getPanelX() + (GuiDHDButton.GlyphWidth * i), this.getPanelY(),
-					this.tileEntity.dialingAddress[i],
+					this.tileEntity.addressBuffer[i],
 					1, 0.5f, 0, 1);
 		}
 		// Draw the address of this GUI's tile entity

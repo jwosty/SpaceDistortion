@@ -57,7 +57,7 @@ public class PacketDHDEnterGlyph implements IPacket {
 			} else {
 				// Add another glyph into the dialing address
 				if (tileEntity.currentGlyphIndex < 7) {
-					tileEntity.dialingAddress[tileEntity.currentGlyphIndex] = this.glyphID;
+					tileEntity.addressBuffer[tileEntity.currentGlyphIndex] = this.glyphID;
 					tileEntity.currentGlyphIndex++;
 				}
 				
@@ -74,36 +74,33 @@ public class PacketDHDEnterGlyph implements IPacket {
 	/** Attempts to activate or deactivate the given stargate and the stargate it is in the process of dialing, returning whether or not it succeeded */
 	public boolean toggleStargatePair(EntityPlayer player,
 			TileEntityStargateController tileEntity) {
-		Triplet<Integer, Integer, Integer> decodedAddress = SDBlock.stargateController.decodeAddress(tileEntity.dialingAddress);
-		int dstDimension = decodedAddress.X;
-		// Get chunk coordinates
-		int dstChunkX = decodedAddress.Y;
-		int dstChunkZ = decodedAddress.Z;
-		if (dstChunkX == tileEntity.xCoord >> 4 && dstChunkZ == tileEntity.zCoord >> 4) {
-			// A stargate can't dial to its own chunk
-			return false;
-		}
-		int[] dstCoords = BlockStargateController.getDominantController(player.worldObj, dstChunkX, dstChunkZ);
-		if (dstCoords == null) {
-			return false;
-		}
-		TileEntityStargateController dstTileEntity = (TileEntityStargateController) player.worldObj.getTileEntity(dstCoords[0], dstCoords[1], dstCoords[2]);
-		
 		// Activate or deactivate the stargates if possible
-		if (dstCoords != null) {
-			switch (tileEntity.state) {
-			case READY:
-				SDBlock.stargateController.serverActivateStargatePair(
-						player.worldObj, tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord,
-						dstCoords[0], dstCoords[1], dstCoords[2]);
-				break;
-			case ACTIVE_OUTGOING:
-				SDBlock.stargateController.serverDeactivateStargatePair(
-						player.worldObj, tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord,
-						dstCoords[0], dstCoords[1], dstCoords[2]);
-				break;
-			default:
+		switch (tileEntity.state) {
+		case READY:
+			Triplet<Integer, Integer, Integer> decodedAddress = SDBlock.stargateController.decodeAddress(tileEntity.addressBuffer);
+			int dstDimension = decodedAddress.X;
+			// Get chunk coordinates
+			int dstChunkX = decodedAddress.Y;
+			int dstChunkZ = decodedAddress.Z;
+			if (dstChunkX == tileEntity.xCoord >> 4 && dstChunkZ == tileEntity.zCoord >> 4) {
+				// A stargate can't dial to its own chunk
+				return false;
 			}
+			int[] dstCoords = BlockStargateController.getDominantController(player.worldObj, dstChunkX, dstChunkZ);
+			if (dstCoords == null) {
+				return false;
+			}
+			SDBlock.stargateController.serverActivateStargatePair(
+					player.worldObj, tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord,
+					dstCoords[0], dstCoords[1], dstCoords[2]);
+			break;
+		case ACTIVE_OUTGOING:
+			SDBlock.stargateController.serverDeactivateStargatePair(
+					player.worldObj, tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord,
+					tileEntity.connectedXCoord, tileEntity.connectedYCoord, tileEntity.connectedZCoord);
+			break;
+		default:
+			
 		}
 		return true;
 	}

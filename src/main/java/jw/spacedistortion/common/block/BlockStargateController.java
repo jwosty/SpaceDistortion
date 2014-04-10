@@ -107,20 +107,6 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 		
 		TileEntityStargateController controllerTileEntity = (TileEntityStargateController) world.getTileEntity(x, y, z);
 		controllerTileEntity.state = BlockStargateController.getCurrentState(world, x, y, z);
-		
-		//System.out.println(x + " -> " + this.convertBase(x, 39));
-		///*
-		byte[] address = this.encodeAddress(x >> 4, z >> 4, 0);
-		System.out.print("coords: (" + x + ", " + z + "), address: ");
-		for (int i = 0; i < address.length; i++) {
-			System.out.print(address[i]);
-			if (i < address.length - 1) {
-				System.out.print(", ");
-			} else {
-				System.out.println();
-			}
-		}
-		//*/
 	}
 	
 	@Override
@@ -233,11 +219,18 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 			basicUnsafeFillStargateCenter(world, dstFacing, dstBlocks, srcFacing, srcBlocks, i, SDBlock.eventHorizon);
 		}
 		
-		// Change the states of both stargates
+		// Set the states of both stargates
 		srcTileEntity.state = StargateControllerState.ACTIVE_OUTGOING;
 		world.markBlockForUpdate(srcX, srcY, srcZ);
 		dstTileEntity.state = StargateControllerState.ACTIVE_INCOMING;
 		world.markBlockForUpdate(dstX, dstY, dstZ);
+		// Set connection coordinates
+		srcTileEntity.connectedXCoord = dstTileEntity.xCoord;
+		srcTileEntity.connectedYCoord = dstTileEntity.yCoord;
+		srcTileEntity.connectedZCoord = dstTileEntity.zCoord;
+		dstTileEntity.connectedXCoord = srcTileEntity.xCoord;
+		dstTileEntity.connectedYCoord = srcTileEntity.yCoord;
+		dstTileEntity.connectedZCoord = srcTileEntity.zCoord;
 		
 		// Play kawoosh sounds at both stargates
 		SDSoundHandler.serverPlaySoundToPlayers(
