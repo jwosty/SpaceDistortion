@@ -10,7 +10,7 @@ import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 
 public class TileEntityStargateController extends TileEntity {
-	public StargateControllerState state;
+	public StargateControllerStateOld state;
 	/** Stores the coordinates the player has entered thus so far */
 	public byte[] addressBuffer;
 	public int currentGlyphIndex;
@@ -23,7 +23,7 @@ public class TileEntityStargateController extends TileEntity {
 	public TileEntityStargateController() {
 		// It actually doesn't matter what state we use; BlockStargateController#onBlockPlacedBy or
 		// TileEntityStargateController#readFromNBT will correct this
-		this.reset(StargateControllerState.NO_CONNECTED_STARGATE);
+		this.reset(StargateControllerStateOld.NO_CONNECTED_STARGATE);
 	}
 	
 	/**
@@ -31,7 +31,7 @@ public class TileEntityStargateController extends TileEntity {
 	 * @param newState The new state to initialize with -- if null, uses SDBlock.stargateController.getCurrentState
 	 * to determine the new state
 	 */
-	public void reset(StargateControllerState newState) {
+	public void reset(StargateControllerStateOld newState) {
 		if (newState == null) {
 			this.state = SDBlock.stargateController.getCurrentState(this.worldObj, this.xCoord, this.yCoord, this.zCoord);
 		} else {
@@ -68,7 +68,7 @@ public class TileEntityStargateController extends TileEntity {
 	@Override
 	public void readFromNBT(NBTTagCompound data) {
 		super.readFromNBT(data);
-		this.state = StargateControllerState.values()[data.getInteger("state")];
+		this.state = StargateControllerStateOld.values()[data.getInteger("state")];
 		switch (this.state) {
 		case NO_CONNECTED_STARGATE:
 		case READY:

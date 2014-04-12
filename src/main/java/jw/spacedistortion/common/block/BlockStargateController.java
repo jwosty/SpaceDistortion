@@ -6,7 +6,7 @@ import jw.spacedistortion.Pair;
 import jw.spacedistortion.Triplet;
 import jw.spacedistortion.client.SDSoundHandler;
 import jw.spacedistortion.common.SpaceDistortion;
-import jw.spacedistortion.common.tileentity.StargateControllerState;
+import jw.spacedistortion.common.tileentity.StargateControllerStateOld;
 import jw.spacedistortion.common.tileentity.TileEntityEventHorizon;
 import jw.spacedistortion.common.tileentity.TileEntityStargateController;
 import net.minecraft.block.Block;
@@ -91,11 +91,11 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 	 * @param z the z position of the controller
 	 * @return A StargateControllerState the describes the stargate's state
 	 */
-	public static StargateControllerState getCurrentState(IBlockAccess world, int x, int y, int z) {
+	public static StargateControllerStateOld getCurrentState(IBlockAccess world, int x, int y, int z) {
 		if (SDBlock.stargateController.getStargateBlocks(world, x, y, z) != null) {
-			return StargateControllerState.READY;
+			return StargateControllerStateOld.READY;
 		} else {
-			return StargateControllerState.NO_CONNECTED_STARGATE;
+			return StargateControllerStateOld.NO_CONNECTED_STARGATE;
 		}
 	}
 	
@@ -157,7 +157,7 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 	
 	@Override
 	public void onNeighborChange(IBlockAccess world, int x, int y, int z, int otherX, int otherY, int otherZ) {
-		StargateControllerState state = BlockStargateController.getCurrentState(world, x, y, z);
+		StargateControllerStateOld state = BlockStargateController.getCurrentState(world, x, y, z);
 		TileEntityStargateController controllerTileEntity = (TileEntityStargateController) world.getTileEntity(x, y, z);
 		if (controllerTileEntity != null) {
 			SDBlock.syncTileEntity(controllerTileEntity);
@@ -255,8 +255,8 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 		}
 		
 		// Set the states of both stargates
-		srcTileEntity.state = StargateControllerState.ACTIVE_OUTGOING;
-		dstTileEntity.state = StargateControllerState.ACTIVE_INCOMING;
+		srcTileEntity.state = StargateControllerStateOld.ACTIVE_OUTGOING;
+		dstTileEntity.state = StargateControllerStateOld.ACTIVE_INCOMING;
 		// Set connection coordinates
 		srcTileEntity.connectedXCoord = dstTileEntity.xCoord;
 		srcTileEntity.connectedYCoord = dstTileEntity.yCoord;
