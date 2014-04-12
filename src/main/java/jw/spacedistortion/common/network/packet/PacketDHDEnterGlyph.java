@@ -66,8 +66,6 @@ public class PacketDHDEnterGlyph implements IPacket {
 						player.worldObj.playerEntities, "stargate.glyph", 1F, 1F,
 						(double) tileEntity.xCoord, (double) tileEntity.yCoord, (double) tileEntity.zCoord);	
 			}
-			// Send changes on the stargate controller block and tile entity to all clients
-			player.worldObj.markBlockForUpdate(this.x, this.y, this.z);
 		}
 	}
 	

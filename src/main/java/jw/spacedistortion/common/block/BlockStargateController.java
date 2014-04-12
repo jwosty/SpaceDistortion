@@ -125,7 +125,7 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 		default:
 			break;
 		}
-		world.createExplosion(explosionCausingJerk, x, y, z, 3.5f, true);
+		//world.createExplosion(explosionCausingJerk, x, y, z, 3.5f, true);
 	}
 	
 	@Override
@@ -256,9 +256,7 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 		
 		// Set the states of both stargates
 		srcTileEntity.state = StargateControllerState.ACTIVE_OUTGOING;
-		world.markBlockForUpdate(srcX, srcY, srcZ);
 		dstTileEntity.state = StargateControllerState.ACTIVE_INCOMING;
-		world.markBlockForUpdate(dstX, dstY, dstZ);
 		// Set connection coordinates
 		srcTileEntity.connectedXCoord = dstTileEntity.xCoord;
 		srcTileEntity.connectedYCoord = dstTileEntity.yCoord;
@@ -266,6 +264,8 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 		dstTileEntity.connectedXCoord = srcTileEntity.xCoord;
 		dstTileEntity.connectedYCoord = srcTileEntity.yCoord;
 		dstTileEntity.connectedZCoord = srcTileEntity.zCoord;
+		world.markBlockForUpdate(srcX, srcY, srcZ);
+		world.markBlockForUpdate(dstX, dstY, dstZ);
 		
 		// Play kawoosh sounds at both stargates
 		SDSoundHandler.serverPlaySoundToPlayers(
@@ -313,7 +313,7 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 		if (srcPlaneBlocks != null) {
 			TileEntityStargateController srcTileEntity = (TileEntityStargateController) world.getTileEntity(srcX, srcY, srcZ);
 			srcTileEntity.reset(null);
-			world.markBlockForUpdate(dstX, dstY, dstZ);
+			world.markBlockForUpdate(srcX, srcY, srcZ);
 			
 			// Play deactivation sound at outgoing stargate
 			SDSoundHandler.serverPlaySoundToPlayers(
@@ -322,7 +322,7 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 		}
 		
 		if (dstPlaneBlocks != null) {
-			TileEntityStargateController dstTileEntity = (TileEntityStargateController) world.getTileEntity(srcX, srcY, srcZ);
+			TileEntityStargateController dstTileEntity = (TileEntityStargateController) world.getTileEntity(dstX, dstY, dstZ);
 			dstTileEntity.reset(null);
 			world.markBlockForUpdate(dstX, dstY, dstZ);
 			
