@@ -30,10 +30,12 @@ public class BlockStargateRing extends SDBlock {
 	@Override
 	public boolean removedByPlayer(World world, EntityPlayer player, int x, int y, int z) {
 		boolean result = super.removedByPlayer(world, player, x, y, z);
-		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
-			if (world.getBlock(x + direction.offsetX, y + direction.offsetY, z + direction.offsetZ) == SDBlock.eventHorizon) { 
-				this.explode(world, player, x, y, z);
-				break;
+		if (!world.isRemote){ 
+			for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
+				if (world.getBlock(x + direction.offsetX, y + direction.offsetY, z + direction.offsetZ) == SDBlock.eventHorizon) { 
+					this.explode(world, player, x, y, z);
+					break;
+				}
 			}
 		}
 		return result;
@@ -41,6 +43,7 @@ public class BlockStargateRing extends SDBlock {
 	
 	@Override
 	public void onBlockDestroyedByExplosion(World world, int x, int y, int z, Explosion explosion) {
+		super.onBlockDestroyedByExplosion(world, x, y, z, explosion);
 		if (!world.isRemote) {
 			this.explode(world, null, x, y, z);
 		}

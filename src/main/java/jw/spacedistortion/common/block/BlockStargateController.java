@@ -109,6 +109,41 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 		controllerTileEntity.state = BlockStargateController.getCurrentState(world, x, y, z);
 	}
 	
+	private void explode(World world, EntityLivingBase explosionCausingJerk, int x, int y, int z) {
+		TileEntityStargateController tileEntity = (TileEntityStargateController)world.getTileEntity(x, y, z);
+		switch (tileEntity.state) {
+		case ACTIVE_OUTGOING:
+			this.serverDeactivateStargatePair(
+					world, x, y, z,
+					tileEntity.connectedXCoord, tileEntity.connectedYCoord, tileEntity.connectedZCoord);
+			break;
+		case ACTIVE_INCOMING:
+			this.serverDeactivateStargatePair(
+					world, tileEntity.connectedXCoord, tileEntity.connectedYCoord, tileEntity.connectedZCoord,
+					x, y, z);
+			break;
+		default:
+			break;
+		}
+		world.createExplosion(explosionCausingJerk, x, y, z, 3.5f, true);
+	}
+	
+	@Override
+	public void breakBlock(World world, int x, int y, int z, Block block, int metadata) {
+		TileEntityStargateController tileEntity = (TileEntityStargateController)world.getTileEntity(x, y, z);
+		if (!world.isRemote) {
+			switch (tileEntity.state) {
+			case ACTIVE_OUTGOING:
+			case ACTIVE_INCOMING:
+				this.explode(world, null, x, y, z);
+				break;
+			default:
+				break;
+			}
+		}
+		super.breakBlock(world, x, y, z, block, metadata);
+	}
+	
 	@Override
 	/** Called when the block is right-clicked on **/
 	public boolean onBlockActivated(World world, int x, int y, int z,
