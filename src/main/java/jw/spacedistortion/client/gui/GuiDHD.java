@@ -83,7 +83,10 @@ public class GuiDHD extends GuiScreen {
 	public void memoize() {
 		this.addressMemoization = SDBlock.stargateController.encodeAddress(
 				this.tileEntity.xCoord >> 4, this.tileEntity.zCoord >> 4, this.tileEntity.getWorldObj().provider.dimensionId);
-		if (this.tileEntity.state instanceof StargateControllerActive) {
+		if (this.tileEntity.state instanceof StargateControllerReady) {
+			StargateControllerReady state = (StargateControllerReady) tileEntity.state;
+			this.connectedMemoization = state.addressBuffer;
+		} else if (this.tileEntity.state instanceof StargateControllerActive) {
 			StargateControllerActive state = (StargateControllerActive) tileEntity.state;
 			this.connectedMemoization = SDBlock.stargateController.encodeAddress(
 					state.connectedXCoord >> 4, state.connectedZCoord >> 4, state.connectedDimension);
