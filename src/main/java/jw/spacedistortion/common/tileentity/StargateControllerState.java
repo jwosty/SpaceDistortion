@@ -119,17 +119,17 @@ public abstract class StargateControllerState {
 
 		@Override
 		public float getGuiDisplayRed() {
-			return 1f;
+			return this.isOutgoing ? 1f : 0f;
 		}
 
 		@Override
 		public float getGuiDisplayGreen() {
-			return 0f;
+			return this.isOutgoing ? 0.25f : 0f;
 		}
 
 		@Override
 		public float getGuiDisplayBlue() {
-			return 0f;
+			return this.isOutgoing ? 0f : 1f;
 		}
 	}
 	
