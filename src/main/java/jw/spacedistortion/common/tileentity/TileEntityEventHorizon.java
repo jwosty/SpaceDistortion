@@ -13,7 +13,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class TileEntityEventHorizon extends TileEntity {
 	public boolean isOutgoing = false;
 	public ForgeDirection facing;
-	// Coordinates of the destination stargate controller
+	
 	public int destX;
 	public int destY;
 	public int destZ;

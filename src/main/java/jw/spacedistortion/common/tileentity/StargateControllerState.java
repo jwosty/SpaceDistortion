@@ -12,7 +12,7 @@ public abstract class StargateControllerState {
 	
 	public abstract String getType();
 	
-	public abstract void writeNBTData(NBTTagCompound tag);
+	public void writeNBTData(NBTTagCompound tag) { }
 	
 	public void writeToNBT(NBTTagCompound tag) {
 		String type = this.getType();
@@ -29,9 +29,6 @@ public abstract class StargateControllerState {
 		public String getType() {
 			return "invalid";
 		}
-
-		@Override
-		public void writeNBTData(NBTTagCompound tag) { }
 
 		@Override
 		public float getGuiDisplayRed() {

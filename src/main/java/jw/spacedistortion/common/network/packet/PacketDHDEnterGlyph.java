@@ -96,6 +96,10 @@ public class PacketDHDEnterGlyph implements IPacket {
 				SDBlock.stargateController.serverDeactivateStargatePair(
 						player.worldObj, tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord,
 						state.connectedXCoord, state.connectedYCoord, state.connectedZCoord);
+			} else {
+				SDBlock.stargateController.serverDeactivateStargatePair(
+						player.worldObj, state.connectedXCoord, state.connectedYCoord, state.connectedZCoord,
+						tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord);
 			}
 		} else {
 			return false;
