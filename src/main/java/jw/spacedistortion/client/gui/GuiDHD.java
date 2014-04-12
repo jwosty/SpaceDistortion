@@ -4,6 +4,8 @@ import jw.spacedistortion.common.CommonProxy;
 import jw.spacedistortion.common.block.SDBlock;
 import jw.spacedistortion.common.network.ChannelHandler;
 import jw.spacedistortion.common.network.packet.PacketDHDEnterGlyph;
+import jw.spacedistortion.common.tileentity.StargateControllerState.StargateControllerActive;
+import jw.spacedistortion.common.tileentity.StargateControllerState.StargateControllerReady;
 import jw.spacedistortion.common.tileentity.TileEntityStargateController;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
@@ -70,7 +72,8 @@ public class GuiDHD extends GuiScreen {
 			int y = this.getPanelY() + (i / (gsw / gw) * gh) + (gh * 2);
 			// Finally, add the button
 			GuiDHDButton button = new GuiDHDButton(x, y, this.glyphTexture, (byte)glyphID);
-			if (ArrayUtils.contains(this.tileEntity.addressBuffer, (byte)glyphID)) {
+			if (this.tileEntity.state instanceof StargateControllerReady
+					&& ArrayUtils.contains(((StargateControllerReady)this.tileEntity.state).addressBuffer, (byte)glyphID)) {
 				button.isActivated = true;
 			}
 			this.buttonList.add(button);
@@ -80,8 +83,11 @@ public class GuiDHD extends GuiScreen {
 	public void memoize() {
 		this.addressMemoization = SDBlock.stargateController.encodeAddress(
 				this.tileEntity.xCoord >> 4, this.tileEntity.zCoord >> 4, this.tileEntity.getWorldObj().provider.dimensionId);
-		this.connectedMemoization = SDBlock.stargateController.encodeAddress(
-				this.tileEntity.connectedXCoord >> 4, this.tileEntity.connectedZCoord >> 4, this.tileEntity.connectedDimension);
+		if (this.tileEntity.state instanceof StargateControllerActive) {
+			StargateControllerActive state = (StargateControllerActive) tileEntity.state;
+			this.connectedMemoization = SDBlock.stargateController.encodeAddress(
+					state.connectedXCoord >> 4, state.connectedZCoord >> 4, state.connectedDimension);
+		}
 	}
 	
 	@Override
@@ -117,26 +123,8 @@ public class GuiDHD extends GuiScreen {
 		mc.getTextureManager().bindTexture(this.backgroundTexture);
 		this.drawTexturedModalRect(this.getPanelX(), this.getPanelY(), 0, 0,
 				256, 256);
-		float r;
-		float g;
-		float b;
-		switch (this.tileEntity.state) {
-		case NO_CONNECTED_STARGATE:
-			r = g = b = 0.25f;
-			break;
-		case READY:
-		case ACTIVE_OUTGOING:
-			r = 1;
-			g = 0.5f;
-			b = 0;
-			break;
-		case ACTIVE_INCOMING:
-			r = 0.5f;
-			g = 0.f;
-			break;
-		}
-		
 		// Draw the address the user is dialing
+		/*
 		int max;
 		byte[] addressBarGlyphs;
 		switch (this.tileEntity.state) {
@@ -150,12 +138,16 @@ public class GuiDHD extends GuiScreen {
 			addressBarGlyphs = this.tileEntity.addressBuffer;
 			break;
 		}
-		for (int i = 0; i < this.tileEntity.addressBuffer.length; i++) {
+		*/
+		for (int i = 0; i < this.connectedMemoization.length; i++) {
 			GlyphRenderer.drawGlyph(
 					this, this.mc, this.glyphTexture, this.fontRendererObj,
 					this.getPanelX() + (GuiDHDButton.GlyphWidth * i), this.getPanelY(),
-					addressBarGlyphs[i],
-					1, 0.5f, 0, 1);
+					this.connectedMemoization[i],
+					this.tileEntity.state.getGuiDisplayRed(),
+					this.tileEntity.state.getGuiDisplayGreen(),
+					this.tileEntity.state.getGuiDisplayBlue(),
+					1);
 		}
 		// Draw the address of this GUI's tile entity
 		for (int i = 0; i < this.addressMemoization.length; i++) {

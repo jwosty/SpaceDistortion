@@ -3,14 +3,12 @@ package jw.spacedistortion.common.network.packet;
 import io.netty.buffer.ByteBuf;
 import jw.spacedistortion.Triplet;
 import jw.spacedistortion.client.SDSoundHandler;
-import jw.spacedistortion.common.CommonProxy;
 import jw.spacedistortion.common.block.BlockStargateController;
 import jw.spacedistortion.common.block.SDBlock;
+import jw.spacedistortion.common.tileentity.StargateControllerState.StargateControllerActive;
+import jw.spacedistortion.common.tileentity.StargateControllerState.StargateControllerReady;
 import jw.spacedistortion.common.tileentity.TileEntityStargateController;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.network.play.server.S29PacketSoundEffect;
 import cpw.mods.fml.relauncher.Side;
 
 public class PacketDHDEnterGlyph implements IPacket {
@@ -54,11 +52,12 @@ public class PacketDHDEnterGlyph implements IPacket {
 			TileEntityStargateController tileEntity = (TileEntityStargateController) player.worldObj.getTileEntity(this.x, this.y, this.z);
 			if (this.glyphID == 39) {
 				this.toggleStargatePair(player, tileEntity);
-			} else {
+			} else if (tileEntity.state instanceof StargateControllerReady) {
+				StargateControllerReady state = (StargateControllerReady) tileEntity.state;
 				// Add another glyph into the dialing address
-				if (tileEntity.currentGlyphIndex < 7) {
-					tileEntity.addressBuffer[tileEntity.currentGlyphIndex] = this.glyphID;
-					tileEntity.currentGlyphIndex++;
+				if (state.currentGlyphIndex < 7) {
+					state.addressBuffer[state.currentGlyphIndex] = this.glyphID;
+					state.currentGlyphIndex++;
 				}
 				
 				// Play a glyph press sound on all clients at the stargate controller block
@@ -73,9 +72,9 @@ public class PacketDHDEnterGlyph implements IPacket {
 	public boolean toggleStargatePair(EntityPlayer player,
 			TileEntityStargateController tileEntity) {
 		// Activate or deactivate the stargates if possible
-		switch (tileEntity.state) {
-		case READY:
-			Triplet<Integer, Integer, Integer> decodedAddress = SDBlock.stargateController.decodeAddress(tileEntity.addressBuffer);
+		if (tileEntity.state instanceof StargateControllerReady) {
+			StargateControllerReady state = (StargateControllerReady)tileEntity.state;
+			Triplet<Integer, Integer, Integer> decodedAddress = SDBlock.stargateController.decodeAddress(state.addressBuffer);
 			int dstDimension = decodedAddress.X;
 			// Get chunk coordinates
 			int dstChunkX = decodedAddress.Y;
@@ -91,14 +90,15 @@ public class PacketDHDEnterGlyph implements IPacket {
 			SDBlock.stargateController.serverActivateStargatePair(
 					player.worldObj, tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord,
 					dstCoords[0], dstCoords[1], dstCoords[2]);
-			break;
-		case ACTIVE_OUTGOING:
-			SDBlock.stargateController.serverDeactivateStargatePair(
-					player.worldObj, tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord,
-					tileEntity.connectedXCoord, tileEntity.connectedYCoord, tileEntity.connectedZCoord);
-			break;
-		default:
-			
+		} else if (tileEntity.state instanceof StargateControllerActive) {
+			StargateControllerActive state = (StargateControllerActive) tileEntity.state;
+			if (state.isOutgoing) {
+				SDBlock.stargateController.serverDeactivateStargatePair(
+						player.worldObj, tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord,
+						state.connectedXCoord, state.connectedYCoord, state.connectedZCoord);
+			}
+		} else {
+			return false;
 		}
 		return true;
 	}

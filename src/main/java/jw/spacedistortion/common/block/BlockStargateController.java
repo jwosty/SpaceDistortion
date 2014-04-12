@@ -6,7 +6,10 @@ import jw.spacedistortion.Pair;
 import jw.spacedistortion.Triplet;
 import jw.spacedistortion.client.SDSoundHandler;
 import jw.spacedistortion.common.SpaceDistortion;
-import jw.spacedistortion.common.tileentity.StargateControllerStateOld;
+import jw.spacedistortion.common.tileentity.StargateControllerState;
+import jw.spacedistortion.common.tileentity.StargateControllerState.StargateControllerActive;
+import jw.spacedistortion.common.tileentity.StargateControllerState.StargateControllerInvalid;
+import jw.spacedistortion.common.tileentity.StargateControllerState.StargateControllerReady;
 import jw.spacedistortion.common.tileentity.TileEntityEventHorizon;
 import jw.spacedistortion.common.tileentity.TileEntityStargateController;
 import net.minecraft.block.Block;
@@ -91,11 +94,11 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 	 * @param z the z position of the controller
 	 * @return A StargateControllerState the describes the stargate's state
 	 */
-	public static StargateControllerStateOld getCurrentState(IBlockAccess world, int x, int y, int z) {
+	public static StargateControllerState getCurrentState(IBlockAccess world, int x, int y, int z) {
 		if (SDBlock.stargateController.getStargateBlocks(world, x, y, z) != null) {
-			return StargateControllerStateOld.READY;
+			return new StargateControllerState.StargateControllerReady(new byte[] { 40, 40, 40, 40, 40, 40, 40 }, 0);
 		} else {
-			return StargateControllerStateOld.NO_CONNECTED_STARGATE;
+			return new StargateControllerState.StargateControllerInvalid();
 		}
 	}
 	
@@ -111,19 +114,17 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 	
 	private void explode(World world, EntityLivingBase explosionCausingJerk, int x, int y, int z) {
 		TileEntityStargateController tileEntity = (TileEntityStargateController)world.getTileEntity(x, y, z);
-		switch (tileEntity.state) {
-		case ACTIVE_OUTGOING:
+		if (tileEntity.state instanceof StargateControllerActive) {
+			StargateControllerActive state = (StargateControllerActive) tileEntity.state;
+			if (state.isOutgoing) {
 			this.serverDeactivateStargatePair(
 					world, x, y, z,
-					tileEntity.connectedXCoord, tileEntity.connectedYCoord, tileEntity.connectedZCoord);
-			break;
-		case ACTIVE_INCOMING:
+					state.connectedXCoord, state.connectedYCoord, state.connectedZCoord);
+			} else {
 			this.serverDeactivateStargatePair(
-					world, tileEntity.connectedXCoord, tileEntity.connectedYCoord, tileEntity.connectedZCoord,
+					world, state.connectedXCoord, state.connectedYCoord, state.connectedZCoord,
 					x, y, z);
-			break;
-		default:
-			break;
+			}
 		}
 		world.createExplosion(explosionCausingJerk, x, y, z, 3.5f, true);
 	}
@@ -131,15 +132,8 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 	@Override
 	public void breakBlock(World world, int x, int y, int z, Block block, int metadata) {
 		TileEntityStargateController tileEntity = (TileEntityStargateController)world.getTileEntity(x, y, z);
-		if (!world.isRemote) {
-			switch (tileEntity.state) {
-			case ACTIVE_OUTGOING:
-			case ACTIVE_INCOMING:
-				this.explode(world, null, x, y, z);
-				break;
-			default:
-				break;
-			}
+		if (!world.isRemote && tileEntity.state instanceof StargateControllerActive) {
+			this.explode(world, null, x, y, z);
 		}
 		super.breakBlock(world, x, y, z, block, metadata);
 	}
@@ -157,7 +151,7 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 	
 	@Override
 	public void onNeighborChange(IBlockAccess world, int x, int y, int z, int otherX, int otherY, int otherZ) {
-		StargateControllerStateOld state = BlockStargateController.getCurrentState(world, x, y, z);
+		StargateControllerState state = BlockStargateController.getCurrentState(world, x, y, z);
 		TileEntityStargateController controllerTileEntity = (TileEntityStargateController) world.getTileEntity(x, y, z);
 		if (controllerTileEntity != null) {
 			SDBlock.syncTileEntity(controllerTileEntity);
@@ -238,7 +232,7 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 		} else {
 			srcTileEntity = (TileEntityStargateController) world.getTileEntity(srcX, srcY, srcZ);
 			if (dstPlaneBlocks == null) {
-				srcTileEntity.reset(null);
+				srcTileEntity.reset();
 				return;
 			} else {
 				dstTileEntity = (TileEntityStargateController) world.getTileEntity(dstX, dstY, dstZ);
@@ -254,16 +248,14 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 			basicUnsafeFillStargateCenter(world, dstFacing, dstBlocks, srcFacing, srcBlocks, i, SDBlock.eventHorizon);
 		}
 		
-		// Set the states of both stargates
-		srcTileEntity.state = StargateControllerStateOld.ACTIVE_OUTGOING;
-		dstTileEntity.state = StargateControllerStateOld.ACTIVE_INCOMING;
-		// Set connection coordinates
-		srcTileEntity.connectedXCoord = dstTileEntity.xCoord;
-		srcTileEntity.connectedYCoord = dstTileEntity.yCoord;
-		srcTileEntity.connectedZCoord = dstTileEntity.zCoord;
-		dstTileEntity.connectedXCoord = srcTileEntity.xCoord;
-		dstTileEntity.connectedYCoord = srcTileEntity.yCoord;
-		dstTileEntity.connectedZCoord = srcTileEntity.zCoord;
+		// Set the appropriate states of both stargates
+		srcTileEntity.state = new StargateControllerActive(
+				true, dstTileEntity.xCoord, dstTileEntity.yCoord, dstTileEntity.zCoord,
+				dstTileEntity.getWorldObj().provider.dimensionId);
+		dstTileEntity.state = new StargateControllerActive(
+				false, srcTileEntity.xCoord, srcTileEntity.yCoord, srcTileEntity.zCoord,
+				srcTileEntity.getWorldObj().provider.dimensionId);
+		
 		world.markBlockForUpdate(srcX, srcY, srcZ);
 		world.markBlockForUpdate(dstX, dstY, dstZ);
 		
@@ -312,7 +304,7 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 
 		if (srcPlaneBlocks != null) {
 			TileEntityStargateController srcTileEntity = (TileEntityStargateController) world.getTileEntity(srcX, srcY, srcZ);
-			srcTileEntity.reset(null);
+			srcTileEntity.reset();
 			world.markBlockForUpdate(srcX, srcY, srcZ);
 			
 			// Play deactivation sound at outgoing stargate
@@ -323,7 +315,7 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 		
 		if (dstPlaneBlocks != null) {
 			TileEntityStargateController dstTileEntity = (TileEntityStargateController) world.getTileEntity(dstX, dstY, dstZ);
-			dstTileEntity.reset(null);
+			dstTileEntity.reset();
 			world.markBlockForUpdate(dstX, dstY, dstZ);
 			
 			// Play deactivation sound at incoming stargate
@@ -451,17 +443,12 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 		int facing = world.getBlockMetadata(x, y, z);
 		if (side == facing) {
 			TileEntityStargateController tileEntity = (TileEntityStargateController) world.getTileEntity(x, y, z);
-			if (tileEntity != null && tileEntity.state != null) {
-				switch (tileEntity.state) {
-				case NO_CONNECTED_STARGATE:
-					return this.controllerOff;
-				case READY:
-					return this.controllerIdle;
-				case ACTIVE_OUTGOING:
-					return this.controllerActive;
-				case ACTIVE_INCOMING:
-					return this.controllerActive;
-				}
+			if (tileEntity.state instanceof StargateControllerInvalid) {
+				return this.controllerOff;
+			} else if (tileEntity.state instanceof StargateControllerReady) {
+				return this.controllerIdle;
+			} else if (tileEntity.state instanceof StargateControllerActive) {
+				return this.controllerActive;
 			}
 		}
 		return this.blockIcon;
