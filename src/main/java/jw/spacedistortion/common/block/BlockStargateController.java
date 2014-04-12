@@ -125,7 +125,7 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 		default:
 			break;
 		}
-		//world.createExplosion(explosionCausingJerk, x, y, z, 3.5f, true);
+		world.createExplosion(explosionCausingJerk, x, y, z, 3.5f, true);
 	}
 	
 	@Override
