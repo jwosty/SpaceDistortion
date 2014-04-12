@@ -19,6 +19,7 @@ public class GuiDHD extends GuiScreen {
 	public TileEntityStargateController tileEntity;
 	/** Memoizes the address of the stargate controller */
 	public byte[] addressMemoization;
+	public byte[] connectedMemoization;
 	
 	public GuiDHD(TileEntityStargateController controllerTileEntity) {
 		this.tileEntity = controllerTileEntity;
@@ -41,10 +42,9 @@ public class GuiDHD extends GuiScreen {
 
 	@Override
 	public void initGui() {
-		this.addressMemoization = SDBlock.stargateController.encodeAddress(
-				this.tileEntity.xCoord >> 4, this.tileEntity.zCoord >> 4, this.tileEntity.getWorldObj().provider.dimensionId);
-		
 		this.buttonList.clear();
+		
+		this.memoize();
 
 		// "Shortcuts" for frequently accessed constants
 		int gsw = GuiDHDButton.GlyphSheetWidth;
@@ -77,12 +77,20 @@ public class GuiDHD extends GuiScreen {
 		}
 	}
 	
+	public void memoize() {
+		this.addressMemoization = SDBlock.stargateController.encodeAddress(
+				this.tileEntity.xCoord >> 4, this.tileEntity.zCoord >> 4, this.tileEntity.getWorldObj().provider.dimensionId);
+		this.connectedMemoization = SDBlock.stargateController.encodeAddress(
+				this.tileEntity.connectedXCoord >> 4, this.tileEntity.connectedZCoord >> 4, this.tileEntity.connectedDimension);
+	}
+	
 	@Override
 	public void actionPerformed(GuiButton button) {
 		GuiDHDButton b = (GuiDHDButton) button;
 		b.isActivated = true;
 		ChannelHandler.clientSendPacket(new PacketDHDEnterGlyph(
 				this.tileEntity.xCoord, this.tileEntity.yCoord, this.tileEntity.zCoord, b.glyphID));
+		this.memoize();
 	}
 	
 	@Override
@@ -109,12 +117,44 @@ public class GuiDHD extends GuiScreen {
 		mc.getTextureManager().bindTexture(this.backgroundTexture);
 		this.drawTexturedModalRect(this.getPanelX(), this.getPanelY(), 0, 0,
 				256, 256);
+		float r;
+		float g;
+		float b;
+		switch (this.tileEntity.state) {
+		case NO_CONNECTED_STARGATE:
+			r = g = b = 0.25f;
+			break;
+		case READY:
+		case ACTIVE_OUTGOING:
+			r = 1;
+			g = 0.5f;
+			b = 0;
+			break;
+		case ACTIVE_INCOMING:
+			r = 0.5f;
+			g = 0.f;
+			break;
+		}
+		
 		// Draw the address the user is dialing
-		for (int i = 0; i < this.tileEntity.currentGlyphIndex; i++) {
+		int max;
+		byte[] addressBarGlyphs;
+		switch (this.tileEntity.state) {
+		case ACTIVE_OUTGOING:
+		case ACTIVE_INCOMING:
+			max = this.addressMemoization.length;
+			addressBarGlyphs = this.connectedMemoization;
+			break;
+		default:
+			max = this.tileEntity.currentGlyphIndex;
+			addressBarGlyphs = this.tileEntity.addressBuffer;
+			break;
+		}
+		for (int i = 0; i < this.tileEntity.addressBuffer.length; i++) {
 			GlyphRenderer.drawGlyph(
 					this, this.mc, this.glyphTexture, this.fontRendererObj,
 					this.getPanelX() + (GuiDHDButton.GlyphWidth * i), this.getPanelY(),
-					this.tileEntity.addressBuffer[i],
+					addressBarGlyphs[i],
 					1, 0.5f, 0, 1);
 		}
 		// Draw the address of this GUI's tile entity
