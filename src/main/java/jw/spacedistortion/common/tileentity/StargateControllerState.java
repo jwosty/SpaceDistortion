@@ -132,15 +132,14 @@ public abstract class StargateControllerState {
 	
 	public static StargateControllerState readFromNBT(NBTTagCompound tag) {
 		String type = tag.getString("type");
-		switch (type) {
-		case "invalid":
+		if (type.equals("invalid")) {
 			return new StargateControllerInvalid();
-		case "ready":
+		} else if (type.equals("ready")) {
 			return new StargateControllerReady(tag.getByteArray("address"), tag.getInteger("glyph"));
-		case "active":
+		} else if (type.equals("active")) {
 			return new StargateControllerActive(tag.getBoolean("incoming"),
 					tag.getInteger("connx"), tag.getInteger("conny"), tag.getInteger("connz"), tag.getInteger("connd"));
-		default:
+		} else {
 			String t = type == null ? "null" : "`" + type + "`";
 			throw new RuntimeException("Bad stargate controller state type; probably a bug! (got " + t + ")");
 		}
