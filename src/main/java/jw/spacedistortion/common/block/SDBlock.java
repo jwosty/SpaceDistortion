@@ -115,7 +115,7 @@ public class SDBlock extends Block {
 	
 	
 	// Returns all blocks in a structure if this block is part of it
-	public static DetectStructureResults detectStructure(IBlockAccess world,
+	public static Structure detectStructure(IBlockAccess world,
 			StringGrid template, int xOrigin, int yOrigin, int zOrigin,
 			HashMap<Character, Pair<Block, Boolean>> charToBlock) {
 		
@@ -125,7 +125,7 @@ public class SDBlock extends Block {
 			charToBlockAndMetadata.put(e.getKey(), new Pair(e.getValue().X, e.getValue().Y ? ForgeDirection.UNKNOWN : null));
 		}
 		
-		DetectStructureResults results = null;
+		Structure results = null;
 		// Move the template over each possible position
 		match: for (ForgeDirection facing : ForgeDirection.VALID_DIRECTIONS) {
 			// Update metadata
@@ -143,7 +143,7 @@ public class SDBlock extends Block {
 								world, template, xOrigin, yOrigin, zOrigin,
 								facing, xOffset, yOffset, charToBlockAndMetadata);
 						if (blocks != null) {
-							results = new DetectStructureResults(
+							results = new Structure(
 									blocks, new Triplet(xOrigin, yOrigin, zOrigin),
 									facing, xOffset, yOffset);
 							break match;

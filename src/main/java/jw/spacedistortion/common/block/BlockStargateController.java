@@ -390,7 +390,7 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 	public Pair<ForgeDirection, ArrayList<Triplet<Integer, Integer, Integer>>> getStargateCenterBlocks(World world, int x, int y, int z) {
 		ArrayList<Triplet<Integer, Integer, Integer>> results = new ArrayList();
 		// See if there's really a stargate here
-		DetectStructureResults stargate = this.getStargateBlocks(world, x, y, z);
+		Structure stargate = this.getStargateBlocks(world, x, y, z);
 		if (stargate == null) {
 			return null;
 		}
@@ -418,7 +418,7 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 	 * stargate ring. Coordinates in returns are not relative to the given
 	 * coordinates
 	 **/
-	public DetectStructureResults getStargateBlocks(IBlockAccess world, int x,
+	public Structure getStargateBlocks(IBlockAccess world, int x,
 			int y, int z) {
 		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
 			int bx = x + direction.offsetX;
@@ -426,7 +426,7 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 			int bz = z + direction.offsetZ;
 			Block block = world.getBlock(bx, by, bz);
 			if (block == SDBlock.stargateRing || block == SDBlock.stargateRingChevron) {
-				DetectStructureResults results = SDBlock.detectStructure(
+				Structure results = SDBlock.detectStructure(
 						world, SpaceDistortion.stargateRingShape, bx, by, bz,
 						SpaceDistortion.stargateRingShapeInfo);
 				if (results != null) {
