@@ -1,16 +1,15 @@
 package jw.spacedistortion.common.block;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import jw.spacedistortion.Pair;
 import jw.spacedistortion.Triplet;
-import jw.spacedistortion.client.SDSoundHandler;
 import jw.spacedistortion.common.SpaceDistortion;
 import jw.spacedistortion.common.tileentity.StargateControllerState;
 import jw.spacedistortion.common.tileentity.StargateControllerState.StargateControllerActive;
 import jw.spacedistortion.common.tileentity.StargateControllerState.StargateControllerInvalid;
 import jw.spacedistortion.common.tileentity.StargateControllerState.StargateControllerReady;
-import jw.spacedistortion.common.tileentity.TileEntityEventHorizon;
 import jw.spacedistortion.common.tileentity.TileEntityStargateController;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockPistonBase;
@@ -19,7 +18,6 @@ import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
@@ -95,10 +93,10 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 	 * @return A StargateControllerState the describes the stargate's state
 	 */
 	public static StargateControllerState getCurrentState(IBlockAccess world, int x, int y, int z) {
-		if (SDBlock.stargateController.getStargateBlocks(world, x, y, z) != null) {
-			return new StargateControllerState.StargateControllerReady(new byte[] { 40, 40, 40, 40, 40, 40, 40 }, 0);
-		} else {
+		if (Structure.detectStructure(world, x, y, z, SpaceDistortion.stargateRingShape, SpaceDistortion.stargateRingShapeInfo) == null) {
 			return new StargateControllerState.StargateControllerInvalid();
+		} else {
+			return new StargateControllerState.StargateControllerReady(new byte[] { 40, 40, 40, 40, 40, 40, 40 }, 0);
 		}
 	}
 	
@@ -110,6 +108,8 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 		
 		TileEntityStargateController controllerTileEntity = (TileEntityStargateController) world.getTileEntity(x, y, z);
 		controllerTileEntity.state = BlockStargateController.getCurrentState(world, x, y, z);
+		
+		Structure.detectStructure(world, x, y, z, SpaceDistortion.stargateRingShape, SpaceDistortion.stargateRingShapeInfo);
 	}
 	
 	private void explode(World world, EntityLivingBase explosionCausingJerk, int x, int y, int z) {
@@ -117,13 +117,13 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 		if (tileEntity.state instanceof StargateControllerActive) {
 			StargateControllerActive state = (StargateControllerActive) tileEntity.state;
 			if (state.isOutgoing) {
-			this.serverDeactivateStargatePair(
-					world, x, y, z,
-					state.connectedXCoord, state.connectedYCoord, state.connectedZCoord);
+			//this.serverDeactivateStargatePair(
+			//		world, x, y, z,
+			//		state.connectedXCoord, state.connectedYCoord, state.connectedZCoord);
 			} else {
-			this.serverDeactivateStargatePair(
-					world, state.connectedXCoord, state.connectedYCoord, state.connectedZCoord,
-					x, y, z);
+			//this.serverDeactivateStargatePair(
+			//		world, state.connectedXCoord, state.connectedYCoord, state.connectedZCoord,
+			//		x, y, z);
 			}
 		}
 		world.createExplosion(explosionCausingJerk, x, y, z, 3.5f, true);
@@ -213,9 +213,11 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 		};
 	}
 	
+	
 	/**
 	 * Activate the stargates attached to the given controllers
 	 */
+	/*
 	public void serverActivateStargatePair(World world, int srcX, int srcY, int srcZ,
 			int dstX, int dstY, int dstZ) {
 		if (world.getBlock(srcX, srcY, srcZ) != SDBlock.stargateController || world.getBlock(dstX, dstY, dstZ) != SDBlock.stargateController) {
@@ -268,10 +270,12 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 				world.playerEntities, "stargate.kawoosh", 1F, 1F,
 				(double) dstTileEntity.xCoord, (double) dstTileEntity.yCoord, (double) dstTileEntity.zCoord);
 	}
+	*/
 
 	/**
 	 * Deactivate the stargates attached to the given controllers
 	 */
+	/*
 	public void serverDeactivateStargatePair(World world, int srcX, int srcY, int srcZ,
 			int dstX, int dstY, int dstZ) {
 		Pair<ForgeDirection, ArrayList<Triplet<Integer, Integer, Integer>>> dstPlaneBlocks = this.getStargateCenterBlocks(world, dstX, dstY, dstZ);
@@ -372,6 +376,7 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 			}
 		}
 	}
+	*/
 
 	/**
 	 * Returns the coordinates of all the center blocks at the given stargate,
@@ -387,6 +392,7 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 	 *            The z coordinate of the stargate controller
 	 * @return
 	 */
+	/*
 	public Pair<ForgeDirection, ArrayList<Triplet<Integer, Integer, Integer>>> getStargateCenterBlocks(World world, int x, int y, int z) {
 		ArrayList<Triplet<Integer, Integer, Integer>> results = new ArrayList();
 		// See if there's really a stargate here
@@ -412,12 +418,13 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 		}
 		return new Pair(stargate.facing, results);
 	}
-
+	
 	/**
 	 * Returns the position of the first neighboring block found that is a
 	 * stargate ring. Coordinates in returns are not relative to the given
 	 * coordinates
 	 **/
+	/*
 	public Structure getStargateBlocks(IBlockAccess world, int x,
 			int y, int z) {
 		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
@@ -436,6 +443,7 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 		}
 		return null;
 	}
+	*/
 	
 	@SideOnly(Side.CLIENT)
 	@Override

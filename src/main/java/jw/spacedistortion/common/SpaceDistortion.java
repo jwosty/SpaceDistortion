@@ -11,6 +11,7 @@ import jw.spacedistortion.common.tileentity.TileEntityEventHorizon;
 import jw.spacedistortion.common.tileentity.TileEntityStargateController;
 import net.minecraft.block.Block;
 import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.common.util.ForgeDirection;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
@@ -46,7 +47,7 @@ public class SpaceDistortion {
 			" EEEEE ",
 			"  EEE  ",
 			"       ");
-	public static HashMap<Character, Pair<Block, Boolean>> stargateRingShapeInfo = null;
+	public static HashMap<Character, Block> stargateRingShapeInfo = null;
 	
 	@EventHandler
 	public void serverLoad(FMLServerStartingEvent event) {
@@ -62,8 +63,8 @@ public class SpaceDistortion {
 		config.save();
 		
 		stargateRingShapeInfo = new HashMap();
-		stargateRingShapeInfo.put('R', new Pair(SDBlock.stargateRing, false));
-		stargateRingShapeInfo.put('C', new Pair(SDBlock.stargateRingChevron, true));
+		stargateRingShapeInfo.put('R', SDBlock.stargateRing);
+		stargateRingShapeInfo.put('C', SDBlock.stargateRingChevron);
 	}
 	
 	@EventHandler

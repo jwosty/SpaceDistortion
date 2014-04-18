@@ -87,19 +87,19 @@ public class PacketDHDEnterGlyph implements IPacket {
 			if (dstCoords == null) {
 				return false;
 			}
-			SDBlock.stargateController.serverActivateStargatePair(
-					player.worldObj, tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord,
-					dstCoords[0], dstCoords[1], dstCoords[2]);
+			//SDBlock.stargateController.serverActivateStargatePair(
+			//		player.worldObj, tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord,
+			//		dstCoords[0], dstCoords[1], dstCoords[2]);
 		} else if (tileEntity.state instanceof StargateControllerActive) {
 			StargateControllerActive state = (StargateControllerActive) tileEntity.state;
 			if (state.isOutgoing) {
-				SDBlock.stargateController.serverDeactivateStargatePair(
-						player.worldObj, tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord,
-						state.connectedXCoord, state.connectedYCoord, state.connectedZCoord);
+			//	SDBlock.stargateController.serverDeactivateStargatePair(
+			//			player.worldObj, tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord,
+			//			state.connectedXCoord, state.connectedYCoord, state.connectedZCoord);
 			} else {
-				SDBlock.stargateController.serverDeactivateStargatePair(
-						player.worldObj, state.connectedXCoord, state.connectedYCoord, state.connectedZCoord,
-						tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord);
+			//	SDBlock.stargateController.serverDeactivateStargatePair(
+			//			player.worldObj, state.connectedXCoord, state.connectedYCoord, state.connectedZCoord,
+			//			tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord);
 			}
 		} else {
 			return false;

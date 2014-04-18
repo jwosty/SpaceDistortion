@@ -113,7 +113,7 @@ public class SDBlock extends Block {
 		}
 	}
 	
-	
+	/*
 	// Returns all blocks in a structure if this block is part of it
 	public static Structure detectStructure(IBlockAccess world,
 			StringGrid template, int xOrigin, int yOrigin, int zOrigin,
@@ -154,6 +154,7 @@ public class SDBlock extends Block {
 		}
 		return results;
 	}
+	*/
 
 	/**
 	 * Find a structure using a StringGrid and the given position. Optionally,
@@ -179,6 +180,7 @@ public class SDBlock extends Block {
 	 *            whether or not the block has directional metadata) in the template
 	 * @return
 	 */
+	/*
 	public static Block[][] detectStructureAtLocation(IBlockAccess world,
 			StringGrid template, int x, int y, int z, ForgeDirection facing,
 			int xTemplateOffset, int yTemplateOffset,
@@ -225,6 +227,7 @@ public class SDBlock extends Block {
 		}
 		return blocks;
 	}
+	/*
 	
 	/**
 	 * Get a set of block coordinates relative to a structure.
