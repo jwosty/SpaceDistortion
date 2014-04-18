@@ -43,7 +43,7 @@ public class Structure {
 	public static Structure detectStructure(IBlockAccess world, int x, int y, int z, StringGrid template, HashMap<Character, Block> charToBlock) {
 		for (int xTemplateOffset = -template.width; xTemplateOffset <= template.width; xTemplateOffset++) {
 			for (int yTemplateOffset = -template.height; yTemplateOffset <= template.height; yTemplateOffset++) {
-				Structure s = Structure.detectStructureAtOffset(world, x, y, z, xTemplateOffset, yTemplateOffset, template, charToBlock);
+				Structure s = Structure.detectStructureAtLocation(world, x + xTemplateOffset, y - yTemplateOffset, z, template, charToBlock);
 				if (s != null) {
 					return s;
 				}
@@ -52,15 +52,15 @@ public class Structure {
 		return null;
 	}
 	
-	public static Structure detectStructureAtOffset(IBlockAccess world, int x, int y, int z, int xTemplateOffset, int yTemplateOffset, StringGrid template,
+	public static Structure detectStructureAtLocation(IBlockAccess world, int x, int y, int z, StringGrid template,
 			HashMap<Character, Block> charToBlock) {
 		Structure result = new Structure(x, y, z, new HashMap<Pair<Integer, Integer>, BlockInfo>(), ForgeDirection.SOUTH);
 		
 		templateLoop: for (int tx = 0; tx <= template.width; tx++) {
 			for (int ty = 0; ty <= template.height; ty++) {
 				char templateChar = template.get(tx, ty);
-				int bx = x + tx + xTemplateOffset;
-				int by = y - ty + yTemplateOffset;
+				int bx = x + tx;
+				int by = y - ty;
 				int bz = z;
 				Block worldBlock = world.getBlock(bx, by, bz);
 				
@@ -83,8 +83,8 @@ public class Structure {
 			int ny = y + d.offsetY;
 			int nz = z + d.offsetZ;
 			Block neighbor = world.getBlock(nx, ny, nz);
-			if (neighbor == Blocks.gold_block) {//SDBlock.stargateRing | neighbor == SDBlock.stargateRingChevron) {
-				Structure stargate = Structure.detectStructureAtOffset(world, nx, ny, nz, 0, 0, template, charToBlock);
+			if (neighbor == SDBlock.stargateRing | neighbor == SDBlock.stargateRingChevron) {
+				Structure stargate = Structure.detectStructure(world, nx, ny, nz, template, charToBlock);
 				if (stargate != null) {
 					return stargate;
 				}
