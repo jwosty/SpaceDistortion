@@ -60,7 +60,7 @@ public class Structure {
 			for (int ty = 0; ty <= template.height; ty++) {
 				char templateChar = template.get(tx, ty);
 				int bx = x + tx + xTemplateOffset;
-				int by = y + ty + yTemplateOffset;
+				int by = y - ty + yTemplateOffset;
 				int bz = z;
 				Block worldBlock = world.getBlock(bx, by, bz);
 				
@@ -83,8 +83,8 @@ public class Structure {
 			int ny = y + d.offsetY;
 			int nz = z + d.offsetZ;
 			Block neighbor = world.getBlock(nx, ny, nz);
-			if (neighbor == SDBlock.stargateRing | neighbor == SDBlock.stargateRingChevron) {
-				Structure stargate = Structure.detectStructure(world, nx, ny, nz, template, charToBlock);
+			if (neighbor == Blocks.gold_block) {//SDBlock.stargateRing | neighbor == SDBlock.stargateRingChevron) {
+				Structure stargate = Structure.detectStructureAtOffset(world, nx, ny, nz, 0, 0, template, charToBlock);
 				if (stargate != null) {
 					return stargate;
 				}
