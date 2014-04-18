@@ -4,9 +4,10 @@ import java.util.HashMap;
 
 import jw.spacedistortion.Pair;
 import jw.spacedistortion.StringGrid;
-import jw.spacedistortion.Triplet;
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
 import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
 public class Structure {
@@ -39,30 +40,56 @@ public class Structure {
 		this.facing = facing;
 	}
 	
-	public static Structure detectStructure(IBlockAccess world, int x, int y, int z, StringGrid template,
+	public static Structure detectStructure(IBlockAccess world, int x, int y, int z, StringGrid template, HashMap<Character, Block> charToBlock) {
+		for (int xTemplateOffset = -template.width; xTemplateOffset <= template.width; xTemplateOffset++) {
+			for (int yTemplateOffset = -template.height; yTemplateOffset <= template.height; yTemplateOffset++) {
+				Structure s = Structure.detectStructureAtOffset(world, x, y, z, xTemplateOffset, yTemplateOffset, template, charToBlock);
+				if (s != null) {
+					return s;
+				}
+			}
+		}
+		return null;
+	}
+	
+	public static Structure detectStructureAtOffset(IBlockAccess world, int x, int y, int z, int xTemplateOffset, int yTemplateOffset, StringGrid template,
 			HashMap<Character, Block> charToBlock) {
-		HashMap<Pair<Integer, Integer>, BlockInfo> blocks =
-				new HashMap<Pair<Integer, Integer>, BlockInfo>();
 		Structure result = new Structure(x, y, z, new HashMap<Pair<Integer, Integer>, BlockInfo>(), ForgeDirection.SOUTH);
 		
-		templateLoop: for (int tx = -template.width; tx <= template.width; tx++) {
-			for (int ty = -template.height; ty <= template.height; ty++) {
+		templateLoop: for (int tx = 0; tx <= template.width; tx++) {
+			for (int ty = 0; ty <= template.height; ty++) {
 				char templateChar = template.get(tx, ty);
-				int bx = x + tx;
-				int by = y + ty;
+				int bx = x + tx + xTemplateOffset;
+				int by = y + ty + yTemplateOffset;
 				int bz = z;
 				Block worldBlock = world.getBlock(bx, by, bz);
-				int worldBlockMetadata = world.getBlockMetadata(x + tx, y + ty, z);
 				
-				if (charToBlock.containsKey(templateChar) & worldBlock == charToBlock.get(templateChar)) {
-					result.blocks.put(new Pair(tx, ty), new BlockInfo(bx, by, bz, worldBlock));
-				} else {
+				if (charToBlock.containsKey(templateChar) & worldBlock != charToBlock.get(templateChar)) {
 					result = null;
 					break templateLoop;
+				} else {
+					result.blocks.put(new Pair(tx, ty), new BlockInfo(bx, by, bz, worldBlock));
 				}
 			}
 		}
 		
 		return result;
+	}
+	
+	public static Structure detectConnectedStructure(IBlockAccess world, int x, int y, int z, StringGrid template,
+			HashMap<Character, Block> charToBlock) {
+		for (ForgeDirection d : ForgeDirection.VALID_DIRECTIONS) {
+			int nx = x + d.offsetX;
+			int ny = y + d.offsetY;
+			int nz = z + d.offsetZ;
+			Block neighbor = world.getBlock(nx, ny, nz);
+			if (neighbor == SDBlock.stargateRing | neighbor == SDBlock.stargateRingChevron) {
+				Structure stargate = Structure.detectStructure(world, nx, ny, nz, template, charToBlock);
+				if (stargate != null) {
+					return stargate;
+				}
+			}
+		}
+		return null;
 	}
 }

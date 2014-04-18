@@ -1,9 +1,7 @@
 package jw.spacedistortion.common.block;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
-import jw.spacedistortion.Pair;
 import jw.spacedistortion.Triplet;
 import jw.spacedistortion.common.SpaceDistortion;
 import jw.spacedistortion.common.tileentity.StargateControllerState;
@@ -93,9 +91,11 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 	 * @return A StargateControllerState the describes the stargate's state
 	 */
 	public static StargateControllerState getCurrentState(IBlockAccess world, int x, int y, int z) {
-		if (Structure.detectStructure(world, x, y, z, SpaceDistortion.stargateRingShape, SpaceDistortion.stargateRingShapeInfo) == null) {
+		Structure stargate = Structure.detectConnectedStructure(world, x, y, z, SpaceDistortion.stargateRingShape, SpaceDistortion.stargateRingShapeInfo);
+		if (stargate == null) {
 			return new StargateControllerState.StargateControllerInvalid();
 		} else {
+			System.out.println("Found stargate at (" + stargate.x + ", " + stargate.y + ", " + stargate.z + ")");
 			return new StargateControllerState.StargateControllerReady(new byte[] { 40, 40, 40, 40, 40, 40, 40 }, 0);
 		}
 	}
@@ -109,7 +109,7 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 		TileEntityStargateController controllerTileEntity = (TileEntityStargateController) world.getTileEntity(x, y, z);
 		controllerTileEntity.state = BlockStargateController.getCurrentState(world, x, y, z);
 		
-		Structure.detectStructure(world, x, y, z, SpaceDistortion.stargateRingShape, SpaceDistortion.stargateRingShapeInfo);
+		//Structure.detectStructure(world, x, y, z, SpaceDistortion.stargateRingShape, SpaceDistortion.stargateRingShapeInfo);
 	}
 	
 	private void explode(World world, EntityLivingBase explosionCausingJerk, int x, int y, int z) {
@@ -126,7 +126,7 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 			//		x, y, z);
 			}
 		}
-		world.createExplosion(explosionCausingJerk, x, y, z, 3.5f, true);
+		//world.createExplosion(explosionCausingJerk, x, y, z, 3.5f, true);
 	}
 	
 	@Override
