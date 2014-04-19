@@ -70,7 +70,6 @@ public class Structure {
 	/** Detect a structure with an unknown offset and facing */
 	public static Structure detectStructure(IBlockAccess world, int x, int y, int z, StringGrid template,
 			HashMap<Character, Pair<Block, Boolean>> charToBlockAndHasDirection) {
-		//ForgeDirection facing = ForgeDirection.NORTH;
 		for (ForgeDirection facing : ForgeDirection.VALID_DIRECTIONS) {
 			for (int xTemplateOffset = -template.width; xTemplateOffset <= template.width; xTemplateOffset++) {
 				for (int yTemplateOffset = -template.height; yTemplateOffset <= template.height; yTemplateOffset++) {
@@ -148,19 +147,19 @@ public class Structure {
 		switch (facing) {
 		case NORTH:
 			x = -tx;
-			y = ty;
+			y = -ty;
 			break;
 		case SOUTH:
 			x = tx;
-			y = ty;
+			y = -ty;
 			break;
 		case EAST:
-			z = tx;
-			y = ty;
+			z = -tx;
+			y = -ty;
 			break;
 		case WEST:
-			z = -tx;
-			y = ty;
+			z = tx;
+			y = -ty;
 			break;
 		case UP:
 			x = tx;
