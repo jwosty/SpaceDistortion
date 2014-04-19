@@ -1,11 +1,14 @@
 package jw.spacedistortion.common.block;
 
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 import jw.spacedistortion.Pair;
 import jw.spacedistortion.StringGrid;
 import jw.spacedistortion.Triplet;
 import net.minecraft.block.Block;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -22,11 +25,33 @@ public class Structure {
 		public int z;
 		public Block blockType;
 		
+		protected BlockInfo() { };
+		
 		public BlockInfo(int x, int y, int z, Block blockType) {
 			this.x = x;
 			this.y = y;
 			this.z = z;
 			this.blockType = blockType;
+		}
+		
+		public void writeToNBT(NBTTagCompound tag) {
+			tag.setInteger("x", this.x);
+			tag.setInteger("y", this.y);
+			tag.setInteger("z", this.z);
+			tag.setInteger("b", Block.getIdFromBlock(this.blockType));
+		}
+		
+		protected void readFromNBT(NBTTagCompound tag) {
+			this.x = tag.getInteger("x");
+			this.y = tag.getInteger("y");
+			this.z = tag.getInteger("z");
+			this.blockType = Block.getBlockById(tag.getInteger("b"));
+		}
+		
+		public static BlockInfo createFromNBT(NBTTagCompound tag) {
+			BlockInfo blockInfo = new BlockInfo();
+			blockInfo.readFromNBT(tag);
+			return blockInfo;
 		}
 	}
 	
@@ -35,6 +60,18 @@ public class Structure {
 		public DirectionalBlockInfo(int x, int y, int z, ForgeDirection direction, Block blockType) {
 			super(x, y, z, blockType);
 			this.direction = direction;
+		}
+		
+		@Override
+		public void writeToNBT(NBTTagCompound tag) {
+			super.writeToNBT(tag);
+			tag.setByte("d", (byte)this.direction.ordinal());
+		}
+		
+		@Override
+		protected void readFromNBT(NBTTagCompound tag) {
+			super.readFromNBT(tag);
+			this.direction = ForgeDirection.getOrientation(tag.getByte("d"));
 		}
 	}
 	
@@ -172,5 +209,36 @@ public class Structure {
 		}
 		
 		return new Triplet<Integer, Integer, Integer>(x, y, z);
+	}
+
+	public void writeToNBT(NBTTagCompound tag) {
+		tag.setInteger("x", this.x);
+		tag.setInteger("y", this.y);
+		tag.setInteger("z", this.z);
+		tag.setByte("facing", (byte)this.facing.ordinal());
+		NBTTagList blockInfoTags = new NBTTagList();
+		for (Entry<Pair<Integer, Integer>, BlockInfo>entry : this.blocks.entrySet()) {
+			NBTTagCompound blockInfoTag = new NBTTagCompound();
+			blockInfoTag.setInteger("templateX", entry.getKey().X);
+			blockInfoTag.setInteger("templateY", entry.getKey().Y);
+			entry.getValue().writeToNBT(blockInfoTag);
+		}
+		tag.setTag("blocks", blockInfoTags);
+	}
+	
+	private void readFromNBT(NBTTagCompound tag) {
+		this.x = tag.getInteger("structureX");
+		this.y = tag.getInteger("structureY");
+		this.z = tag.getInteger("structureZ");
+		this.facing = ForgeDirection.getOrientation(tag.getInteger("structureF"));
+		this.blocks = new HashMap<Pair<Integer, Integer>, BlockInfo>();
+		
+		NBTTagList blockInfoTags = tag.getTagList("blocks", 10);
+		for (int i = 0; i < blockInfoTags.tagCount(); i++) {
+			NBTTagCompound blockInfoTag = blockInfoTags.getCompoundTagAt(i);
+			this.blocks.put(
+					new Pair<Integer, Integer>(blockInfoTag.getInteger("templateX"), blockInfoTag.getInteger("templateY")),
+					BlockInfo.createFromNBT(blockInfoTag));
+		}
 	}
 }
