@@ -47,7 +47,9 @@ public class SpaceDistortion {
 			" EEEEE ",
 			"  EEE  ",
 			"       ");
-	public static HashMap<Character, Block> stargateRingShapeInfo = null;
+	/** The mapping from template chars to the blocks they represent, and whether or not
+	 * it has a direction (e.g. pistons, furnaces, etc) */
+	public static HashMap<Character, Pair<Block, Boolean>> stargateRingShapeInfo = null;
 	
 	@EventHandler
 	public void serverLoad(FMLServerStartingEvent event) {
@@ -63,8 +65,8 @@ public class SpaceDistortion {
 		config.save();
 		
 		stargateRingShapeInfo = new HashMap();
-		stargateRingShapeInfo.put('R', SDBlock.stargateRing);
-		stargateRingShapeInfo.put('C', SDBlock.stargateRingChevron);
+		stargateRingShapeInfo.put('R', new Pair<Block, Boolean>(SDBlock.stargateRing, false));
+		stargateRingShapeInfo.put('C', new Pair<Block, Boolean>(SDBlock.stargateRingChevron, true));
 	}
 	
 	@EventHandler

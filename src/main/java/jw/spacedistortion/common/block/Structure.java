@@ -32,6 +32,14 @@ public class Structure {
 		}
 	}
 	
+	public static class DirectionalBlockInfo extends BlockInfo {
+		public ForgeDirection direction;
+		public DirectionalBlockInfo(int x, int y, int z, ForgeDirection direction, Block blockType) {
+			super(x, y, z, blockType);
+			this.direction = direction;
+		}
+	}
+	
 	public Structure(int x, int y, int z, HashMap<Pair<Integer, Integer>, BlockInfo> blocks,
 			ForgeDirection facing) {
 		this.x = x;
@@ -43,14 +51,14 @@ public class Structure {
 	
 	/** Attempt to find a structure attached to the given block */
 	public static Structure detectConnectedStructure(IBlockAccess world, int x, int y, int z, StringGrid template,
-			HashMap<Character, Block> charToBlock) {
+			HashMap<Character, Pair<Block, Boolean>> charToBlockAndHasDirection) {
 		for (ForgeDirection d : ForgeDirection.VALID_DIRECTIONS) {
 			int nx = x + d.offsetX;
 			int ny = y + d.offsetY;
 			int nz = z + d.offsetZ;
 			Block neighbor = world.getBlock(nx, ny, nz);
 			if (neighbor == SDBlock.stargateRing | neighbor == SDBlock.stargateRingChevron) {
-				Structure stargate = Structure.detectStructure(world, nx, ny, nz, template, charToBlock);
+				Structure stargate = Structure.detectStructure(world, nx, ny, nz, template, charToBlockAndHasDirection);
 				if (stargate != null) {
 					return stargate;
 				}
@@ -61,7 +69,7 @@ public class Structure {
 	
 	/** Detect a structure with an unknown offset and facing */
 	public static Structure detectStructure(IBlockAccess world, int x, int y, int z, StringGrid template,
-			HashMap<Character, Block> charToBlock) {
+			HashMap<Character, Pair<Block, Boolean>> charToBlockAndHasDirection) {
 		//ForgeDirection facing = ForgeDirection.NORTH;
 		for (ForgeDirection facing : ForgeDirection.VALID_DIRECTIONS) {
 			for (int xTemplateOffset = -template.width; xTemplateOffset <= template.width; xTemplateOffset++) {
@@ -69,7 +77,7 @@ public class Structure {
 					Triplet<Integer, Integer, Integer> offsetFromFacing = Structure.templateToWorldCoordinates(xTemplateOffset, yTemplateOffset, facing);
 					Structure s = Structure.detectStructureAtLocationAndOrientation(world,
 							x + offsetFromFacing.X, y + offsetFromFacing.Y, z + offsetFromFacing.Z,
-							facing, template, charToBlock);
+							facing, template, charToBlockAndHasDirection);
 					if (s != null) {
 						return s;
 					}
@@ -81,7 +89,7 @@ public class Structure {
 	
 	/** Detect a structure at the given concrete location (known offset) and facing */
 	public static Structure detectStructureAtLocationAndOrientation(IBlockAccess world, int x, int y, int z, ForgeDirection facing, StringGrid template,
-			HashMap<Character, Block> charToBlock) {
+			HashMap<Character, Pair<Block, Boolean>> charToBlockAndHasDirection) {
 		Structure result = new Structure(x, y, z, new HashMap<Pair<Integer, Integer>, BlockInfo>(), facing);
 		
 		templateLoop: for (int tx = 0; tx <= template.width; tx++) {
@@ -93,12 +101,39 @@ public class Structure {
 				int bz = z + offsetFromFacing.Z;
 				Block worldBlock = world.getBlock(bx, by, bz);
 				
-				if (charToBlock.containsKey(templateChar) & worldBlock != charToBlock.get(templateChar)) {
-					result = null;
-					break templateLoop;
+				BlockInfo blockInfo;
+				
+				if (charToBlockAndHasDirection.containsKey(templateChar)) {
+					int metadata = world.getBlockMetadata(bx, by, bz);
+					
+					Pair<Block, Boolean> blockAndHasDirection = charToBlockAndHasDirection.get(templateChar);
+					Block block = blockAndHasDirection.X;
+					boolean hasDirection = blockAndHasDirection.Y;
+					
+					// TODO: structure this better if possible; it's pretty ugly
+					if (worldBlock == block) {
+						if (hasDirection) {
+							if (metadata == facing.ordinal()) {
+								blockInfo = new DirectionalBlockInfo(bx, by, bz, facing, worldBlock);
+							} else {
+								result = null;
+								break templateLoop;
+							}
+						} else {
+							blockInfo = new BlockInfo(bx, by, bz, worldBlock);
+						}
+					} else {
+						// Block didn't match
+						result = null;
+						break templateLoop;
+					}
 				} else {
-					result.blocks.put(new Pair(tx, ty), new BlockInfo(bx, by, bz, worldBlock));
+					// Wildcard
+					blockInfo = new BlockInfo(bx, by, bz, worldBlock);
 				}
+				
+				// Getting this far means that the block matches the template
+				result.blocks.put(new Pair<Integer, Integer>(tx, ty), blockInfo);
 			}
 		}
 		
