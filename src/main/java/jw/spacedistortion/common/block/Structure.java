@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import jw.spacedistortion.Pair;
 import jw.spacedistortion.StringGrid;
+import jw.spacedistortion.Triplet;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.IBlockAccess;
@@ -40,42 +41,7 @@ public class Structure {
 		this.facing = facing;
 	}
 	
-	public static Structure detectStructure(IBlockAccess world, int x, int y, int z, StringGrid template, HashMap<Character, Block> charToBlock) {
-		for (int xTemplateOffset = -template.width; xTemplateOffset <= template.width; xTemplateOffset++) {
-			for (int yTemplateOffset = -template.height; yTemplateOffset <= template.height; yTemplateOffset++) {
-				Structure s = Structure.detectStructureAtLocation(world, x + xTemplateOffset, y - yTemplateOffset, z, template, charToBlock);
-				if (s != null) {
-					return s;
-				}
-			}
-		}
-		return null;
-	}
-	
-	public static Structure detectStructureAtLocation(IBlockAccess world, int x, int y, int z, StringGrid template,
-			HashMap<Character, Block> charToBlock) {
-		Structure result = new Structure(x, y, z, new HashMap<Pair<Integer, Integer>, BlockInfo>(), ForgeDirection.SOUTH);
-		
-		templateLoop: for (int tx = 0; tx <= template.width; tx++) {
-			for (int ty = 0; ty <= template.height; ty++) {
-				char templateChar = template.get(tx, ty);
-				int bx = x + tx;
-				int by = y - ty;
-				int bz = z;
-				Block worldBlock = world.getBlock(bx, by, bz);
-				
-				if (charToBlock.containsKey(templateChar) & worldBlock != charToBlock.get(templateChar)) {
-					result = null;
-					break templateLoop;
-				} else {
-					result.blocks.put(new Pair(tx, ty), new BlockInfo(bx, by, bz, worldBlock));
-				}
-			}
-		}
-		
-		return result;
-	}
-	
+	/** Attempt to find a structure attached to the given block */
 	public static Structure detectConnectedStructure(IBlockAccess world, int x, int y, int z, StringGrid template,
 			HashMap<Character, Block> charToBlock) {
 		for (ForgeDirection d : ForgeDirection.VALID_DIRECTIONS) {
@@ -91,5 +57,88 @@ public class Structure {
 			}
 		}
 		return null;
+	}
+	
+	/** Detect a structure with an unknown offset and facing */
+	public static Structure detectStructure(IBlockAccess world, int x, int y, int z, StringGrid template,
+			HashMap<Character, Block> charToBlock) {
+		ForgeDirection facingg = ForgeDirection.SOUTH;
+		for (ForgeDirection facing : ForgeDirection.VALID_DIRECTIONS) {
+			for (int xTemplateOffset = -template.width; xTemplateOffset <= template.width; xTemplateOffset++) {
+				for (int yTemplateOffset = -template.height; yTemplateOffset <= template.height; yTemplateOffset++) {
+					Triplet<Integer, Integer, Integer> offsetFromFacing = Structure.templateToWorldCoordinates(xTemplateOffset, yTemplateOffset, facing);
+					Structure s = Structure.detectStructureAtLocationAndOrientation(
+							//world, x + offsetFromFacing.X, y + offsetFromFacing.Y, offsetFromFacing.Z, facing, template, charToBlock);
+							world, x + xTemplateOffset, y + yTemplateOffset, z, facing, template, charToBlock);
+					if (s != null) {
+						return s;
+					}
+				}
+			}
+		}
+		return null;
+	}
+	
+	/** Detect a structure at the given concrete location (known offset) and facing */
+	public static Structure detectStructureAtLocationAndOrientation(IBlockAccess world, int x, int y, int z, ForgeDirection facing, StringGrid template,
+			HashMap<Character, Block> charToBlock) {
+		Structure result = new Structure(x, y, z, new HashMap<Pair<Integer, Integer>, BlockInfo>(), facing);
+		
+		templateLoop: for (int tx = 0; tx <= template.width; tx++) {
+			for (int ty = 0; ty <= template.height; ty++) {
+				char templateChar = template.get(tx, ty);
+				Triplet<Integer, Integer, Integer> offsetFromFacing = Structure.templateToWorldCoordinates(tx, ty, facing);
+				int bx = x + offsetFromFacing.X;
+				int by = y + offsetFromFacing.Y;
+				int bz = z + offsetFromFacing.Z;
+				Block worldBlock = world.getBlock(bx, by, bz);
+				
+				if (charToBlock.containsKey(templateChar) & worldBlock != charToBlock.get(templateChar)) {
+					result = null;
+					break templateLoop;
+				} else {
+					result.blocks.put(new Pair(tx, ty), new BlockInfo(bx, by, bz, worldBlock));
+				}
+			}
+		}
+		
+		return result;
+	}
+	
+	public static Triplet<Integer, Integer, Integer> templateToWorldCoordinates(int tx, int ty, ForgeDirection facing) {
+		int x = 0;
+		int y = 0;
+		int z = 0;
+		
+		switch (facing) {
+		case NORTH:
+			x = -tx;
+			y = ty;
+			break;
+		case SOUTH:
+			x = tx;
+			y = ty;
+			break;
+		case EAST:
+			z = tx;
+			y = ty;
+			break;
+		case WEST:
+			z = -tx;
+			y = ty;
+			break;
+		case UP:
+			x = tx;
+			z = ty;
+			break;
+		case DOWN:
+			x = -tx;
+			z = ty;
+			break;
+		case UNKNOWN:
+			throw new RuntimeException("Unknown Forge direction");
+		}
+		
+		return new Triplet<Integer, Integer, Integer>(x, y, z);
 	}
 }
