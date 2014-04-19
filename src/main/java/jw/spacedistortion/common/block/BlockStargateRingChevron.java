@@ -2,7 +2,6 @@ package jw.spacedistortion.common.block;
 
 import jw.spacedistortion.common.CommonProxy;
 import net.minecraft.block.BlockPistonBase;
-import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;

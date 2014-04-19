@@ -1,6 +1,5 @@
 package jw.spacedistortion.common.tileentity;
 
-import jw.spacedistortion.Axis;
 import jw.spacedistortion.client.audio.LoopingSound;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SoundHandler;

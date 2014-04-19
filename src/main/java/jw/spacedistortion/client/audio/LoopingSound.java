@@ -2,7 +2,6 @@ package jw.spacedistortion.client.audio;
 
 import net.minecraft.client.audio.ITickableSound;
 import net.minecraft.client.audio.PositionedSound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 
 public class LoopingSound extends PositionedSound implements ITickableSound {
