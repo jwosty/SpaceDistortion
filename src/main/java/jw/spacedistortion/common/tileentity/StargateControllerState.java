@@ -12,14 +12,10 @@ public abstract class StargateControllerState {
 	
 	public abstract String getType();
 	
-	public void writeNBTData(NBTTagCompound tag) { }
-	
 	public void writeToNBT(NBTTagCompound tag) {
 		String type = this.getType();
 		tag.setString("type", type);
-		this.writeNBTData(tag);
 	}
-	
 	
 	/** Signifies a controller that isn't connected to a stargate ring */
 	public static final class StargateControllerInvalid extends StargateControllerState {
@@ -62,7 +58,8 @@ public abstract class StargateControllerState {
 		}
 		
 		@Override
-		public void writeNBTData(NBTTagCompound tag) {
+		public void writeToNBT(NBTTagCompound tag) {
+			super.writeToNBT(tag);
 			tag.setByteArray("address", this.addressBuffer);
 			tag.setInteger("glyph", this.currentGlyphIndex);
 		}
@@ -106,7 +103,8 @@ public abstract class StargateControllerState {
 		}
 
 		@Override
-		public void writeNBTData(NBTTagCompound tag) {
+		public void writeToNBT(NBTTagCompound tag) {
+			super.writeToNBT(tag);
 			tag.setBoolean("incoming", this.isOutgoing);
 			tag.setInteger("connx", this.connectedXCoord);
 			tag.setInteger("conny", this.connectedYCoord);
@@ -130,7 +128,7 @@ public abstract class StargateControllerState {
 		}
 	}
 	
-	public static StargateControllerState readFromNBT(NBTTagCompound tag) {
+	public static StargateControllerState createFromNBT(NBTTagCompound tag) {
 		String type = tag.getString("type");
 		if (type.equals("invalid")) {
 			return new StargateControllerInvalid();

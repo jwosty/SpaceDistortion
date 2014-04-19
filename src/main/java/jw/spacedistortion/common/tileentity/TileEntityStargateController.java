@@ -34,7 +34,7 @@ public class TileEntityStargateController extends TileEntity {
 	@Override
 	public void readFromNBT(NBTTagCompound data) {
 		super.readFromNBT(data);
-		this.state = StargateControllerState.readFromNBT((NBTTagCompound) data.getTag("state"));
+		this.state = StargateControllerState.createFromNBT((NBTTagCompound) data.getTag("state"));
 	}
 	
 	@Override
