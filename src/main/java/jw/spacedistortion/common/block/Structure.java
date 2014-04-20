@@ -35,6 +35,7 @@ public class Structure {
 		}
 		
 		public void writeToNBT(NBTTagCompound tag) {
+			tag.setBoolean("isDirectional", false);
 			tag.setInteger("x", this.x);
 			tag.setInteger("y", this.y);
 			tag.setInteger("z", this.z);
@@ -49,7 +50,7 @@ public class Structure {
 		}
 		
 		public static BlockInfo createFromNBT(NBTTagCompound tag) {
-			BlockInfo blockInfo = new BlockInfo();
+			BlockInfo blockInfo = tag.getBoolean("isDirectional") ? new DirectionalBlockInfo() : new BlockInfo();
 			blockInfo.readFromNBT(tag);
 			return blockInfo;
 		}
@@ -57,6 +58,9 @@ public class Structure {
 	
 	public static class DirectionalBlockInfo extends BlockInfo {
 		public ForgeDirection direction;
+		
+		protected DirectionalBlockInfo() { }
+		
 		public DirectionalBlockInfo(int x, int y, int z, ForgeDirection direction, Block blockType) {
 			super(x, y, z, blockType);
 			this.direction = direction;
@@ -65,6 +69,7 @@ public class Structure {
 		@Override
 		public void writeToNBT(NBTTagCompound tag) {
 			super.writeToNBT(tag);
+			tag.setBoolean("isDirectional", true);
 			tag.setByte("d", (byte)this.direction.ordinal());
 		}
 		
