@@ -5,9 +5,9 @@ import java.util.ArrayList;
 import jw.spacedistortion.Triplet;
 import jw.spacedistortion.common.SpaceDistortion;
 import jw.spacedistortion.common.tileentity.StargateControllerState;
-import jw.spacedistortion.common.tileentity.StargateControllerState.StargateControllerActive;
 import jw.spacedistortion.common.tileentity.StargateControllerState.StargateControllerInvalid;
-import jw.spacedistortion.common.tileentity.StargateControllerState.StargateControllerReady;
+import jw.spacedistortion.common.tileentity.StargateControllerState.StargateControllerValid.StargateControllerActive;
+import jw.spacedistortion.common.tileentity.StargateControllerState.StargateControllerValid.StargateControllerReady;
 import jw.spacedistortion.common.tileentity.TileEntityStargateController;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockPistonBase;
@@ -97,7 +97,7 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 			if (world instanceof World & !((World)world).isRemote) {
 				System.out.println("Found stargate facing " + stargate.facing + " at (" + stargate.x + ", " + stargate.y + ", " + stargate.z + ")");
 			}
-			return new StargateControllerState.StargateControllerReady(new byte[] { 40, 40, 40, 40, 40, 40, 40 }, 0);
+			return new StargateControllerReady(stargate, new byte[] { 40, 40, 40, 40, 40, 40, 40 }, 0);
 		}
 	}
 	

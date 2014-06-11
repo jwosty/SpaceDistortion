@@ -80,6 +80,8 @@ public class Structure {
 		}
 	}
 	
+	protected Structure() { }
+	
 	public Structure(int x, int y, int z, HashMap<Pair<Integer, Integer>, BlockInfo> blocks,
 			ForgeDirection facing) {
 		this.x = x;
@@ -245,5 +247,12 @@ public class Structure {
 					new Pair<Integer, Integer>(blockInfoTag.getInteger("templateX"), blockInfoTag.getInteger("templateY")),
 					BlockInfo.createFromNBT(blockInfoTag));
 		}
+	}
+	
+	/** Loads a structure from a NBT tag */
+	public static Structure createFromNBT(NBTTagCompound tag) {
+		Structure s = new Structure();
+		s.readFromNBT(tag);
+		return s;
 	}
 }
