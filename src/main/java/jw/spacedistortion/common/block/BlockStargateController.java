@@ -102,55 +102,6 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 	}
 	
 	@Override
-	public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entity, ItemStack itemStack) {
-		// no need to figure out the right orientation again when the piston block can do it for us
-		int direction = BlockPistonBase.determineOrientation(world, x, y, z, entity);
-		world.setBlockMetadataWithNotify(x, y, z, direction, 2);
-		
-		TileEntityStargateController controllerTileEntity = (TileEntityStargateController) world.getTileEntity(x, y, z);
-		controllerTileEntity.state = BlockStargateController.getCurrentState(world, x, y, z);
-		
-		//Structure.detectStructure(world, x, y, z, SpaceDistortion.stargateRingShape, SpaceDistortion.stargateRingShapeInfo);
-	}
-	
-	private void explode(World world, EntityLivingBase explosionCausingJerk, int x, int y, int z) {
-		TileEntityStargateController tileEntity = (TileEntityStargateController)world.getTileEntity(x, y, z);
-		if (tileEntity.state instanceof StargateControllerActive) {
-			StargateControllerActive state = (StargateControllerActive) tileEntity.state;
-			if (state.isOutgoing) {
-			//this.serverDeactivateStargatePair(
-			//		world, x, y, z,
-			//		state.connectedXCoord, state.connectedYCoord, state.connectedZCoord);
-			} else {
-			//this.serverDeactivateStargatePair(
-			//		world, state.connectedXCoord, state.connectedYCoord, state.connectedZCoord,
-			//		x, y, z);
-			}
-		}
-		//world.createExplosion(explosionCausingJerk, x, y, z, 3.5f, true);
-	}
-	
-	@Override
-	public void breakBlock(World world, int x, int y, int z, Block block, int metadata) {
-		TileEntityStargateController tileEntity = (TileEntityStargateController)world.getTileEntity(x, y, z);
-		if (!world.isRemote && tileEntity.state instanceof StargateControllerActive) {
-			this.explode(world, null, x, y, z);
-		}
-		super.breakBlock(world, x, y, z, block, metadata);
-	}
-	
-	@Override
-	/** Called when the block is right-clicked on **/
-	public boolean onBlockActivated(World world, int x, int y, int z,
-			EntityPlayer player, int par1, float par2, float par3, float par4) {
-		if (world.isRemote) {
-			TileEntityStargateController tileEntity = (TileEntityStargateController) world.getTileEntity(x, y, z);
-			player.openGui(SpaceDistortion.instance, 0, world, x, y, z);
-		}
-		return true;
-	}
-	
-	@Override
 	public void onNeighborChange(IBlockAccess world, int x, int y, int z, int otherX, int otherY, int otherZ) {
 		StargateControllerState state = BlockStargateController.getCurrentState(world, x, y, z);
 		TileEntityStargateController controllerTileEntity = (TileEntityStargateController) world.getTileEntity(x, y, z);
@@ -212,6 +163,55 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 				(byte)(int)cz.get(0), (byte)(int)cz.get(1), (byte)(int)cz.get(2),
 				(byte)d
 		};
+	}
+	
+	private void explode(World world, EntityLivingBase explosionCausingJerk, int x, int y, int z) {
+		TileEntityStargateController tileEntity = (TileEntityStargateController)world.getTileEntity(x, y, z);
+		if (tileEntity.state instanceof StargateControllerActive) {
+			StargateControllerActive state = (StargateControllerActive) tileEntity.state;
+			if (state.isOutgoing) {
+			//this.serverDeactivateStargatePair(
+			//		world, x, y, z,
+			//		state.connectedXCoord, state.connectedYCoord, state.connectedZCoord);
+			} else {
+			//this.serverDeactivateStargatePair(
+			//		world, state.connectedXCoord, state.connectedYCoord, state.connectedZCoord,
+			//		x, y, z);
+			}
+		}
+		//world.createExplosion(explosionCausingJerk, x, y, z, 3.5f, true);
+	}
+	
+	@Override
+	public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entity, ItemStack itemStack) {
+		// no need to figure out the right orientation again when the piston block can do it for us
+		int direction = BlockPistonBase.determineOrientation(world, x, y, z, entity);
+		world.setBlockMetadataWithNotify(x, y, z, direction, 2);
+		
+		TileEntityStargateController controllerTileEntity = (TileEntityStargateController) world.getTileEntity(x, y, z);
+		controllerTileEntity.state = BlockStargateController.getCurrentState(world, x, y, z);
+		
+		//Structure.detectStructure(world, x, y, z, SpaceDistortion.stargateRingShape, SpaceDistortion.stargateRingShapeInfo);
+	}
+	
+	@Override
+	public void breakBlock(World world, int x, int y, int z, Block block, int metadata) {
+		TileEntityStargateController tileEntity = (TileEntityStargateController)world.getTileEntity(x, y, z);
+		if (!world.isRemote && tileEntity.state instanceof StargateControllerActive) {
+			this.explode(world, null, x, y, z);
+		}
+		super.breakBlock(world, x, y, z, block, metadata);
+	}
+	
+	@Override
+	/** Called when the block is right-clicked on **/
+	public boolean onBlockActivated(World world, int x, int y, int z,
+			EntityPlayer player, int par1, float par2, float par3, float par4) {
+		if (world.isRemote) {
+			TileEntityStargateController tileEntity = (TileEntityStargateController) world.getTileEntity(x, y, z);
+			player.openGui(SpaceDistortion.instance, 0, world, x, y, z);
+		}
+		return true;
 	}
 	
 	@SideOnly(Side.CLIENT)
