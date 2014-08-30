@@ -1,14 +1,21 @@
 package jw.spacedistortion.common.network.packet;
 
 import io.netty.buffer.ByteBuf;
+
+import java.util.HashMap;
+
 import jw.spacedistortion.Triplet;
 import jw.spacedistortion.client.SDSoundHandler;
+import jw.spacedistortion.common.SpaceDistortion;
 import jw.spacedistortion.common.block.BlockStargateController;
 import jw.spacedistortion.common.block.SDBlock;
+import jw.spacedistortion.common.block.Structure;
 import jw.spacedistortion.common.tileentity.StargateControllerState.StargateControllerValid.StargateControllerActive;
 import jw.spacedistortion.common.tileentity.StargateControllerState.StargateControllerValid.StargateControllerReady;
 import jw.spacedistortion.common.tileentity.TileEntityStargateController;
+import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import cpw.mods.fml.relauncher.Side;
 
 public class PacketDHDEnterGlyph implements IPacket {
@@ -70,28 +77,28 @@ public class PacketDHDEnterGlyph implements IPacket {
 	
 	/** Attempts to activate or deactivate the given stargate and the stargate it is in the process of dialing, returning whether or not it succeeded */
 	public boolean toggleStargatePair(EntityPlayer player,
-			TileEntityStargateController tileEntity) {
+			TileEntityStargateController srcController) {
 		// Activate or deactivate the stargates if possible
-		if (tileEntity.state instanceof StargateControllerReady) {
-			StargateControllerReady state = (StargateControllerReady)tileEntity.state;
+		if (srcController.state instanceof StargateControllerReady) {
+			StargateControllerReady state = (StargateControllerReady)srcController.state;
 			Triplet<Integer, Integer, Integer> decodedAddress = SDBlock.stargateController.decodeAddress(state.addressBuffer);
 			int dstDimension = decodedAddress.X;
 			// Get chunk coordinates
 			int dstChunkX = decodedAddress.Y;
 			int dstChunkZ = decodedAddress.Z;
-			if (dstChunkX == tileEntity.xCoord >> 4 && dstChunkZ == tileEntity.zCoord >> 4) {
+			if (dstChunkX == srcController.xCoord >> 4 && dstChunkZ == srcController.zCoord >> 4) {
 				// A stargate can't dial to its own chunk
 				return false;
 			}
 			int[] dstCoords = BlockStargateController.getDominantController(player.worldObj, dstChunkX, dstChunkZ);
-			if (dstCoords == null) {
-				return false;
+			if (dstCoords != null) {
+				TileEntityStargateController dstController =
+						(TileEntityStargateController) player.worldObj.getTileEntity(dstCoords[0], dstCoords[1], dstCoords[2]);
+				SDBlock.stargateController.activateStargatePair(
+						player.worldObj, srcController, dstController);
 			}
-			//SDBlock.stargateController.serverActivateStargatePair(
-			//		player.worldObj, tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord,
-			//		dstCoords[0], dstCoords[1], dstCoords[2]);
-		} else if (tileEntity.state instanceof StargateControllerActive) {
-			StargateControllerActive state = (StargateControllerActive) tileEntity.state;
+		} else if (srcController.state instanceof StargateControllerActive) {
+			StargateControllerActive state = (StargateControllerActive) srcController.state;
 			if (state.isOutgoing) {
 			//	SDBlock.stargateController.serverDeactivateStargatePair(
 			//			player.worldObj, tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord,

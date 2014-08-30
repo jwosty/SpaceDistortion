@@ -1,5 +1,7 @@
 package jw.spacedistortion;
 
+import java.util.Iterator;
+
 public class StringGrid {
 	private String[] strings;
 	public int width;

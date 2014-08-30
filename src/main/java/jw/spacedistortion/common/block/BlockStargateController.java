@@ -1,7 +1,10 @@
 package jw.spacedistortion.common.block;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
+import jw.spacedistortion.Pair;
+import jw.spacedistortion.StringGrid;
 import jw.spacedistortion.Triplet;
 import jw.spacedistortion.common.SpaceDistortion;
 import jw.spacedistortion.common.tileentity.StargateControllerState;
@@ -16,6 +19,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
@@ -180,6 +184,62 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 			}
 		}
 		//world.createExplosion(explosionCausingJerk, x, y, z, 3.5f, true);
+	}
+	
+	public void activateStargatePair(World world, TileEntityStargateController srcController, TileEntityStargateController dstController) {
+		StringGrid ringTemplate = SpaceDistortion.stargateRingShape;
+		HashMap<Character, Pair<Block, Boolean>> ringInfo = SpaceDistortion.stargateRingShapeInfo;
+		Structure srcStargate = Structure.detectConnectedStructure(
+				world, srcController.xCoord, srcController.yCoord, srcController.zCoord, ringTemplate, ringInfo);
+		Structure dstStargate = Structure.detectConnectedStructure(
+				world, dstController.xCoord, dstController.yCoord, dstController.zCoord, ringTemplate, ringInfo);
+		if (srcStargate != null && dstStargate != null) {
+			HashMap<Character, Block> blockMappings = new HashMap<Character, Block>();
+			blockMappings.put('E', SDBlock.eventHorizon);
+			this.fillStargateCenter(world, srcStargate, blockMappings);
+			this.fillStargateCenter(world, dstStargate, blockMappings);
+			
+			srcController.state = new StargateControllerState.StargateControllerValid.StargateControllerActive(
+					srcStargate, false, dstController.xCoord, dstController.yCoord, dstController.zCoord, 0);
+			dstController.state = new StargateControllerState.StargateControllerValid.StargateControllerActive(
+					dstStargate, true, srcController.xCoord, srcController.yCoord, srcController.zCoord, 0);
+		}
+	}
+	
+	public void deactivateStargatePair(World world, TileEntityStargateController srcController, TileEntityStargateController dstController) {
+		StringGrid ringTemplate = SpaceDistortion.stargateRingShape;
+		HashMap<Character, Pair<Block, Boolean>> ringInfo = SpaceDistortion.stargateRingShapeInfo;
+		Structure srcStargate = Structure.detectConnectedStructure(
+				world, srcController.xCoord, srcController.yCoord, srcController.zCoord, ringTemplate, ringInfo);
+		Structure dstStargate = Structure.detectConnectedStructure(
+				world, dstController.xCoord, dstController.yCoord, dstController.zCoord, ringTemplate, ringInfo);
+		if (srcStargate != null && dstStargate != null) {
+			HashMap<Character, Block> blockMappings = new HashMap<Character, Block>();
+			blockMappings.put('E', Blocks.air);
+			this.fillStargateCenter(world, srcStargate, blockMappings);
+			this.fillStargateCenter(world, dstStargate, blockMappings);
+			
+			srcController.state = SDBlock.stargateController.getCurrentState(world, srcController.xCoord, srcController.yCoord, srcController.zCoord);
+			dstController.state = SDBlock.stargateController.getCurrentState(world, dstController.xCoord, srcController.yCoord, srcController.zCoord);
+		}
+	}
+	
+	/** Fills the center of a stargate Structure using SpaceDistortion.stargateEventHorizonShape for the template and
+	  * blockMappings to map template chars to blocks */
+	public void fillStargateCenter(World world, Structure stargate, HashMap<Character, Block> blockMappings) {
+		StringGrid template = SpaceDistortion.stargateEventHorizonShape;
+		// iterate over the template to set blocks
+		for (int templateY = 0; templateY < template.height; templateY++) {
+			for (int templateX = 0; templateX < template.width; templateX++) {
+				char c = template.get(templateX, templateY);
+				// set the block
+				if (blockMappings.containsKey(c)) {
+					Triplet<Integer, Integer, Integer> blockCoords = Structure.templateToWorldCoordinates(templateX, templateY, stargate.facing);
+					Block b = blockMappings.get(c);
+					world.setBlock(stargate.x + blockCoords.X, stargate.y + blockCoords.Y, stargate.z + blockCoords.Z, blockMappings.get(c));
+				}
+			}
+		}
 	}
 	
 	@Override
