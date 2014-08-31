@@ -99,15 +99,12 @@ public class PacketDHDEnterGlyph implements IPacket {
 			}
 		} else if (srcController.state instanceof StargateControllerActive) {
 			StargateControllerActive state = (StargateControllerActive) srcController.state;
-			if (state.isOutgoing) {
-			//	SDBlock.stargateController.serverDeactivateStargatePair(
-			//			player.worldObj, tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord,
-			//			state.connectedXCoord, state.connectedYCoord, state.connectedZCoord);
-			} else {
-			//	SDBlock.stargateController.serverDeactivateStargatePair(
-			//			player.worldObj, state.connectedXCoord, state.connectedYCoord, state.connectedZCoord,
-			//			tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord);
+			TileEntityStargateController dstController =
+					(TileEntityStargateController) player.worldObj.getTileEntity(state.connectedXCoord, state.connectedYCoord, state.connectedZCoord);
+			if (dstController == null) {
+				return false;
 			}
+			SDBlock.stargateController.deactivateStargatePair(player.worldObj, srcController, dstController);
 		} else {
 			return false;
 		}

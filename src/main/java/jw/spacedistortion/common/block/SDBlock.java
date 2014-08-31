@@ -73,18 +73,6 @@ public class SDBlock extends Block {
 		GameRegistry.registerBlock(stargateRingChevron, stargateRingChevron.getUnlocalizedName());
 		GameRegistry.registerBlock(eventHorizon, eventHorizon.getUnlocalizedName());
 	}
-
-	/**
-	 * Synchronizes a TileEntity with all clients. Only works server-side; will throw an error for client-side!
-	 * @param tileEntity
-	 */
-	public static void syncTileEntity(TileEntity tileEntity) {
-		if (tileEntity != null) {
-			Packet packet = tileEntity.getDescriptionPacket();
-			
-			//PacketDispatcher.sendPacketToAllPlayers(packet);
-		}
-	}
 	
 	public void updateNearbyStargateControllers(World world, int x, int y, int z) {
 		Block thisBlock = world.getBlock(x, y, z);
@@ -95,7 +83,6 @@ public class SDBlock extends Block {
 					if (block == SDBlock.stargateController && !(world.isRemote)) {
 						world.notifyBlockOfNeighborChange(xx, yy, zz, SDBlock.stargateController);
 						world.markBlockForUpdate(xx, yy, zz);
-						SDBlock.syncTileEntity(world.getTileEntity(xx, yy, zz));
 					}
 				}
 			}

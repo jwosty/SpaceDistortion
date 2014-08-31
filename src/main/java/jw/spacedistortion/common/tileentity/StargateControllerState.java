@@ -83,7 +83,11 @@ public abstract class StargateControllerState {
 		@Override
 		public void writeToNBT(NBTTagCompound tag) {
 			super.writeToNBT(tag);
-			this.stargate.writeToNBT(tag);
+			if (this.stargate == null) {
+				System.out.println("Encountered null stargate structure while saving -- that shouldn't happen!");
+			} else {
+				this.stargate.writeToNBT(tag);
+			}
 		}
 		
 		@Override
@@ -149,10 +153,10 @@ public abstract class StargateControllerState {
 			
 			protected StargateControllerActive() { };
 			
-			public StargateControllerActive(Structure stargate, boolean isIncoming, int connectedXCoord,
+			public StargateControllerActive(Structure stargate, boolean isOutgoing, int connectedXCoord,
 					int connectedYCoord, int connectedZCoord, int connectedDimension) {
 				super(stargate);
-				this.isOutgoing = isIncoming;
+				this.isOutgoing = isOutgoing;
 				this.connectedXCoord = connectedXCoord;
 				this.connectedYCoord = connectedYCoord;
 				this.connectedZCoord = connectedZCoord;

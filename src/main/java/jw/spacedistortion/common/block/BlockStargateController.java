@@ -11,6 +11,7 @@ import jw.spacedistortion.common.tileentity.StargateControllerState;
 import jw.spacedistortion.common.tileentity.StargateControllerState.StargateControllerInvalid;
 import jw.spacedistortion.common.tileentity.StargateControllerState.StargateControllerValid.StargateControllerActive;
 import jw.spacedistortion.common.tileentity.StargateControllerState.StargateControllerValid.StargateControllerReady;
+import jw.spacedistortion.common.tileentity.TileEntityEventHorizon;
 import jw.spacedistortion.common.tileentity.TileEntityStargateController;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockPistonBase;
@@ -110,7 +111,7 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 		StargateControllerState state = BlockStargateController.getCurrentState(world, x, y, z);
 		TileEntityStargateController controllerTileEntity = (TileEntityStargateController) world.getTileEntity(x, y, z);
 		if (controllerTileEntity != null) {
-			SDBlock.syncTileEntity(controllerTileEntity);
+			controllerTileEntity.getWorldObj().markBlockForUpdate(x, y, z);
 		}
 	}
 	
@@ -194,15 +195,15 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 		Structure dstStargate = Structure.detectConnectedStructure(
 				world, dstController.xCoord, dstController.yCoord, dstController.zCoord, ringTemplate, ringInfo);
 		if (srcStargate != null && dstStargate != null) {
-			HashMap<Character, Block> blockMappings = new HashMap<Character, Block>();
-			blockMappings.put('E', SDBlock.eventHorizon);
-			this.fillStargateCenter(world, srcStargate, blockMappings);
-			this.fillStargateCenter(world, dstStargate, blockMappings);
+			this.createEventHorizon(world, srcStargate, dstStargate, true);
+			this.createEventHorizon(world, dstStargate, srcStargate, false);
 			
 			srcController.state = new StargateControllerState.StargateControllerValid.StargateControllerActive(
-					srcStargate, false, dstController.xCoord, dstController.yCoord, dstController.zCoord, 0);
+					srcStargate, true, dstController.xCoord, dstController.yCoord, dstController.zCoord, 0);
+			world.markBlockForUpdate(srcController.xCoord, srcController.yCoord, srcController.zCoord);
 			dstController.state = new StargateControllerState.StargateControllerValid.StargateControllerActive(
-					dstStargate, true, srcController.xCoord, srcController.yCoord, srcController.zCoord, 0);
+					dstStargate, false, srcController.xCoord, srcController.yCoord, srcController.zCoord, 0);
+			world.markBlockForUpdate(dstController.xCoord, dstController.yCoord, dstController.zCoord);
 		}
 	}
 	
@@ -213,30 +214,59 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 				world, srcController.xCoord, srcController.yCoord, srcController.zCoord, ringTemplate, ringInfo);
 		Structure dstStargate = Structure.detectConnectedStructure(
 				world, dstController.xCoord, dstController.yCoord, dstController.zCoord, ringTemplate, ringInfo);
-		if (srcStargate != null && dstStargate != null) {
-			HashMap<Character, Block> blockMappings = new HashMap<Character, Block>();
-			blockMappings.put('E', Blocks.air);
-			this.fillStargateCenter(world, srcStargate, blockMappings);
-			this.fillStargateCenter(world, dstStargate, blockMappings);
-			
-			srcController.state = SDBlock.stargateController.getCurrentState(world, srcController.xCoord, srcController.yCoord, srcController.zCoord);
-			dstController.state = SDBlock.stargateController.getCurrentState(world, dstController.xCoord, srcController.yCoord, srcController.zCoord);
+		if (srcStargate != null) {
+			this.destroyEventHorizon(world, srcStargate);
+			srcController.reset();
+			world.markBlockForUpdate(srcController.xCoord, srcController.yCoord, srcController.zCoord);
+		}
+		if (dstStargate != null) {
+			this.destroyEventHorizon(world, dstStargate);
+			dstController.reset();
+			world.markBlockForUpdate(dstController.xCoord, dstController.yCoord, dstController.zCoord);
 		}
 	}
 	
-	/** Fills the center of a stargate Structure using SpaceDistortion.stargateEventHorizonShape for the template and
-	  * blockMappings to map template chars to blocks */
-	public void fillStargateCenter(World world, Structure stargate, HashMap<Character, Block> blockMappings) {
+	/** Creates an even horizon */
+	public void createEventHorizon(World world, Structure stargate, Structure connectedStargate, boolean isOutgoing) {
 		StringGrid template = SpaceDistortion.stargateEventHorizonShape;
 		// iterate over the template to set blocks
 		for (int templateY = 0; templateY < template.height; templateY++) {
 			for (int templateX = 0; templateX < template.width; templateX++) {
 				char c = template.get(templateX, templateY);
 				// set the block
-				if (blockMappings.containsKey(c)) {
-					Triplet<Integer, Integer, Integer> blockCoords = Structure.templateToWorldCoordinates(templateX, templateY, stargate.facing);
-					Block b = blockMappings.get(c);
-					world.setBlock(stargate.x + blockCoords.X, stargate.y + blockCoords.Y, stargate.z + blockCoords.Z, blockMappings.get(c));
+				if (template.get(templateX, templateY) == 'E') {
+					Triplet<Integer, Integer, Integer> blockOffset = Structure.templateToWorldCoordinates(templateX, templateY, stargate.facing);
+					int x = stargate.x + blockOffset.X;
+					int y = stargate.y + blockOffset.Y;
+					int z = stargate.z + blockOffset.Z;
+					// otherBlockOffset -- the offset of the block in the other stargate that this event horizon block corresponds to
+					Triplet<Integer, Integer, Integer> connectedBlockOffset = Structure.templateToWorldCoordinates(templateX, templateY, connectedStargate.facing);
+					
+					TileEntityEventHorizon tileEntity = new TileEntityEventHorizon(templateX == template.width / 2 & templateY == template.height / 2);
+					tileEntity.facing = stargate.facing;
+					tileEntity.isOutgoing = isOutgoing;
+					tileEntity.destX = connectedStargate.x + connectedBlockOffset.X;
+					tileEntity.destY = connectedStargate.y + connectedBlockOffset.Y;
+					tileEntity.destZ = connectedStargate.z + connectedBlockOffset.Z;
+					
+					world.setBlock(x, y, z, SDBlock.eventHorizon);
+					world.setTileEntity(x, y, z, tileEntity);
+				}
+			}
+		}
+	}
+	
+	/** Removes an event horizon */
+	public void destroyEventHorizon(World world, Structure stargate) {
+		StringGrid template = SpaceDistortion.stargateEventHorizonShape;
+		// iterate over the template to set blocks
+		for (int templateY = 0; templateY < template.height; templateY++) {
+			for (int templateX = 0; templateX < template.width; templateX++) {
+				char c = template.get(templateX, templateY);
+				// set the block
+				if (template.get(templateX, templateY) == 'E') {
+					Triplet<Integer, Integer, Integer> blockOffset = Structure.templateToWorldCoordinates(templateX, templateY, stargate.facing);
+					world.setBlock(stargate.x + blockOffset.X, stargate.y + blockOffset.Y, stargate.z + blockOffset.Z, Blocks.air);
 				}
 			}
 		}
