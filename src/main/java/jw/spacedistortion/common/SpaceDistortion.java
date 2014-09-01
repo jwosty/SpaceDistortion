@@ -31,6 +31,8 @@ public class SpaceDistortion {
 	@SidedProxy(clientSide="jw.spacedistortion.client.ClientProxy", serverSide="jw.spacedistortion.common.CommonProxy")
 	public static CommonProxy proxy;
 	
+	public static OreGenerator oreGen = new OreGenerator();
+	
 	public static StringGrid stargateRingShape = new StringGrid(
 			"  RCR  ",
 			" C   C ",
@@ -61,8 +63,8 @@ public class SpaceDistortion {
 		Configuration config = new Configuration(event.getSuggestedConfigurationFile());
 		config.load();
 		SDBlock.configureBlocks(config);
-		SDBlock.registerBlocks();
 		SDItem.registerItems();
+		SDBlock.registerBlocks();
 		config.save();
 		
 		stargateRingShapeInfo = new HashMap();
@@ -73,6 +75,9 @@ public class SpaceDistortion {
 	@EventHandler
 	public void init(FMLInitializationEvent event) {
 		SDItem.registerRecipes();
+		
+		GameRegistry.registerWorldGenerator(this.oreGen, 5);
+		
 		GameRegistry.registerTileEntity(TileEntityEventHorizon.class, "tileEntityEventHorizon");
 		GameRegistry.registerTileEntity(TileEntityStargateController.class, "tileEntityStargateController");
 		NetworkRegistry.INSTANCE.registerGuiHandler(SpaceDistortion.instance, new SDGuiHandler());

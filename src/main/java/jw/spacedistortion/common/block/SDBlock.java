@@ -1,12 +1,12 @@
 package jw.spacedistortion.common.block;
 
 import jw.spacedistortion.common.CommonProxy;
+import jw.spacedistortion.common.item.SDItem;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.network.Packet;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.common.config.Configuration;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -14,6 +14,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 public class SDBlock extends Block {
+	public static SDBlock naquadahOre;
 	public static BlockStargateController stargateController;
 	public static BlockStargateRing stargateRing;
 	public static BlockStargateRingChevron stargateRingChevron;
@@ -24,6 +25,10 @@ public class SDBlock extends Block {
 	 * @param config The configuration file to use
 	 */
 	public static void configureBlocks(Configuration config) {
+		naquadahOre = (SDBlock) new SDBlock(Material.rock)
+				.setBlockName("naquadahOre")
+				.setCreativeTab(CreativeTabs.tabBlock)
+				.setStepSound(Block.soundTypeStone);
 		stargateController = (BlockStargateController) new BlockStargateController()
 				.setBlockName("stargateController")
 				.setCreativeTab(CreativeTabs.tabBlock)
@@ -68,10 +73,11 @@ public class SDBlock extends Block {
 	 * Registers all blocks in the mod and the names for the blocks
 	 */
 	public static void registerBlocks() {
-		GameRegistry.registerBlock(stargateController, stargateController.getUnlocalizedName());
-		GameRegistry.registerBlock(stargateRing, stargateRing.getUnlocalizedName());
-		GameRegistry.registerBlock(stargateRingChevron, stargateRingChevron.getUnlocalizedName());
-		GameRegistry.registerBlock(eventHorizon, eventHorizon.getUnlocalizedName());
+		GameRegistry.registerBlock(naquadahOre, "naquadahOre");
+		GameRegistry.registerBlock(stargateController, "stargateController");
+		GameRegistry.registerBlock(stargateRing, "stargateRing");
+		GameRegistry.registerBlock(stargateRingChevron, "stargateRingChevron");
+		GameRegistry.registerBlock(eventHorizon, "eventHorizon");
 	}
 	
 	public void updateNearbyStargateControllers(World world, int x, int y, int z) {
