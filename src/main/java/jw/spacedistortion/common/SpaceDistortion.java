@@ -72,6 +72,7 @@ public class SpaceDistortion {
 	
 	@EventHandler
 	public void init(FMLInitializationEvent event) {
+		SDItem.registerRecipes();
 		GameRegistry.registerTileEntity(TileEntityEventHorizon.class, "tileEntityEventHorizon");
 		GameRegistry.registerTileEntity(TileEntityStargateController.class, "tileEntityStargateController");
 		NetworkRegistry.INSTANCE.registerGuiHandler(SpaceDistortion.instance, new SDGuiHandler());
