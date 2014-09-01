@@ -22,7 +22,6 @@ public class OreGenerator implements IWorldGenerator {
 				int y = random.nextInt(25);
 				int z = (chunkZ * 16) + random.nextInt(16);
 				(new WorldGenMinable(SDBlock.naquadahOre, 6)).generate(world, random, x, y, z);
-				System.out.println("Generated naquadah vein at (" + x + ", " + y + ", " + z + ")");
 			}
 		}
 	}

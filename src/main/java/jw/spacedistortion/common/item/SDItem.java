@@ -39,8 +39,12 @@ public class SDItem extends Item {
 		GameRegistry.addShapelessRecipe(new ItemStack(controlCrystal, 1, 2), new ItemStack(controlCrystal), new ItemStack(Items.dye, 1, 11));
 		GameRegistry.addShapelessRecipe(new ItemStack(controlCrystal, 1, 3), new ItemStack(controlCrystal), new ItemStack(Items.dye, 1, 2));
 		GameRegistry.addShapelessRecipe(new ItemStack(controlCrystal, 1, 4), new ItemStack(controlCrystal), new ItemStack(Items.dye, 1, 4));
-		
+
+		// Naquadah stuff
+		GameRegistry.addSmelting(SDBlock.naquadahOre, new ItemStack(naquadahIngot), 5);
 		GameRegistry.addRecipe(new ItemStack(naquadahCircuit), "ini", "rrr", "ini", 'i', iron, 'n', naquadah, 'r', redstone);
+		
+		// Stargate stuff
 		GameRegistry.addRecipe(new ItemStack(SDBlock.stargateRing), "sis", "sns", "sns", 's', stone, 'i', iron, 'n', circuit);
 		// dye 14 = orange dye
 		GameRegistry.addRecipe(new ItemStack(SDBlock.stargateRingChevron), "rdg",
