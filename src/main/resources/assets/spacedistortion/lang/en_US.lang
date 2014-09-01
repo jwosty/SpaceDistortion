@@ -1,3 +1,10 @@
 tile.stargateController.name=Stargate Controller
 tile.stargateRing.name=Stargate Ring
 tile.stargateRingChevron.name=Stargate Chevron
+item.naquadahIngot.name=Naquadah Ingot
+item.naquadahCircuit.name=Naquadah Circuit
+item.controlCrystal.colorless.name=Colorless Control Crystal
+item.controlCrystal.red.name=Red Control Crystal
+item.controlCrystal.yellow.name=Yellow Control Crystal
+item.controlCrystal.green.name=Green Control Crystal
+item.controlCrystal.blue.name=Blue Control Crystal

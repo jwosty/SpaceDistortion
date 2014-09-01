@@ -6,6 +6,7 @@ import jw.spacedistortion.Pair;
 import jw.spacedistortion.StringGrid;
 import jw.spacedistortion.client.gui.SDGuiHandler;
 import jw.spacedistortion.common.block.SDBlock;
+import jw.spacedistortion.common.item.SDItem;
 import jw.spacedistortion.common.network.ChannelHandler;
 import jw.spacedistortion.common.tileentity.TileEntityEventHorizon;
 import jw.spacedistortion.common.tileentity.TileEntityStargateController;
@@ -61,6 +62,7 @@ public class SpaceDistortion {
 		config.load();
 		SDBlock.configureBlocks(config);
 		SDBlock.registerBlocks();
+		SDItem.registerItems();
 		config.save();
 		
 		stargateRingShapeInfo = new HashMap();
