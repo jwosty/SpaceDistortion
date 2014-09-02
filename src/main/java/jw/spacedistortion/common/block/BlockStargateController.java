@@ -6,6 +6,7 @@ import java.util.HashMap;
 import jw.spacedistortion.Pair;
 import jw.spacedistortion.StringGrid;
 import jw.spacedistortion.Triplet;
+import jw.spacedistortion.client.SDSoundHandler;
 import jw.spacedistortion.common.SpaceDistortion;
 import jw.spacedistortion.common.tileentity.StargateControllerState;
 import jw.spacedistortion.common.tileentity.StargateControllerState.StargateControllerInvalid;
@@ -190,14 +191,16 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 	public void activateStargatePair(World world, TileEntityStargateController srcController, TileEntityStargateController dstController) {
 		StringGrid ringTemplate = SpaceDistortion.stargateRingShape;
 		HashMap<Character, Pair<Block, Boolean>> ringInfo = SpaceDistortion.stargateRingShapeInfo;
+		// Get the stargates
 		Structure srcStargate = Structure.detectConnectedStructure(
 				world, srcController.xCoord, srcController.yCoord, srcController.zCoord, ringTemplate, ringInfo);
 		Structure dstStargate = Structure.detectConnectedStructure(
 				world, dstController.xCoord, dstController.yCoord, dstController.zCoord, ringTemplate, ringInfo);
 		if (srcStargate != null && dstStargate != null) {
+			// Fill with event horizons
 			this.createEventHorizon(world, srcStargate, dstStargate, true);
 			this.createEventHorizon(world, dstStargate, srcStargate, false);
-			
+			// Change controller tile entities to reflect the new stargate states
 			srcController.state = new StargateControllerState.StargateControllerValid.StargateControllerActive(
 					srcStargate, true, dstController.xCoord, dstController.yCoord, dstController.zCoord, 0);
 			world.markBlockForUpdate(srcController.xCoord, srcController.yCoord, srcController.zCoord);
@@ -205,15 +208,24 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 					dstStargate, false, srcController.xCoord, srcController.yCoord, srcController.zCoord, 0);
 			world.markBlockForUpdate(dstController.xCoord, dstController.yCoord, dstController.zCoord);
 		}
+		// Play kawoosh sounds at both stargates
+		SDSoundHandler.serverPlaySoundToPlayers(
+				world.playerEntities, "stargate.kawoosh", 1F, 1F,
+				(double) srcController.xCoord, (double) srcController.yCoord, (double) srcController.zCoord);
+		SDSoundHandler.serverPlaySoundToPlayers(
+				world.playerEntities, "stargate.kawoosh", 1F, 1F,
+				(double) dstController.xCoord, (double) dstController.yCoord, (double) dstController.zCoord);
 	}
 	
 	public void deactivateStargatePair(World world, TileEntityStargateController srcController, TileEntityStargateController dstController) {
 		StringGrid ringTemplate = SpaceDistortion.stargateRingShape;
 		HashMap<Character, Pair<Block, Boolean>> ringInfo = SpaceDistortion.stargateRingShapeInfo;
+		// Get stargates
 		Structure srcStargate = Structure.detectConnectedStructure(
 				world, srcController.xCoord, srcController.yCoord, srcController.zCoord, ringTemplate, ringInfo);
 		Structure dstStargate = Structure.detectConnectedStructure(
 				world, dstController.xCoord, dstController.yCoord, dstController.zCoord, ringTemplate, ringInfo);
+		// Destroy event horizons and update controller tile entities
 		if (srcStargate != null) {
 			this.destroyEventHorizon(world, srcStargate);
 			srcController.reset();
@@ -224,9 +236,16 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 			dstController.reset();
 			world.markBlockForUpdate(dstController.xCoord, dstController.yCoord, dstController.zCoord);
 		}
+		// Play the deactivation sound effect at both stargates
+		SDSoundHandler.serverPlaySoundToPlayers(
+				world.playerEntities, "stargate.close", 1F, 1F,
+				(double) srcController.xCoord, (double) srcController.yCoord, (double) srcController.zCoord);
+		SDSoundHandler.serverPlaySoundToPlayers(
+				world.playerEntities, "stargate.close", 1F, 1F,
+				(double) dstController.xCoord, (double) dstController.yCoord, (double) dstController.zCoord);
 	}
 	
-	/** Creates an even horizon */
+	/** Creates an event horizon */
 	public void createEventHorizon(World world, Structure stargate, Structure connectedStargate, boolean isOutgoing) {
 		StringGrid template = SpaceDistortion.stargateEventHorizonShape;
 		// iterate over the template to set blocks
