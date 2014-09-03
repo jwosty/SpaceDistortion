@@ -19,6 +19,7 @@ public class SDBlock extends Block {
 	public static BlockStargateRing stargateRing;
 	public static BlockStargateRingChevron stargateRingChevron;
 	public static BlockEventHorizon eventHorizon;
+	public static BlockRingPlatform ringPlatform;
 
 	/**
 	 * Create the block objects based on configuration information
@@ -45,6 +46,10 @@ public class SDBlock extends Block {
 				.setBlockName("eventHorizon")
 				.setStepSound(Block.soundTypeGlass)
 				.setLightLevel(0.875f);
+		ringPlatform = (BlockRingPlatform) new BlockRingPlatform()
+				.setBlockName("ringPlatform")
+				.setCreativeTab(CreativeTabs.tabBlock)
+				.setStepSound(Block.soundTypeStone);
 	}
 	
 	public SDBlock(Material material) {
@@ -78,6 +83,7 @@ public class SDBlock extends Block {
 		GameRegistry.registerBlock(stargateRing, "stargateRing");
 		GameRegistry.registerBlock(stargateRingChevron, "stargateRingChevron");
 		GameRegistry.registerBlock(eventHorizon, "eventHorizon");
+		GameRegistry.registerBlock(ringPlatform, "ringPlatform");
 	}
 	
 	public void updateNearbyStargateControllers(World world, int x, int y, int z) {

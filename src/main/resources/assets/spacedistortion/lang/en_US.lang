@@ -2,6 +2,7 @@ tile.naquadahOre.name=Naquadah Ore
 tile.stargateController.name=Stargate Controller
 tile.stargateRing.name=Stargate Ring
 tile.stargateRingChevron.name=Stargate Chevron
+tile.ringPlatform.name=Transporter Ring Platform
 item.naquadahIngot.name=Naquadah Ingot
 item.naquadahCircuit.name=Naquadah Circuit
 item.controlCrystal.colorless.name=Colorless Control Crystal
