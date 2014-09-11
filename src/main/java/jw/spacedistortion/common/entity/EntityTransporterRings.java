@@ -34,9 +34,11 @@ public class EntityTransporterRings extends Entity {
 	public void onUpdate() {
 		super.onUpdate();
 		this.isDead = ((EntityPlayer) this.worldObj.playerEntities.get(0)).isSneaking();
-		//for (int i = 0; i < parts.length; i++) {
-			//parts[i].onUpdate();
-		//}
+		for (int i = 0; i < parts.length; i++) {
+			if (parts[i] != null) {
+				parts[i].onUpdate();
+			}
+		}
 		//this.isDead = true;
 		/*
 		this.startY++;
