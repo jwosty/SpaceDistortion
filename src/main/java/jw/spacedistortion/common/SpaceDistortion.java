@@ -6,6 +6,8 @@ import jw.spacedistortion.Pair;
 import jw.spacedistortion.StringGrid;
 import jw.spacedistortion.client.gui.SDGuiHandler;
 import jw.spacedistortion.common.block.SDBlock;
+import jw.spacedistortion.common.entity.EntityTransporterRings;
+import jw.spacedistortion.common.entity.EntityTransporterRingsPart;
 import jw.spacedistortion.common.item.SDItem;
 import jw.spacedistortion.common.network.ChannelHandler;
 import jw.spacedistortion.common.tileentity.TileEntityEventHorizon;
@@ -21,6 +23,7 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 
 @Mod(modid = CommonProxy.MOD_ID, name = CommonProxy.MOD_NAME, version = CommonProxy.MOD_VERSION)
@@ -75,12 +78,18 @@ public class SpaceDistortion {
 	@EventHandler
 	public void init(FMLInitializationEvent event) {
 		SDItem.registerRecipes();
-		
+		// World gen
 		GameRegistry.registerWorldGenerator(this.oreGen, 5);
-		
+		// Tile entities
 		GameRegistry.registerTileEntity(TileEntityEventHorizon.class, "tileEntityEventHorizon");
 		GameRegistry.registerTileEntity(TileEntityStargateController.class, "tileEntityStargateController");
+		// Entities
+		EntityRegistry.registerModEntity(EntityTransporterRings.class, "transporterRings", 0, instance, 0, 1, true);
+		EntityRegistry.registerModEntity(EntityTransporterRingsPart.class, "transporterRingsPart", 0, instance, 0, 1, true);
+		// GUIs
 		NetworkRegistry.INSTANCE.registerGuiHandler(SpaceDistortion.instance, new SDGuiHandler());
+		// Entity renderers
+		proxy.registerRenderers();
 	}
 	
 	@EventHandler
