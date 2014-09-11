@@ -34,7 +34,7 @@ public class RenderTransporterRings extends RenderEntity {
 
 	public void doRender(EntityTransporterRingsPart part) {
 		GL11.glPushMatrix();
-		GL11.glTranslated(-part.boundingBox.minX, -part.boundingBox.minY, -part.boundingBox.minZ);
+		GL11.glTranslated(-part.posX, -part.posY, -part.posZ);
 		super.renderAABB(part.boundingBox);
 		/*
 		Tessellator t = Tessellator.instance;
