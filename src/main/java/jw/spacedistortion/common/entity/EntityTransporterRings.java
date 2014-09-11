@@ -4,6 +4,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public class EntityTransporterRings extends Entity {
 	public EntityTransporterRingsPart[] parts = new EntityTransporterRingsPart[4];
@@ -20,7 +21,7 @@ public class EntityTransporterRings extends Entity {
 		this.setPosition(x, y, z);
 		
 		for (int i = 0; i < parts.length; i++) {
-			parts[i] = new EntityTransporterRingsPart(world, this, x, y, z, i * 90);
+			parts[i] = new EntityTransporterRingsPart(world, this, x, y, z, ForgeDirection.getOrientation(i + 1));
 			//world.spawnEntityInWorld(parts[i]);
 		}
 		
