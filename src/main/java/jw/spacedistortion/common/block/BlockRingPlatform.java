@@ -14,7 +14,7 @@ public class BlockRingPlatform extends SDBlock {
 	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z,
 			EntityPlayer player, int par1, float par2, float par3, float par4) {
-		Entity rings = new EntityTransporterRings(world, x, y + 2, z);
+		Entity rings = new EntityTransporterRings(world, x, y + 1, z);
 		world.spawnEntityInWorld(rings);
 		return true;
 	}

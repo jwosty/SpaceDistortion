@@ -22,7 +22,7 @@ public class RenderTransporterRings extends RenderEntity {
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		GL11.glPointSize(10);
 		for (int i = 0; i < rings.parts.length; i++) {
-			if (i == 0 & rings.parts[i] != null) {
+			if (rings.parts[i] != null) {
 				this.doRender(rings.parts[i]);
 			}
 		}
@@ -35,7 +35,7 @@ public class RenderTransporterRings extends RenderEntity {
 	public void doRender(EntityTransporterRingsPart part) {
 		GL11.glPushMatrix();
 		GL11.glTranslated(-part.posX, -part.posY, -part.posZ);
-		super.renderAABB(part.boundingBox);
+		super.renderOffsetAABB(part.boundingBox, 0, 0, 0);
 		/*
 		Tessellator t = Tessellator.instance;
 		t.startDrawingQuads();

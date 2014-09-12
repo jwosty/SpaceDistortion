@@ -7,7 +7,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
 public class EntityTransporterRings extends Entity {
-	public EntityTransporterRingsPart[] parts = new EntityTransporterRingsPart[4];
+	public EntityTransporterRingsPart[] parts;
 	
 	public EntityTransporterRings(World world) {
 		super(world);
@@ -19,16 +19,17 @@ public class EntityTransporterRings extends Entity {
 		this(world);
 		this.preventEntitySpawning = true;
 		this.setPosition(x, y, z);
-		
-		for (int i = 0; i < parts.length; i++) {
-			parts[i] = new EntityTransporterRingsPart(world, this, x, y, z, ForgeDirection.getOrientation(i + 1));
-			//world.spawnEntityInWorld(parts[i]);
-		}
-		
 	}
 
 	@Override
-	protected void entityInit() {}
+	protected void entityInit() {
+		this.parts = new EntityTransporterRingsPart[4];
+		for (int i = 0; i < parts.length; i++) {
+			ForgeDirection d = ForgeDirection.getOrientation(i + 2);
+			parts[i] = new EntityTransporterRingsPart(this.worldObj, this, this.posX, this.posY, this.posZ, ForgeDirection.getOrientation(i + 2));
+			//world.spawnEntityInWorld(parts[i]);
+		}
+	}
 	
 	@Override
 	public void onUpdate() {
