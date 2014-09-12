@@ -7,22 +7,20 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
 public class EntityTransporterRings extends Entity {
-	public EntityTransporterRingsPart[] parts;
+	public EntityTransporterRingsPart[] parts = new EntityTransporterRingsPart[4];
 	
 	public EntityTransporterRings(World world) {
 		super(world);
-		//this.setSize(0, 0);
-		//this.setSize(1.0f, 1.0f);
 	}
 	
 	public EntityTransporterRings(World world, float x, float y, float z) {
 		this(world);
 		this.preventEntitySpawning = true;
+		this.initParts();
 		this.setPosition(x, y, z);
 	}
-
-	@Override
-	protected void entityInit() {
+	
+	private void initParts() {
 		this.parts = new EntityTransporterRingsPart[4];
 		for (int i = 0; i < parts.length; i++) {
 			ForgeDirection d = ForgeDirection.getOrientation(i + 2);
@@ -32,9 +30,28 @@ public class EntityTransporterRings extends Entity {
 	}
 	
 	@Override
+	public void setPosition(double x, double y, double z) {
+		super.setPosition(x, y, z);
+		if (this.parts == null) {
+			this.initParts();
+		} else {
+			for (int i = 0; i < this.parts.length; i++) {
+				if (parts[i] != null) {
+					parts[i].setPosition(x, y, z);
+				}
+			}			
+		}
+	}
+	
+	@Override
+	protected void entityInit() { }
+	
+	@Override
 	public void onUpdate() {
 		super.onUpdate();
-		this.isDead = ((EntityPlayer) this.worldObj.playerEntities.get(0)).isSneaking();
+		for (int i = 0; i < this.worldObj.playerEntities.size(); i++) {
+			this.isDead |= ((EntityPlayer) this.worldObj.playerEntities.get(i)).isSneaking();
+		}
 		for (int i = 0; i < parts.length; i++) {
 			if (parts[i] != null) {
 				parts[i].onUpdate();
