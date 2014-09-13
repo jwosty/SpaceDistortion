@@ -113,15 +113,25 @@ public class Structure {
 	public static Structure detectStructure(IBlockAccess world, int x, int y, int z, StringGrid template,
 			HashMap<Character, Pair<Block, Boolean>> charToBlockAndHasDirection) {
 		for (ForgeDirection facing : ForgeDirection.VALID_DIRECTIONS) {
-			for (int xTemplateOffset = -template.width; xTemplateOffset <= template.width; xTemplateOffset++) {
-				for (int yTemplateOffset = -template.height; yTemplateOffset <= template.height; yTemplateOffset++) {
-					Triplet<Integer, Integer, Integer> offsetFromFacing = Structure.templateToWorldCoordinates(xTemplateOffset, yTemplateOffset, facing);
-					Structure s = Structure.detectStructure(world,
-							x + offsetFromFacing.X, y + offsetFromFacing.Y, z + offsetFromFacing.Z,
-							facing, template, charToBlockAndHasDirection);
-					if (s != null) {
-						return s;
-					}
+			Structure s = Structure.detectStructure(world, x, y, z, template, charToBlockAndHasDirection, facing);
+			if (s != null) {
+				return s;
+			}
+		}
+		return null;
+	}
+	
+	/** Detect a structure with a known facing and unknown offset */
+	public static Structure detectStructure(IBlockAccess world, int x, int y, int z, StringGrid template,
+			HashMap<Character, Pair<Block, Boolean>> charToBlockAndHasDirection, ForgeDirection facing) {
+		for (int xTemplateOffset = -template.width; xTemplateOffset <= template.width; xTemplateOffset++) {
+			for (int yTemplateOffset = -template.height; yTemplateOffset <= template.height; yTemplateOffset++) {
+				Triplet<Integer, Integer, Integer> offsetFromFacing = Structure.templateToWorldCoordinates(xTemplateOffset, yTemplateOffset, facing);
+				Structure s = Structure.detectStructure(world,
+						x + offsetFromFacing.X, y + offsetFromFacing.Y, z + offsetFromFacing.Z,
+						facing, template, charToBlockAndHasDirection);
+				if (s != null) {
+					return s;
 				}
 			}
 		}
