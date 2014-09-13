@@ -23,7 +23,7 @@ public class RenderTransporterRings extends RenderEntity {
 		GL11.glPointSize(10);
 		for (int i = 0; i < rings.parts.length; i++) {
 			if (rings.parts[i] != null) {
-				this.doRender(rings.parts[i]);
+				this.doRender(rings.parts[i], rings.animationTimer);
 			}
 		}
 		
@@ -32,16 +32,16 @@ public class RenderTransporterRings extends RenderEntity {
 		
 	}
 
-	public void doRender(EntityTransporterRingsPart part) {
+	public void doRender(EntityTransporterRingsPart part, double animationTimer) {
 		GL11.glPushMatrix();
 		GL11.glTranslated(-part.posX, -part.posY, -part.posZ);
 		AxisAlignedBB bb = part.boundingBox;
 		double numRings = 5;
 		for (double i = 0; i < 1; i += (1D/numRings)) {
-			double maxY = bb.maxY - (i * part.height);
-			//if (minY + 0.001 >= part.posY) {
-				this.renderAABB(bb.minX, maxY - (1 / numRings), bb.minZ, bb.maxX, maxY, bb.maxZ);
-			//}
+			double minY = bb.minY + (animationTimer * part.height) - (i * part.height);
+			if (minY + 0.001 >= part.posY) {
+				this.renderAABB(bb.minX, minY, bb.minZ, bb.maxX, minY + (1 / numRings), bb.maxZ);
+			}
 		}
 		GL11.glPopMatrix();
 	}

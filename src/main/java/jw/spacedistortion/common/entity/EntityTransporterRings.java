@@ -8,6 +8,8 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 public class EntityTransporterRings extends Entity {
 	public EntityTransporterRingsPart[] parts;
+	// Stores all information about the animation sequence 0-1 = rising, 1-1.5 = teleporting, 1.5-2.5 = lowering
+	public double animationTimer = 0;
 	
 	public EntityTransporterRings(World world) {
 		super(world);
@@ -52,6 +54,9 @@ public class EntityTransporterRings extends Entity {
 			if (parts[i] != null) {
 				parts[i].onUpdate();
 			}
+		}
+		if (this.animationTimer < 1) {
+			this.animationTimer += (1 / 20D);
 		}
 		//this.isDead = true;
 		/*
