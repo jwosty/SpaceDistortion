@@ -7,7 +7,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
 public class EntityTransporterRings extends Entity {
-	public EntityTransporterRingsPart[] parts = new EntityTransporterRingsPart[4];
+	public EntityTransporterRingsPart[] parts;
 	
 	public EntityTransporterRings(World world) {
 		super(world);
@@ -16,7 +16,6 @@ public class EntityTransporterRings extends Entity {
 	public EntityTransporterRings(World world, float x, float y, float z) {
 		this(world);
 		this.preventEntitySpawning = true;
-		this.initParts();
 		this.setPosition(x, y, z);
 	}
 	
@@ -34,12 +33,9 @@ public class EntityTransporterRings extends Entity {
 		super.setPosition(x, y, z);
 		if (this.parts == null) {
 			this.initParts();
-		} else {
-			for (int i = 0; i < this.parts.length; i++) {
-				if (parts[i] != null) {
-					parts[i].setPosition(x, y, z);
-				}
-			}			
+		}
+		for (int i = 0; i < this.parts.length; i++) {
+			parts[i].setPosition(x, y, z);		
 		}
 	}
 	
@@ -73,10 +69,8 @@ public class EntityTransporterRings extends Entity {
 	}
 	
 	@Override
-	protected void readEntityFromNBT(NBTTagCompound tag) {
-	}
+	protected void readEntityFromNBT(NBTTagCompound tag) { }
 
 	@Override
-	protected void writeEntityToNBT(NBTTagCompound tag) {	
-	}
+	protected void writeEntityToNBT(NBTTagCompound tag) { }
 }

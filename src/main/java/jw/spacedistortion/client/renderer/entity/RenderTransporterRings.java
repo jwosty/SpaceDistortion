@@ -13,7 +13,6 @@ public class RenderTransporterRings extends RenderEntity {
 	@Override
 	public void doRender(Entity ringsEntity, double interpX, double interpY, double interpZ,
 			float par4, float par5) {
-		
 		EntityTransporterRings rings = (EntityTransporterRings) ringsEntity;
 		GL11.glPushMatrix();
 		GL11.glTranslated(interpX, interpY, interpZ);
@@ -36,42 +35,12 @@ public class RenderTransporterRings extends RenderEntity {
 		GL11.glPushMatrix();
 		GL11.glTranslated(-part.posX, -part.posY, -part.posZ);
 		super.renderOffsetAABB(part.boundingBox, 0, 0, 0);
-		/*
-		Tessellator t = Tessellator.instance;
-		t.startDrawingQuads();
-		t.setNormal(0.0F, 0.0F, -1.0F);
-        t.addVertex(0, 1, 0);
-        t.addVertex(1, 1, 0);
-        t.addVertex(1, 0, 0);
-        t.addVertex(0, 0, 0);
-        t.setNormal(0.0F, 0.0F, 1.0F);
-        t.addVertex(0, 0, 1);
-        t.addVertex(1, 0, 1);
-        t.addVertex(1, 1, 1);
-        t.addVertex(0, 1, 1);
-        t.setNormal(0.0F, -1.0F, 0.0F);
-        t.addVertex(0, 0, 0);
-        t.addVertex(1, 0, 0);
-        t.addVertex(1, 0, 1);
-        t.addVertex(0, 0, 1);
-        t.setNormal(0.0F, 1.0F, 0.0F);
-        t.addVertex(0, 1, 1);
-        t.addVertex(1, 1, 1);
-        t.addVertex(1, 1, 0);
-        t.addVertex(0, 1, 0);
-        t.setNormal(-1.0F, 0.0F, 0.0F);
-        t.addVertex(0, 0, 1);
-        t.addVertex(0, 1, 1);
-        t.addVertex(0, 1, 0);
-        t.addVertex(0, 0, 0);
-        t.setNormal(1.0F, 0.0F, 0.0F);
-        t.addVertex(1, 0, 0);
-        t.addVertex(1, 1, 0);
-        t.addVertex(1, 1, 1);
-        t.addVertex(1, 0, 1);
-		t.draw();
-		*/
 		GL11.glPopMatrix();
+	}
+	
+	@Override
+	public boolean isStaticEntity() {
+		return super.isStaticEntity();
 	}
 	
 	@Override

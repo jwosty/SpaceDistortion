@@ -41,7 +41,7 @@ public class EntityTransporterRingsPart extends Entity {
 			this.boundingBox.maxZ = z + e[3];
 			this.boundingBox.minY = y;
 			this.boundingBox.maxY = y + 2;
-			System.out.println("minX: " + boundingBox.minX + " maxX: " + boundingBox.maxX + " minZ: " + boundingBox.minZ + " maxZ: " + boundingBox.maxZ);
+			System.out.println("minX: " + boundingBox.minX + " maxX: " + boundingBox.maxY + " minY: " + boundingBox.minZ + " maxZ: " + boundingBox.maxZ);
 		}
 	}
 	
@@ -50,6 +50,9 @@ public class EntityTransporterRingsPart extends Entity {
 	
 	@Override
 	public void onUpdate() {
+		if (this.posX != this.parent.posX | this.posY != this.parent.posY | this.posZ != this.parent.posZ){
+			this.setPosition(this.parent.posX, this.parent.posY, this.parent.posZ);
+		}
 		this.isDead = this.parent.isDead;
 	}
 	
