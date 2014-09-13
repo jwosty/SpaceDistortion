@@ -24,7 +24,7 @@ public class EntityTransporterRings extends Entity {
 		for (int i = 0; i < parts.length; i++) {
 			ForgeDirection d = ForgeDirection.getOrientation(i + 2);
 			parts[i] = new EntityTransporterRingsPart(this.worldObj, this, this.posX, this.posY, this.posZ, ForgeDirection.getOrientation(i + 2));
-			//world.spawnEntityInWorld(parts[i]);
+			//this.worldObj.spawnEntityInWorld(parts[i]);
 		}
 	}
 	

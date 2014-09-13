@@ -5,6 +5,7 @@ import jw.spacedistortion.common.entity.EntityTransporterRingsPart;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderEntity;
 import net.minecraft.entity.Entity;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
@@ -34,9 +35,57 @@ public class RenderTransporterRings extends RenderEntity {
 	public void doRender(EntityTransporterRingsPart part) {
 		GL11.glPushMatrix();
 		GL11.glTranslated(-part.posX, -part.posY, -part.posZ);
-		super.renderOffsetAABB(part.boundingBox, 0, 0, 0);
+		AxisAlignedBB bb = part.boundingBox;
+		double numRings = 5;
+		for (double i = 0; i < 1; i += (1D/numRings)) {
+			double maxY = bb.maxY - (i * part.height);
+			//if (minY + 0.001 >= part.posY) {
+				this.renderAABB(bb.minX, maxY - (1 / numRings), bb.minZ, bb.maxX, maxY, bb.maxZ);
+			//}
+		}
 		GL11.glPopMatrix();
 	}
+	
+	public static void renderAABB(double minX, double minY, double minZ,
+			double maxX, double maxY, double maxZ) {
+        GL11.glDisable(GL11.GL_TEXTURE_2D);
+        Tessellator tessellator = Tessellator.instance;
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        tessellator.startDrawingQuads();
+        tessellator.setNormal(0.0F, 0.0F, -1.0F);
+        tessellator.addVertex(minX, maxY, minZ);
+        tessellator.addVertex(maxX, maxY, minZ);
+        tessellator.addVertex(maxX, minY, minZ);
+        tessellator.addVertex(minX, minY, minZ);
+        tessellator.setNormal(0.0F, 0.0F, 1.0F);
+        tessellator.addVertex(minX, minY, maxZ);
+        tessellator.addVertex(maxX, minY, maxZ);
+        tessellator.addVertex(maxX, maxY, maxZ);
+        tessellator.addVertex(minX, maxY, maxZ);
+        tessellator.setNormal(0.0F, -1.0F, 0.0F);
+        tessellator.addVertex(minX, minY, minZ);
+        tessellator.addVertex(maxX, minY, minZ);
+        tessellator.addVertex(maxX, minY, maxZ);
+        tessellator.addVertex(minX, minY, maxZ);
+        tessellator.setNormal(0.0F, 1.0F, 0.0F);
+        tessellator.addVertex(minX, maxY, maxZ);
+        tessellator.addVertex(maxX, maxY, maxZ);
+        tessellator.addVertex(maxX, maxY, minZ);
+        tessellator.addVertex(minX, maxY, minZ);
+        tessellator.setNormal(-1.0F, 0.0F, 0.0F);
+        tessellator.addVertex(minX, minY, maxZ);
+        tessellator.addVertex(minX, maxY, maxZ);
+        tessellator.addVertex(minX, maxY, minZ);
+        tessellator.addVertex(minX, minY, minZ);
+        tessellator.setNormal(1.0F, 0.0F, 0.0F);
+        tessellator.addVertex(maxX, minY, minZ);
+        tessellator.addVertex(maxX, maxY, minZ);
+        tessellator.addVertex(maxX, maxY, maxZ);
+        tessellator.addVertex(maxX, minY, maxZ);
+        tessellator.setTranslation(0.0D, 0.0D, 0.0D);
+        tessellator.draw();
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
+    }
 	
 	@Override
 	public boolean isStaticEntity() {
