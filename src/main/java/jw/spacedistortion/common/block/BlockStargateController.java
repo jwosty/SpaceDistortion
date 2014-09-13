@@ -96,7 +96,7 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 	 * @return A StargateControllerState the describes the stargate's state
 	 */
 	public static StargateControllerState getCurrentState(IBlockAccess world, int x, int y, int z) {
-		Structure stargate = Structure.detectConnectedStructure(world, x, y, z, SpaceDistortion.stargateRingShape, SpaceDistortion.stargateRingShapeInfo);
+		Structure stargate = Structure.detectConnectedStructure(world, x, y, z, SpaceDistortion.stargateRingShape, SpaceDistortion.templateBlockInfo);
 		if (stargate == null) {
 			return new StargateControllerState.StargateControllerInvalid();
 		} else {
@@ -190,7 +190,7 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 	
 	public void activateStargatePair(World world, TileEntityStargateController srcController, TileEntityStargateController dstController) {
 		StringGrid ringTemplate = SpaceDistortion.stargateRingShape;
-		HashMap<Character, Pair<Block, Boolean>> ringInfo = SpaceDistortion.stargateRingShapeInfo;
+		HashMap<Character, Pair<Block, Boolean>> ringInfo = SpaceDistortion.templateBlockInfo;
 		// Get the stargates
 		Structure srcStargate = Structure.detectConnectedStructure(
 				world, srcController.xCoord, srcController.yCoord, srcController.zCoord, ringTemplate, ringInfo);
@@ -219,7 +219,7 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 	
 	public void deactivateStargatePair(World world, TileEntityStargateController srcController, TileEntityStargateController dstController) {
 		StringGrid ringTemplate = SpaceDistortion.stargateRingShape;
-		HashMap<Character, Pair<Block, Boolean>> ringInfo = SpaceDistortion.stargateRingShapeInfo;
+		HashMap<Character, Pair<Block, Boolean>> ringInfo = SpaceDistortion.templateBlockInfo;
 		// Get stargates
 		Structure srcStargate = Structure.detectConnectedStructure(
 				world, srcController.xCoord, srcController.yCoord, srcController.zCoord, ringTemplate, ringInfo);
