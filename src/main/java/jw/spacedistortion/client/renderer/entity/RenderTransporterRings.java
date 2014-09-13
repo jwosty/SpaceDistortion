@@ -29,7 +29,6 @@ public class RenderTransporterRings extends RenderEntity {
 		
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
 		GL11.glPopMatrix();
-		
 	}
 
 	public void doRender(EntityTransporterRingsPart part, int animationTimer) {

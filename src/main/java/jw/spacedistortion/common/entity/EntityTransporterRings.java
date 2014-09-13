@@ -3,8 +3,8 @@ package jw.spacedistortion.common.entity;
 import jw.spacedistortion.Triplet;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
-import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -34,7 +34,10 @@ public class EntityTransporterRings extends Entity {
 	
 	@Override
 	public void setPosition(double x, double y, double z) {
-		super.setPosition(x, y, z);
+		this.posX = x;
+		this.posY = y;
+		this.posZ = z;
+		this.boundingBox.setBounds(x - 1, y, z - 1, x + 1, y + 2, z + 1);
 		if (this.parts == null) {
 			this.initParts();
 		}
@@ -70,6 +73,7 @@ public class EntityTransporterRings extends Entity {
 	}
 	
 	public void doTransport(int x, int y, int z) {
+		// Move blocks
 		for (int xo = -1; xo < 1; xo++) {
 			for (int yo = 0; yo < 2; yo++) {
 				for (int zo = -1; zo < 1; zo++) {
@@ -87,7 +91,15 @@ public class EntityTransporterRings extends Entity {
 				}
 			}
 		}
-		
+		// Move entities
+		for (Object e : this.worldObj.getEntitiesWithinAABBExcludingEntity(this, this.boundingBox)) {
+			Entity entity = (Entity)e;
+			entity.setPosition(x - this.posX + entity.posX, y - this.posY + entity.posY, z - this.posZ + entity.posZ);
+		}
+		for (Object e : this.worldObj.getEntitiesWithinAABBExcludingEntity(this, AxisAlignedBB.getBoundingBox(x - 1, y, z - 1, x + 1, y + 2, z + 1))) {
+			Entity entity = (Entity)e;
+			entity.setPosition(this.posX - x + entity.posX, this.posY - y + entity.posY, this.posZ - z + entity.posZ);
+		}
 	}
 	
 	@Override
