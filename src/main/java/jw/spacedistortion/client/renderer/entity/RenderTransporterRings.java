@@ -32,13 +32,15 @@ public class RenderTransporterRings extends RenderEntity {
 		
 	}
 
-	public void doRender(EntityTransporterRingsPart part, double animationTimer) {
+	public void doRender(EntityTransporterRingsPart part, int animationTimer) {
 		GL11.glPushMatrix();
 		GL11.glTranslated(-part.posX, -part.posY, -part.posZ);
+		// A big complicated scary line to get a height factor (so 0..1) from the animation timer rules
+		double interp = animationTimer < 40 ? ((double)animationTimer / 40D) : (animationTimer < 60 ? 1 : ((double)(100 - animationTimer) / 40));
 		AxisAlignedBB bb = part.boundingBox;
 		double numRings = 5;
 		for (double i = 0; i < 1; i += (1D/numRings)) {
-			double minY = bb.minY + (animationTimer * part.height) - (i * part.height);
+			double minY = bb.minY + (interp * part.height) - (i * part.height);
 			if (minY + 0.001 >= part.posY) {
 				this.renderAABB(bb.minX, minY, bb.minZ, bb.maxX, minY + (1 / numRings), bb.maxZ);
 			}
