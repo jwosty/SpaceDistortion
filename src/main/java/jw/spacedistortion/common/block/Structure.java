@@ -116,7 +116,7 @@ public class Structure {
 			for (int xTemplateOffset = -template.width; xTemplateOffset <= template.width; xTemplateOffset++) {
 				for (int yTemplateOffset = -template.height; yTemplateOffset <= template.height; yTemplateOffset++) {
 					Triplet<Integer, Integer, Integer> offsetFromFacing = Structure.templateToWorldCoordinates(xTemplateOffset, yTemplateOffset, facing);
-					Structure s = Structure.detectStructureAtLocationAndOrientation(world,
+					Structure s = Structure.detectStructure(world,
 							x + offsetFromFacing.X, y + offsetFromFacing.Y, z + offsetFromFacing.Z,
 							facing, template, charToBlockAndHasDirection);
 					if (s != null) {
@@ -129,7 +129,7 @@ public class Structure {
 	}
 	
 	/** Detect a structure at the given concrete location (known offset) and facing */
-	public static Structure detectStructureAtLocationAndOrientation(IBlockAccess world, int x, int y, int z, ForgeDirection facing, StringGrid template,
+	public static Structure detectStructure(IBlockAccess world, int x, int y, int z, ForgeDirection facing, StringGrid template,
 			HashMap<Character, Pair<Block, Boolean>> charToBlockAndHasDirection) {
 		Structure result = new Structure(x, y, z, new HashMap<Pair<Integer, Integer>, BlockInfo>(), facing);
 		
