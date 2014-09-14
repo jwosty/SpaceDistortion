@@ -52,6 +52,16 @@ public class EntityTransporterRings extends Entity {
 	protected void entityInit() { }
 	
 	@Override
+	public boolean isBurning() {
+		return false;
+	}
+	
+	@Override
+	public float getShadowSize() {
+		return 0;
+	}
+	
+	@Override
 	public void onUpdate() {
 		super.onUpdate();
 		for (int i = 0; i < parts.length; i++) {
@@ -90,12 +100,16 @@ public class EntityTransporterRings extends Entity {
 		List srcEntities = this.worldObj.getEntitiesWithinAABBExcludingEntity(this, this.boundingBox);
 		List dstEntities = this.worldObj.getEntitiesWithinAABBExcludingEntity(this, AxisAlignedBB.getBoundingBox(x - 1, y, z - 1, x + 1, y + 2, z + 1));
 		for (Object e : srcEntities) {
-			Entity entity = (Entity)e;
-			entity.setPosition(x - this.posX + entity.posX, y - this.posY + entity.posY, z - this.posZ + entity.posZ);
+			if (!(e instanceof EntityTransporterRings)) {
+				Entity entity = (Entity)e;
+				entity.setPosition(x - this.posX + entity.posX, y - this.posY + entity.posY, z - this.posZ + entity.posZ);
+			}
 		}
 		for (Object e : dstEntities) {
-			Entity entity = (Entity)e;
-			entity.setPosition(this.posX - x + entity.posX, this.posY - y + entity.posY, this.posZ - z + entity.posZ);
+			if (!(e instanceof EntityTransporterRings)) {
+				Entity entity = (Entity)e;
+				entity.setPosition(this.posX - x + entity.posX, this.posY - y + entity.posY, this.posZ - z + entity.posZ);
+			}
 		}
 	}
 	
