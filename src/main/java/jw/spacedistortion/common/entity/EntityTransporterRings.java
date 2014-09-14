@@ -1,5 +1,7 @@
 package jw.spacedistortion.common.entity;
 
+import java.util.List;
+
 import jw.spacedistortion.Triplet;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
@@ -63,13 +65,6 @@ public class EntityTransporterRings extends Entity {
 			this.isDead = true;
 		}
 		this.animationTimer++;
-		//this.isDead = true;
-		/*
-		this.startY++;
-		if (startY >= 50) {
-			this.isDead = true;
-		}
-		*/
 	}
 	
 	public void doTransport(int x, int y, int z) {
@@ -92,11 +87,13 @@ public class EntityTransporterRings extends Entity {
 			}
 		}
 		// Move entities
-		for (Object e : this.worldObj.getEntitiesWithinAABBExcludingEntity(this, this.boundingBox)) {
+		List srcEntities = this.worldObj.getEntitiesWithinAABBExcludingEntity(this, this.boundingBox);
+		List dstEntities = this.worldObj.getEntitiesWithinAABBExcludingEntity(this, AxisAlignedBB.getBoundingBox(x - 1, y, z - 1, x + 1, y + 2, z + 1));
+		for (Object e : srcEntities) {
 			Entity entity = (Entity)e;
 			entity.setPosition(x - this.posX + entity.posX, y - this.posY + entity.posY, z - this.posZ + entity.posZ);
 		}
-		for (Object e : this.worldObj.getEntitiesWithinAABBExcludingEntity(this, AxisAlignedBB.getBoundingBox(x - 1, y, z - 1, x + 1, y + 2, z + 1))) {
+		for (Object e : dstEntities) {
 			Entity entity = (Entity)e;
 			entity.setPosition(this.posX - x + entity.posX, this.posY - y + entity.posY, this.posZ - z + entity.posZ);
 		}
