@@ -22,7 +22,8 @@ public class BlockRingPlatform extends SDBlock {
 		}
 		Structure s = Structure.detectStructure(world, x, y, z, SpaceDistortion.transporterRingsShape, SpaceDistortion.templateBlockInfo, ForgeDirection.UP);
 		if (s != null) {
-			world.spawnEntityInWorld(new EntityTransporterRings(world, s.x + 2, s.y + 1, s.z + 2));
+			//world.spawnEntityInWorld(new EntityTransporterRings(world, s.x + 2, s.y + 1, s.z + 2));
+			player.openGui(SpaceDistortion.instance, 1, world, x, y, z);
 			return true;
 		} else {
 			return false;
