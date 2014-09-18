@@ -9,6 +9,7 @@ import jw.spacedistortion.common.tileentity.StargateControllerState.StargateCont
 import jw.spacedistortion.common.tileentity.TileEntityStargateController;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.ResourceLocation;
 
 import org.apache.commons.lang3.ArrayUtils;
