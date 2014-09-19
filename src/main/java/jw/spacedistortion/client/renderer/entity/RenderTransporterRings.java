@@ -40,7 +40,7 @@ public class RenderTransporterRings extends RenderEntity {
 		double numRings = 5;
 		for (double i = 0; i < 1; i += (1D/numRings)) {
 			double minY = bb.minY + (interp * part.height) - (i * part.height);
-			if (minY + 0.001 >= part.posY) {
+			if (minY + 0.2 >= part.posY) {
 				this.renderAABB(bb.minX, minY, bb.minZ, bb.maxX, minY + (1 / numRings), bb.maxZ);
 			}
 		}
