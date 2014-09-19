@@ -29,7 +29,7 @@ public class SDGuiHandler implements IGuiHandler {
 				return new GuiDHD((TileEntityStargateController)tileEntity);
 			case 1:
 				Structure r = Structure.detectStructure(world, x, y, z, SpaceDistortion.transporterRingsShape, SpaceDistortion.templateBlockInfo, ForgeDirection.UP);
-				return new GuiRingPlatform(r.x, r.y, r.z);
+				return new GuiRingPlatform(world, r.x, r.y, r.z);
 			}
 		} catch (NullPointerException e) {
 			return null;
