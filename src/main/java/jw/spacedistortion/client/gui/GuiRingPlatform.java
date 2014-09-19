@@ -4,6 +4,9 @@ import jw.spacedistortion.common.CommonProxy;
 import jw.spacedistortion.common.SpaceDistortion;
 import jw.spacedistortion.common.block.SDBlock;
 import jw.spacedistortion.common.block.Structure;
+import jw.spacedistortion.common.network.ChannelHandler;
+import jw.spacedistortion.common.network.packet.PacketActivateTransporterRings;
+import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.ResourceLocation;
@@ -32,10 +35,10 @@ public class GuiRingPlatform extends GuiScreen {
 		return false;
 	}
 	
-	private void addRings(int x, int z, boolean isThis) {
+	private void addRings(int x, int y, int z, boolean isThis) {
 		int pixelX = x - this.x;
 		int pixelY = z - this.z;
-		this.buttonList.add(new GuiRingPlatformButton((this.width / 2) + (pixelX * 4), (this.height / 2) + (pixelY * 4), isThis));
+		this.buttonList.add(new GuiRingPlatformButton((this.width / 2) + (pixelX * 4), (this.height / 2) + (pixelY * 4), x, y, z, isThis));
 	}
 	
 	@Override
@@ -48,7 +51,7 @@ public class GuiRingPlatform extends GuiScreen {
 								world, x, y, z, SpaceDistortion.transporterRingsShape,
 								SpaceDistortion.templateBlockInfo, ForgeDirection.UP);
 						if (rings != null) {
-							this.addRings(rings.x, rings.z, rings.x == this.x && rings.y == this.y && rings.z == this.z);
+							this.addRings(rings.x, rings.y, rings.z, rings.x == this.x && rings.y == this.y && rings.z == this.z);
 						}
 					}
 				}
@@ -56,12 +59,12 @@ public class GuiRingPlatform extends GuiScreen {
 		}
 	}
 	
-	protected void drawPoint(double x, double y) {
-		Tessellator t = Tessellator.instance;
-		t.addVertex(x,     y,     0);
-		t.addVertex(x,     y + 1, 0);
-		t.addVertex(x + 1, y + 1, 0);
-		t.addVertex(x + 1, y,     0);
+	@Override
+	protected void actionPerformed(GuiButton button) {
+		GuiRingPlatformButton b = (GuiRingPlatformButton) button;
+		if (!b.isThis) {
+			ChannelHandler.clientSendPacket(new PacketActivateTransporterRings(this.x, this.y, this.z, b.ringX, b.ringY, b.ringZ));
+		}
 	}
 	
 	@Override

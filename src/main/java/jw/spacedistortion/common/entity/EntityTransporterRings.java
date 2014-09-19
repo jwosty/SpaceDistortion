@@ -14,14 +14,16 @@ public class EntityTransporterRings extends Entity {
 	public EntityTransporterRingsPart[] parts;
 	// Stores all information about the animation sequence 0-40 = rising, 40-60 = transporting, 60-100 = lowering
 	public int animationTimer = 0;
+	public Triplet<Integer, Integer, Integer> dst;
 	
 	public EntityTransporterRings(World world) {
 		super(world);
 	}
 	
-	public EntityTransporterRings(World world, float x, float y, float z) {
+	public EntityTransporterRings(World world, float x, float y, float z, Triplet<Integer, Integer, Integer> dst) {
 		this(world);
 		this.preventEntitySpawning = true;
+		this.dst = dst;
 		this.setPosition(x, y, z);
 	}
 	
@@ -78,21 +80,23 @@ public class EntityTransporterRings extends Entity {
 	}
 	
 	public void doTransport(int x, int y, int z) {
+		if (this.dst == null) {
+			return;
+		}
 		// Move blocks
 		for (int xo = -1; xo < 1; xo++) {
 			for (int yo = 0; yo < 2; yo++) {
 				for (int zo = -1; zo < 1; zo++) {
 					Triplet<Integer, Integer, Integer> src = new Triplet<Integer, Integer, Integer>((int)this.posX + xo, (int)this.posY + yo, (int)this.posZ + zo);
-					Triplet<Integer, Integer, Integer> dst = new Triplet<Integer, Integer, Integer>(x + xo, y + yo, z + zo);
 					
 					Block srcBlock = this.worldObj.getBlock(src.X, src.Y, src.Z);
 					int srcMeta = this.worldObj.getBlockMetadata(src.X, src.Y, src.Z);
-					Block dstBlock = this.worldObj.getBlock(dst.X, dst.Y, dst.Z);
-					int dstMeta = this.worldObj.getBlockMetadata(dst.X, dst.Y, dst.Z);
+					Block dstBlock = this.worldObj.getBlock(this.dst.X, this.dst.Y, this.dst.Z);
+					int dstMeta = this.worldObj.getBlockMetadata(this.dst.X, this.dst.Y, this.dst.Z);
 					
 					// switch the blocks and their metadata
 					this.worldObj.setBlock(src.X, src.Y, src.Z, dstBlock, dstMeta, 3);
-					this.worldObj.setBlock(dst.X, dst.Y, dst.Z, srcBlock, srcMeta, 3);
+					this.worldObj.setBlock(this.dst.X, this.dst.Y, this.dst.Z, srcBlock, srcMeta, 3);
 				}
 			}
 		}
