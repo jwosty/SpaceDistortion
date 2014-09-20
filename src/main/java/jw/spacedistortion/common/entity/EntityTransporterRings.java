@@ -33,7 +33,6 @@ public class EntityTransporterRings extends Entity {
 		for (int i = 0; i < parts.length; i++) {
 			ForgeDirection d = ForgeDirection.getOrientation(i + 2);
 			parts[i] = new EntityTransporterRingsPart(this.worldObj, this, this.posX, this.posY, this.posZ, ForgeDirection.getOrientation(i + 2));
-			//this.worldObj.spawnEntityInWorld(parts[i]);
 		}
 	}
 	
@@ -93,6 +92,29 @@ public class EntityTransporterRings extends Entity {
 	}
 	
 	public void doTransport(int x, int y, int z) {
+		doTransportBlocks(x, y, z);
+		doTransportTileEntities(x, y, z);
+	}
+
+	public void doTransportTileEntities(int x, int y, int z) {
+		// Move entities
+		List srcEntities = this.worldObj.getEntitiesWithinAABBExcludingEntity(this, this.boundingBox);
+		List dstEntities = this.worldObj.getEntitiesWithinAABBExcludingEntity(this, AxisAlignedBB.getBoundingBox(x - 1, y, z - 1, x + 1, y + 2, z + 1));
+		for (Object e : srcEntities) {
+			if (!(e instanceof EntityTransporterRings)) {
+				Entity entity = (Entity) e;
+				this.teleportEntityOrPlayer(entity, x - this.posX + entity.posX, y - this.posY + entity.posY, z - this.posZ + entity.posZ);
+			}
+		}
+		for (Object e : dstEntities) {
+			if (!(e instanceof EntityTransporterRings)) {
+				Entity entity = (Entity) e;
+				this.teleportEntityOrPlayer(entity, this.posX - x + entity.posX, this.posY - y + entity.posY, this.posZ - z + entity.posZ);
+			}
+		}
+	}
+
+	public void doTransportBlocks(int x, int y, int z) {
 		// Move blocks
 		for (int xo = -1; xo < 1; xo++) {
 			for (int yo = 0; yo < 2; yo++) {
@@ -109,21 +131,6 @@ public class EntityTransporterRings extends Entity {
 					this.worldObj.setBlock(src.X, src.Y, src.Z, dstBlock, dstMeta, 3);
 					this.worldObj.setBlock(dst.X, dst.Y, dst.Z, srcBlock, srcMeta, 3);
 				}
-			}
-		}
-		// Move entities
-		List srcEntities = this.worldObj.getEntitiesWithinAABBExcludingEntity(this, this.boundingBox);
-		List dstEntities = this.worldObj.getEntitiesWithinAABBExcludingEntity(this, AxisAlignedBB.getBoundingBox(x - 1, y, z - 1, x + 1, y + 2, z + 1));
-		for (Object e : srcEntities) {
-			if (!(e instanceof EntityTransporterRings)) {
-				Entity entity = (Entity) e;
-				this.teleportEntityOrPlayer(entity, x - this.posX + entity.posX, y - this.posY + entity.posY, z - this.posZ + entity.posZ);
-			}
-		}
-		for (Object e : dstEntities) {
-			if (!(e instanceof EntityTransporterRings)) {
-				Entity entity = (Entity) e;
-				this.teleportEntityOrPlayer(entity, this.posX - x + entity.posX, this.posY - y + entity.posY, this.posZ - z + entity.posZ);
 			}
 		}
 	}
