@@ -43,15 +43,20 @@ public class GuiRingPlatform extends GuiScreen {
 	
 	@Override
 	public void initGui() {
-		for (int x = this.x - 16; x < this.x + 16; x++) {
-			for (int z = -16; z < this.z + 16; z++) {
+		this.buttonList.clear();
+		boolean[][] hasFound = new boolean[32][32];
+		for (int rx = -16; rx < 16; rx++) {
+			for (int rz = -16; rz < 16; rz++) {
 				for (int y = 0; y < 256; y++) {
+					int x = this.x + rx;
+					int z = this.z + rz;
 					if (world.getBlock(x, y, z) == SDBlock.ringPlatform) {
 						Structure rings = Structure.detectStructure(
 								world, x, y, z, SpaceDistortion.transporterRingsShape,
 								SpaceDistortion.templateBlockInfo, ForgeDirection.UP);
-						if (rings != null) {
+						if (rings != null && !hasFound[this.x - rings.x + 16][this.z - rings.z + 16]) {
 							this.addRings(rings.x, rings.y, rings.z, rings.x == this.x && rings.y == this.y && rings.z == this.z);
+							hasFound[this.x - rings.x + 16][this.z - rings.z + 16] = true;
 						}
 					}
 				}
@@ -62,9 +67,12 @@ public class GuiRingPlatform extends GuiScreen {
 	@Override
 	protected void actionPerformed(GuiButton button) {
 		GuiRingPlatformButton b = (GuiRingPlatformButton) button;
+		
 		if (!b.isThis) {
 			ChannelHandler.clientSendPacket(new PacketActivateTransporterRings(this.x, this.y, this.z, b.ringX, b.ringY, b.ringZ));
 		}
+		
+		System.out.println("boom");
 	}
 	
 	@Override

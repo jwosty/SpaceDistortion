@@ -52,14 +52,6 @@ public class EntityTransporterRingsPart extends Entity {
 		if (this.posX != this.parent.posX | this.posY != this.parent.posY | this.posZ != this.parent.posZ){
 			this.setPosition(this.parent.posX, this.parent.posY, this.parent.posZ);
 		}
-		/*
-		if (Math.abs(this.boundingBox.maxY - this.boundingBox.minY) < this.height) {
-			this.boundingBox.maxY += ((1D / 12D));
-			if ((Math.abs(this.boundingBox.maxY - this.boundingBox.minY) > this.height)) {
-				this.boundingBox.maxY = this.boundingBox.minY + 2;
-			}
-		}
-		*/
 		this.isDead = this.parent.isDead;
 	}
 	

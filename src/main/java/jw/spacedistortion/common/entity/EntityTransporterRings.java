@@ -51,6 +51,16 @@ public class EntityTransporterRings extends Entity {
 	}
 	
 	@Override
+	public void setPositionAndRotation(double x, double y, double z, float pitch, float yaw) {
+		this.setLocationAndAngles(x, y, z, pitch, yaw);
+	}
+	
+	@Override
+	public void setPositionAndRotation2(double x, double y, double z, float pitch, float yaw, int par) {
+		this.setLocationAndAngles(x, y, z, pitch, yaw);
+	}
+	
+	@Override
 	protected void entityInit() { }
 	
 	@Override
@@ -72,7 +82,9 @@ public class EntityTransporterRings extends Entity {
 			}
 		}
 		if (this.animationTimer == 50) {
-			this.doTransport((int)this.posX, (int)this.posY,(int)this.posZ + 6);
+			if (this.dst != null) {
+				this.doTransport(this.dst.X, this.dst.Y, this.dst.Z);
+			}
 		} else if (this.animationTimer == 100) {
 			this.isDead = true;
 		}
@@ -80,23 +92,21 @@ public class EntityTransporterRings extends Entity {
 	}
 	
 	public void doTransport(int x, int y, int z) {
-		if (this.dst == null) {
-			return;
-		}
 		// Move blocks
 		for (int xo = -1; xo < 1; xo++) {
 			for (int yo = 0; yo < 2; yo++) {
 				for (int zo = -1; zo < 1; zo++) {
 					Triplet<Integer, Integer, Integer> src = new Triplet<Integer, Integer, Integer>((int)this.posX + xo, (int)this.posY + yo, (int)this.posZ + zo);
+					Triplet<Integer, Integer, Integer> dst = new Triplet<Integer, Integer, Integer>(x + xo, y + yo, z + zo);
 					
 					Block srcBlock = this.worldObj.getBlock(src.X, src.Y, src.Z);
 					int srcMeta = this.worldObj.getBlockMetadata(src.X, src.Y, src.Z);
-					Block dstBlock = this.worldObj.getBlock(this.dst.X, this.dst.Y, this.dst.Z);
-					int dstMeta = this.worldObj.getBlockMetadata(this.dst.X, this.dst.Y, this.dst.Z);
+					Block dstBlock = this.worldObj.getBlock(dst.X, dst.Y, dst.Z);
+					int dstMeta = this.worldObj.getBlockMetadata(dst.X, dst.Y, dst.Z);
 					
 					// switch the blocks and their metadata
 					this.worldObj.setBlock(src.X, src.Y, src.Z, dstBlock, dstMeta, 3);
-					this.worldObj.setBlock(this.dst.X, this.dst.Y, this.dst.Z, srcBlock, srcMeta, 3);
+					this.worldObj.setBlock(dst.X, dst.Y, dst.Z, srcBlock, srcMeta, 3);
 				}
 			}
 		}
@@ -119,13 +129,24 @@ public class EntityTransporterRings extends Entity {
 	
 	@Override
 	public Entity[] getParts() {
-		//return this.parts;
-		return super.getParts();
+		return this.parts;
 	}
 	
 	@Override
-	protected void readEntityFromNBT(NBTTagCompound tag) { }
+	protected void readEntityFromNBT(NBTTagCompound tag) { 
+		this.animationTimer = tag.getInteger("timer");
+		if (tag.hasKey("dstX") && tag.hasKey("dstY") && tag.hasKey("dstZ")) {
+			this.dst = new Triplet<Integer, Integer, Integer>(tag.getInteger("dstX"), tag.getInteger("dstY"), tag.getInteger("dstZ"));
+		}
+	}
 
 	@Override
-	protected void writeEntityToNBT(NBTTagCompound tag) { }
+	protected void writeEntityToNBT(NBTTagCompound tag) {
+		tag.setInteger("timer", this.animationTimer);
+		if (this.dst != null) {
+			tag.setInteger("dstX", this.dst.X);
+			tag.setInteger("dstY", this.dst.Y);
+			tag.setInteger("dstZ", this.dst.Z);
+		}
+	}
 }

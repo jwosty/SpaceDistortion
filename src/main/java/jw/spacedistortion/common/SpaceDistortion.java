@@ -90,7 +90,7 @@ public class SpaceDistortion {
 		GameRegistry.registerTileEntity(TileEntityEventHorizon.class, "tileEntityEventHorizon");
 		GameRegistry.registerTileEntity(TileEntityStargateController.class, "tileEntityStargateController");
 		// Entities
-		EntityRegistry.registerModEntity(EntityTransporterRings.class, "transporterRings", 0, instance, 80, 1, true);
+		EntityRegistry.registerModEntity(EntityTransporterRings.class, "transporterRings", 0, instance, 80, 1, false);
 		//EntityRegistry.registerModEntity(EntityTransporterRingsPart.class, "transporterRingsPart", 0, instance, 0, 1, true);
 		// GUIs
 		NetworkRegistry.INSTANCE.registerGuiHandler(SpaceDistortion.instance, new SDGuiHandler());
