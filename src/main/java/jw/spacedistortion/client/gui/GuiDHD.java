@@ -128,21 +128,6 @@ public class GuiDHD extends GuiScreen {
 		this.drawTexturedModalRect(this.getPanelX(), this.getPanelY(), 0, 0,
 				256, 256);
 		// Draw the address the user is dialing
-		/*
-		int max;
-		byte[] addressBarGlyphs;
-		switch (this.tileEntity.state) {
-		case ACTIVE_OUTGOING:
-		case ACTIVE_INCOMING:
-			max = this.addressMemoization.length;
-			addressBarGlyphs = this.connectedMemoization;
-			break;
-		default:
-			max = this.tileEntity.currentGlyphIndex;
-			addressBarGlyphs = this.tileEntity.addressBuffer;
-			break;
-		}
-		*/
 		for (int i = 0; i < this.connectedMemoization.length; i++) {
 			GlyphRenderer.drawGlyph(
 					this, this.mc, this.glyphTexture, this.fontRendererObj,
