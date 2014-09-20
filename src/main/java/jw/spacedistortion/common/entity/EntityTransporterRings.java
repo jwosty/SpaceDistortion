@@ -5,6 +5,7 @@ import java.util.List;
 import jw.spacedistortion.Triplet;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
@@ -115,15 +116,23 @@ public class EntityTransporterRings extends Entity {
 		List dstEntities = this.worldObj.getEntitiesWithinAABBExcludingEntity(this, AxisAlignedBB.getBoundingBox(x - 1, y, z - 1, x + 1, y + 2, z + 1));
 		for (Object e : srcEntities) {
 			if (!(e instanceof EntityTransporterRings)) {
-				Entity entity = (Entity)e;
-				entity.setPosition(x - this.posX + entity.posX, y - this.posY + entity.posY, z - this.posZ + entity.posZ);
+				Entity entity = (Entity) e;
+				this.teleportEntityOrPlayer(entity, x - this.posX + entity.posX, y - this.posY + entity.posY, z - this.posZ + entity.posZ);
 			}
 		}
 		for (Object e : dstEntities) {
 			if (!(e instanceof EntityTransporterRings)) {
-				Entity entity = (Entity)e;
-				entity.setPosition(this.posX - x + entity.posX, this.posY - y + entity.posY, this.posZ - z + entity.posZ);
+				Entity entity = (Entity) e;
+				this.teleportEntityOrPlayer(entity, this.posX - x + entity.posX, this.posY - y + entity.posY, this.posZ - z + entity.posZ);
 			}
+		}
+	}
+	
+	private void teleportEntityOrPlayer(Entity e, double x, double y, double z) {
+		if (e instanceof EntityPlayerMP) {
+			((EntityPlayerMP) e).playerNetServerHandler.setPlayerLocation(x, y, z, e.rotationYaw, e.rotationPitch);
+		} else {
+			e.setLocationAndAngles(x, y, z, e.rotationYaw, e.rotationPitch);
 		}
 	}
 	

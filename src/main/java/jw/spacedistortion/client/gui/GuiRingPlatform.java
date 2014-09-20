@@ -67,12 +67,9 @@ public class GuiRingPlatform extends GuiScreen {
 	@Override
 	protected void actionPerformed(GuiButton button) {
 		GuiRingPlatformButton b = (GuiRingPlatformButton) button;
-		
 		if (!b.isThis) {
 			ChannelHandler.clientSendPacket(new PacketActivateTransporterRings(this.x, this.y, this.z, b.ringX, b.ringY, b.ringZ));
 		}
-		
-		System.out.println("boom");
 	}
 	
 	@Override
