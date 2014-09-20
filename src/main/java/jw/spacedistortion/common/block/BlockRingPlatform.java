@@ -100,7 +100,9 @@ public class BlockRingPlatform extends SDBlock {
 	public void onBlockAdded(World world, int x, int y, int z) {
 		for (int i = 2; i<6; i++) {
 			ForgeDirection d = ForgeDirection.getOrientation(i);
-			this.setOrientation(world, x + d.offsetX, y, z + d.offsetZ);
+			if (world.getBlock(x + d.offsetX, y, z + d.offsetZ) == SDBlock.ringPlatform) {
+				this.setOrientation(world, x + d.offsetX, y, z + d.offsetZ);
+			}
 		}
 		this.setOrientation(world, x, y, z);
 	}

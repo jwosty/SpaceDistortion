@@ -9,6 +9,7 @@ import jw.spacedistortion.common.network.packet.PacketActivateTransporterRings;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -54,9 +55,11 @@ public class GuiRingPlatform extends GuiScreen {
 						Structure rings = Structure.detectStructure(
 								world, x, y, z, SpaceDistortion.transporterRingsShape,
 								SpaceDistortion.templateBlockInfo, ForgeDirection.UP);
-						if (rings != null && !hasFound[this.x - rings.x + 16][this.z - rings.z + 16]) {
+						int scaledX = MathHelper.clamp_int(this.x - rings.x + 16, -16, 16);
+						int scaledZ = MathHelper.clamp_int(this.z - rings.z + 16, -16, 16);
+						if (rings != null && !hasFound[scaledX][scaledZ]) {
 							this.addRings(rings.x, rings.y, rings.z, rings.x == this.x && rings.y == this.y && rings.z == this.z);
-							hasFound[this.x - rings.x + 16][this.z - rings.z + 16] = true;
+							hasFound[scaledX][scaledZ] = true;
 						}
 					}
 				}
