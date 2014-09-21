@@ -155,12 +155,16 @@ public class EntityTransporterRings extends Entity {
 					this.worldObj.setBlock(dst.X, dst.Y, dst.Z, srcBlock, srcMeta, 3);
 					// switch tile entities
 					if (srcTileEntity != null) {
-						srcTileEntity.readFromNBT(srcTag);
-						this.worldObj.setTileEntity(dst.X, dst.Y, dst.Z, srcTileEntity);
+						this.worldObj.setTileEntity(dst.X, dst.Y, dst.Z, TileEntity.createAndLoadEntity(srcTag));
+						//srcTileEntity.readFromNBT(srcTag);
+						//this.worldObj.setTileEntity(dst.X, dst.Y, dst.Z, srcTileEntity);
+						this.worldObj.markBlockForUpdate(dst.X, dst.Y, dst.Z);
 					}
 					if (dstTileEntity != null) {
-						dstTileEntity.readFromNBT(dstTag);
-						this.worldObj.setTileEntity(src.X, src.Y, src.Z, dstTileEntity);
+						//dstTileEntity.readFromNBT(dstTag);
+						//this.worldObj.setTileEntity(src.X, src.Y, src.Z, dstTileEntity);
+						this.worldObj.setTileEntity(src.X, src.Y, src.Z, TileEntity.createAndLoadEntity(dstTag));
+						this.worldObj.markBlockForUpdate(src.X, src.Y, src.Z);
 					}
 				}
 			}
