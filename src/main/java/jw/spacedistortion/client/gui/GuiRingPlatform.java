@@ -55,11 +55,13 @@ public class GuiRingPlatform extends GuiScreen {
 						Structure rings = Structure.detectStructure(
 								world, x, y, z, SpaceDistortion.transporterRingsShape,
 								SpaceDistortion.templateBlockInfo, ForgeDirection.UP);
-						int scaledX = MathHelper.clamp_int(this.x - rings.x + 16, -16, 16);
-						int scaledZ = MathHelper.clamp_int(this.z - rings.z + 16, -16, 16);
-						if (rings != null && !hasFound[scaledX][scaledZ]) {
-							this.addRings(rings.x, rings.y, rings.z, rings.x == this.x && rings.y == this.y && rings.z == this.z);
-							hasFound[scaledX][scaledZ] = true;
+						if (rings != null) {
+							int scaledX = MathHelper.clamp_int(this.x - rings.x + 16, -16, 16);
+							int scaledZ = MathHelper.clamp_int(this.z - rings.z + 16, -16, 16);
+							if (!hasFound[scaledX][scaledZ]) {
+								this.addRings(rings.x, rings.y, rings.z, rings.x == this.x && rings.y == this.y && rings.z == this.z);
+								hasFound[scaledX][scaledZ] = true;
+							}
 						}
 					}
 				}

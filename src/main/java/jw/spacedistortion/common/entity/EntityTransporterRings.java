@@ -7,6 +7,7 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -93,10 +94,10 @@ public class EntityTransporterRings extends Entity {
 	
 	public void doTransport(int x, int y, int z) {
 		doTransportBlocks(x, y, z);
-		doTransportTileEntities(x, y, z);
+		doTransportEntities(x, y, z);
 	}
 
-	public void doTransportTileEntities(int x, int y, int z) {
+	private void doTransportEntities(int x, int y, int z) {
 		// Move entities
 		List srcEntities = this.worldObj.getEntitiesWithinAABBExcludingEntity(this, this.boundingBox);
 		List dstEntities = this.worldObj.getEntitiesWithinAABBExcludingEntity(this, AxisAlignedBB.getBoundingBox(x - 1, y, z - 1, x + 1, y + 2, z + 1));
@@ -113,8 +114,8 @@ public class EntityTransporterRings extends Entity {
 			}
 		}
 	}
-
-	public void doTransportBlocks(int x, int y, int z) {
+	
+	private void doTransportBlocks(int x, int y, int z) {
 		// Move blocks
 		for (int xo = -1; xo < 1; xo++) {
 			for (int yo = 0; yo < 2; yo++) {
@@ -127,9 +128,40 @@ public class EntityTransporterRings extends Entity {
 					Block dstBlock = this.worldObj.getBlock(dst.X, dst.Y, dst.Z);
 					int dstMeta = this.worldObj.getBlockMetadata(dst.X, dst.Y, dst.Z);
 					
-					// switch the blocks and their metadata
+					TileEntity srcTileEntity = this.worldObj.getTileEntity(src.X, src.Y, src.Z);
+					NBTTagCompound srcTag = null;
+					if (srcTileEntity != null) {
+						srcTag = new NBTTagCompound();
+						srcTileEntity.writeToNBT(srcTag);
+						srcTag.setInteger("x", src.X);
+						srcTag.setInteger("y", src.Y);
+						srcTag.setInteger("z", src.Z);
+					}
+					
+					TileEntity dstTileEntity = this.worldObj.getTileEntity(dst.X, dst.Y, dst.Z);
+					NBTTagCompound dstTag = null;
+					if (dstTileEntity != null) {
+						dstTag = new NBTTagCompound();
+						dstTileEntity.writeToNBT(dstTag);
+						dstTag.setInteger("x", dst.X);
+						dstTag.setInteger("y", dst.Y);
+						dstTag.setInteger("z", dst.Z);
+					}
+					
+					// switch blocks and metadata
+					this.worldObj.setTileEntity(src.X, src.Y, src.Z, null);
 					this.worldObj.setBlock(src.X, src.Y, src.Z, dstBlock, dstMeta, 3);
+					this.worldObj.setTileEntity(dst.X, dst.Y, dst.Z, null);
 					this.worldObj.setBlock(dst.X, dst.Y, dst.Z, srcBlock, srcMeta, 3);
+					// switch tile entities
+					if (srcTileEntity != null) {
+						srcTileEntity.readFromNBT(srcTag);
+						this.worldObj.setTileEntity(dst.X, dst.Y, dst.Z, srcTileEntity);
+					}
+					if (dstTileEntity != null) {
+						dstTileEntity.readFromNBT(dstTag);
+						this.worldObj.setTileEntity(src.X, src.Y, src.Z, dstTileEntity);
+					}
 				}
 			}
 		}
