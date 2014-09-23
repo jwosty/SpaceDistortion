@@ -17,13 +17,13 @@ buildscript {
 
 apply plugin: 'forge'
 
-version = "mc1.7.2-0.1.0_alpha"
+version = "mc1.7.10-10.1.0_alpha"
 group= "jw.spacedistortion" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "spacedistortion"
 
 minecraft {
-    version = "1.7.2-10.12.0.1056"
-    assetDir = "eclipse/assets"
+    version = "1.7.10-10.13.0.1187"
+    runDir = "eclipse/assets"
 }
 
 processResources
