@@ -45,7 +45,7 @@ public class GuiRingPlatform extends GuiScreen {
 	@Override
 	public void initGui() {
 		this.buttonList.clear();
-		boolean[][] hasFound = new boolean[128][128];
+		boolean[][] hasFound = new boolean[64][64];
 		this.addRings(this.x, this.y, this.z, true);
 		for (int rx = -33; rx < 31; rx++) {
 			for (int rz = -33; rz < 32; rz++) {
