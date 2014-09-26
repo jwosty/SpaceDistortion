@@ -13,7 +13,7 @@ public class GuiRingPlatformButton extends GuiButton {
 	public boolean isThis = false;
 	
 	public GuiRingPlatformButton(int screenX, int screenY, int ringX, int ringY, int ringZ, boolean isThis) {
-		super(0, screenX, screenY, 4, 4, "");
+		super(0, screenX, screenY, 2, 2, "");
 		this.ringX = ringX;
 		this.ringY = ringY;
 		this.ringZ = ringZ;
@@ -35,9 +35,9 @@ public class GuiRingPlatformButton extends GuiButton {
 			t.setColorOpaque(255, 255, 0);
 		}
 		t.addVertex(0, 0, 0);
-		t.addVertex(0, 4, 0);
-		t.addVertex(4, 4, 0);
-		t.addVertex(4, 0, 0);
+		t.addVertex(0, 2, 0);
+		t.addVertex(2, 2, 0);
+		t.addVertex(2, 0, 0);
 		t.draw();
 		GL11.glPopMatrix();
 	}

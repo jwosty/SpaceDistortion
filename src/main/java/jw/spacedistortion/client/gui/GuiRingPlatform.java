@@ -37,17 +37,18 @@ public class GuiRingPlatform extends GuiScreen {
 	}
 	
 	private void addRings(int x, int y, int z, boolean isThis) {
-		int pixelX = x - this.x;
-		int pixelY = z - this.z;
-		this.buttonList.add(new GuiRingPlatformButton((this.width / 2) + (pixelX * 4), (this.height / 2) + (pixelY * 4), x, y, z, isThis));
+		int pixelX = (x - this.x);
+		int pixelY = (z - this.z);
+		this.buttonList.add(new GuiRingPlatformButton((this.width / 2) + (pixelX * 2), (this.height / 2) + (pixelY * 2), x, y, z, isThis));
 	}
 	
 	@Override
 	public void initGui() {
 		this.buttonList.clear();
-		boolean[][] hasFound = new boolean[32][32];
-		for (int rx = -16; rx < 16; rx++) {
-			for (int rz = -16; rz < 16; rz++) {
+		boolean[][] hasFound = new boolean[128][128];
+		this.addRings(this.x, this.y, this.z, true);
+		for (int rx = -33; rx < 31; rx++) {
+			for (int rz = -33; rz < 32; rz++) {
 				for (int y = 0; y < 256; y++) {
 					int x = this.x + rx;
 					int z = this.z + rz;
@@ -56,9 +57,9 @@ public class GuiRingPlatform extends GuiScreen {
 								world, x, y, z, SpaceDistortion.transporterRingsShape,
 								SpaceDistortion.templateBlockInfo, ForgeDirection.UP);
 						if (rings != null) {
-							int scaledX = MathHelper.clamp_int(this.x - rings.x + 16, -16, 16);
-							int scaledZ = MathHelper.clamp_int(this.z - rings.z + 16, -16, 16);
-							if (!hasFound[scaledX][scaledZ]) {
+							int scaledX = MathHelper.clamp_int(this.x - rings.x + 64, -64, 64);
+							int scaledZ = MathHelper.clamp_int(this.z - rings.z + 64, -64, 64);
+							if (!hasFound[scaledX][scaledZ] && !(rings.x == this.x && rings.z == this.z)) {
 								this.addRings(rings.x, rings.y, rings.z, rings.x == this.x && rings.y == this.y && rings.z == this.z);
 								hasFound[scaledX][scaledZ] = true;
 							}
@@ -87,12 +88,6 @@ public class GuiRingPlatform extends GuiScreen {
 		// Render the GUI background
 		mc.getTextureManager().bindTexture(this.backgroundTexture);
 		this.drawTexturedModalRect(-128, -128, 0, 0, 256, 256);
-		
-		GL11.glDisable(GL11.GL_TEXTURE_2D);
-		Tessellator t = Tessellator.instance;
-		// Scale so that the coordinates are in texels
-		GL11.glScalef(4, 4, 1);
-		GL11.glTranslatef(-16, -16, 0);
 		
 		GL11.glPopMatrix();
 		super.drawScreen(par1, par2, par3);
