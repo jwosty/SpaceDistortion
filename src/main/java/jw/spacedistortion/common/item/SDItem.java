@@ -15,6 +15,7 @@ public class SDItem extends Item {
 	public static Item naquadahIngot;
 	public static Item naquadahCircuit;
 	public static Item controlCrystal;
+	public static Item staffWeapon;
 	
 	public static void registerItems() {
 		naquadahIngot = new SDItem().setCreativeTab(CreativeTabs.tabMaterials).setUnlocalizedName("naquadahIngot");
@@ -23,6 +24,8 @@ public class SDItem extends Item {
 		GameRegistry.registerItem(naquadahCircuit, "naquadahCircuit");
 		controlCrystal = new ItemControlCrystal().setCreativeTab(CreativeTabs.tabMaterials).setUnlocalizedName("controlCrystal");
 		GameRegistry.registerItem(controlCrystal, "controlCrystal");
+		staffWeapon = new ItemStaffWeapon().setCreativeTab(CreativeTabs.tabCombat).setUnlocalizedName("staffWeapon");
+		GameRegistry.registerItem(staffWeapon, "staffWeapon");
 	}
 	
 	public static void registerRecipes() {
