@@ -15,16 +15,22 @@ public class SDItem extends Item {
 	public static Item naquadahIngot;
 	public static Item naquadahCircuit;
 	public static Item controlCrystal;
+	public static Item liquefiedNaquadah;
+	public static Item depletedStaffWeapon;
 	public static Item staffWeapon;
 	
 	public static void registerItems() {
 		naquadahIngot = new SDItem().setCreativeTab(CreativeTabs.tabMaterials).setUnlocalizedName("naquadahIngot");
-		GameRegistry.registerItem(naquadahIngot, "naquadahIngot");
 		naquadahCircuit = new SDItem().setCreativeTab(CreativeTabs.tabMaterials).setUnlocalizedName("naquadahCircuit");
-		GameRegistry.registerItem(naquadahCircuit, "naquadahCircuit");
 		controlCrystal = new ItemControlCrystal().setCreativeTab(CreativeTabs.tabMaterials).setUnlocalizedName("controlCrystal");
-		GameRegistry.registerItem(controlCrystal, "controlCrystal");
+		liquefiedNaquadah = new SDItem().setCreativeTab(CreativeTabs.tabMaterials).setUnlocalizedName("liquefiedNaquadah");
+		depletedStaffWeapon = new SDItem().setCreativeTab(CreativeTabs.tabCombat).setUnlocalizedName("depletedStaffWeapon").setMaxStackSize(1);
 		staffWeapon = new ItemStaffWeapon().setCreativeTab(CreativeTabs.tabCombat).setUnlocalizedName("staffWeapon");
+		GameRegistry.registerItem(naquadahIngot, "naquadahIngot");
+		GameRegistry.registerItem(naquadahCircuit, "naquadahCircuit");
+		GameRegistry.registerItem(controlCrystal, "controlCrystal");
+		GameRegistry.registerItem(liquefiedNaquadah, "liquefiedNaquadah");
+		GameRegistry.registerItem(depletedStaffWeapon, "depletedStaffWeapon");
 		GameRegistry.registerItem(staffWeapon, "staffWeapon");
 	}
 	
@@ -33,6 +39,7 @@ public class SDItem extends Item {
 		ItemStack iron = new ItemStack(Items.iron_ingot);
 		ItemStack redstone = new ItemStack(Items.redstone);
 		ItemStack naquadah = new ItemStack(naquadahIngot);
+		ItemStack lnaquadah = new ItemStack(liquefiedNaquadah);
 		ItemStack circuit = new ItemStack(naquadahCircuit);
 		
 		// Control crystals
@@ -46,6 +53,8 @@ public class SDItem extends Item {
 		// Naquadah stuff
 		GameRegistry.addSmelting(SDBlock.naquadahOre, new ItemStack(naquadahIngot), 5);
 		GameRegistry.addRecipe(new ItemStack(naquadahCircuit), "ini", "rrr", "ini", 'i', iron, 'n', naquadah, 'r', redstone);
+		GameRegistry.addShapelessRecipe(lnaquadah,
+				naquadah, naquadah, new ItemStack(Items.blaze_powder), new ItemStack(Items.glass_bottle));
 		
 		// Stargate stuff
 		GameRegistry.addRecipe(new ItemStack(SDBlock.stargateRing), "sis", "sns", "sns", 's', stone, 'i', iron, 'n', circuit);
@@ -60,6 +69,11 @@ public class SDItem extends Item {
 		// Transporter ring platform
 		GameRegistry.addRecipe(new ItemStack(SDBlock.ringPlatform), "isi", "ncn", "sss",
 				'i', iron, 'n', naquadah, 's', stone, 'c', new ItemStack(controlCrystal));
+		
+		// Weapons
+		GameRegistry.addRecipe(new ItemStack(depletedStaffWeapon), " f ", " n ", "ici",
+				'f', new ItemStack(Items.flint_and_steel), 'n', circuit, 'i', iron, 'c', new ItemStack(controlCrystal, 1, 4));
+		GameRegistry.addShapelessRecipe(new ItemStack(staffWeapon), new ItemStack(depletedStaffWeapon), lnaquadah);
 	}
 	
 	@Override

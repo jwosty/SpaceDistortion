@@ -10,4 +10,6 @@ item.controlCrystal.red.name=Red Control Crystal
 item.controlCrystal.yellow.name=Yellow Control Crystal
 item.controlCrystal.green.name=Green Control Crystal
 item.controlCrystal.blue.name=Blue Control Crystal
+item.liquefiedNaquadah.name=Liquefied Naquadah
+item.depletedStaffWeapon.name=Depleted Staff Weapon
 item.staffWeapon.name=Staff Weapon
