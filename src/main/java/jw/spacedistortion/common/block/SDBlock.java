@@ -29,27 +29,38 @@ public class SDBlock extends Block {
 		naquadahOre = (SDBlock) new SDBlock(Material.rock)
 				.setBlockName("naquadahOre")
 				.setCreativeTab(CreativeTabs.tabBlock)
-				.setStepSound(Block.soundTypeStone);
+				.setStepSound(Block.soundTypeStone)
+				.setHardness(3).setResistance(10F);;
+		naquadahOre.setHarvestLevel("pickaxe", 2, 0);
 		stargateController = (BlockStargateController) new BlockStargateController()
 				.setBlockName("stargateController")
 				.setCreativeTab(CreativeTabs.tabBlock)
-				.setStepSound(Block.soundTypeStone);
+				.setStepSound(Block.soundTypeStone)
+				.setHardness(2.5F).setResistance(10F);
+		stargateController.setHarvestLevel("pickaxe", 1, 0);
 		stargateRing = (BlockStargateRing) new BlockStargateRing()
 				.setBlockName("stargateRing")
 				.setCreativeTab(CreativeTabs.tabBlock)
-				.setStepSound(Block.soundTypeStone);
+				.setStepSound(Block.soundTypeStone)
+				.setHardness(3.5F).setResistance(10F);
+		stargateController.setHarvestLevel("pickaxe", 1, 0);
 		stargateRingChevron = (BlockStargateRingChevron) new BlockStargateRingChevron()
 				.setBlockName("stargateRingChevron")
 				.setCreativeTab(CreativeTabs.tabBlock)
-				.setStepSound(Block.soundTypeStone);
+				.setStepSound(Block.soundTypeStone)
+				.setHardness(3.5F).setResistance(10F);
+		stargateRingChevron.setHarvestLevel("pickaxe", 1, 0);
 		eventHorizon = (BlockEventHorizon) new BlockEventHorizon()
 				.setBlockName("eventHorizon")
 				.setStepSound(Block.soundTypeGlass)
-				.setLightLevel(0.875f);
+				.setLightLevel(0.875f)
+				.setBlockUnbreakable().setResistance(6000000F);
 		ringPlatform = (BlockRingPlatform) new BlockRingPlatform()
 				.setBlockName("ringPlatform")
 				.setCreativeTab(CreativeTabs.tabBlock)
-				.setStepSound(Block.soundTypeStone);
+				.setStepSound(Block.soundTypeStone)
+				.setHardness(3F).setResistance(10F);
+		ringPlatform.setHarvestLevel("pickaxe", 1, 0);
 	}
 	
 	public SDBlock(Material material) {

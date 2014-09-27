@@ -127,24 +127,28 @@ public class GuiDHD extends GuiScreen {
 		mc.getTextureManager().bindTexture(this.backgroundTexture);
 		this.drawTexturedModalRect(this.getPanelX(), this.getPanelY(), 0, 0,
 				256, 256);
-		// Draw the address the user is dialing
-		for (int i = 0; i < this.connectedMemoization.length; i++) {
-			GlyphRenderer.drawGlyph(
-					this, this.mc, this.glyphTexture, this.fontRendererObj,
-					this.getPanelX() + (GuiDHDButton.GlyphWidth * i), this.getPanelY(),
-					this.connectedMemoization[i],
-					this.tileEntity.state.getGuiDisplayRed(),
-					this.tileEntity.state.getGuiDisplayGreen(),
-					this.tileEntity.state.getGuiDisplayBlue(),
-					1);
+		if (this.connectedMemoization != null) {
+			// Draw the address the user is dialing
+			for (int i = 0; i < this.connectedMemoization.length; i++) {
+				GlyphRenderer.drawGlyph(
+						this, this.mc, this.glyphTexture, this.fontRendererObj,
+						this.getPanelX() + (GuiDHDButton.GlyphWidth * i), this.getPanelY(),
+						this.connectedMemoization[i],
+						this.tileEntity.state.getGuiDisplayRed(),
+						this.tileEntity.state.getGuiDisplayGreen(),
+						this.tileEntity.state.getGuiDisplayBlue(),
+						1);
+			}
 		}
-		// Draw the address of this GUI's tile entity
-		for (int i = 0; i < this.addressMemoization.length; i++) {
-			GlyphRenderer.drawGlyph(
-					this, this.mc, this.glyphTexture, this.fontRendererObj,
-					this.getPanelX() + (GuiDHDButton.GlyphWidth * i), this.getPanelY() + GuiDHDButton.GlyphHeight,
-					this.addressMemoization[i],
-					0.35f, 0.35f, 0.35f, 1);
+		if (this.addressMemoization != null) {
+			// Draw the address of this GUI's tile entity
+			for (int i = 0; i < this.addressMemoization.length; i++) {
+				GlyphRenderer.drawGlyph(
+						this, this.mc, this.glyphTexture, this.fontRendererObj,
+						this.getPanelX() + (GuiDHDButton.GlyphWidth * i), this.getPanelY() + GuiDHDButton.GlyphHeight,
+						this.addressMemoization[i],
+						0.35f, 0.35f, 0.35f, 1);
+			}
 		}
 		super.drawScreen(par1, par2, par3);
 	}

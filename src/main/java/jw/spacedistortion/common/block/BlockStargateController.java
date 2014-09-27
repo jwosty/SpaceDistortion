@@ -299,8 +299,6 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 		
 		TileEntityStargateController controllerTileEntity = (TileEntityStargateController) world.getTileEntity(x, y, z);
 		controllerTileEntity.state = BlockStargateController.getCurrentState(world, x, y, z);
-		
-		//Structure.detectStructure(world, x, y, z, SpaceDistortion.stargateRingShape, SpaceDistortion.stargateRingShapeInfo);
 	}
 	
 	@Override
@@ -313,14 +311,17 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 	}
 	
 	@Override
-	/** Called when the block is right-clicked on **/
+	/** Called when the block is right-clicked **/
 	public boolean onBlockActivated(World world, int x, int y, int z,
 			EntityPlayer player, int par1, float par2, float par3, float par4) {
 		if (world.isRemote) {
 			TileEntityStargateController tileEntity = (TileEntityStargateController) world.getTileEntity(x, y, z);
-			player.openGui(SpaceDistortion.instance, 0, world, x, y, z);
+			if (tileEntity.state instanceof StargateControllerState.StargateControllerValid) {
+				player.openGui(SpaceDistortion.instance, 0, world, x, y, z);
+				return true;
+			}
 		}
-		return true;
+		return false;
 	}
 	
 	@SideOnly(Side.CLIENT)
