@@ -17,7 +17,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import org.lwjgl.opengl.GL11;
 
 public class GuiRingPlatform extends GuiScreen {
-	public static ResourceLocation backgroundTexture = new ResourceLocation(CommonProxy.MOD_ID + ":" + "textures/gui/rings.png");
+	public static ResourceLocation backgroundTexture = new ResourceLocation(CommonProxy.MOD_ID + ":textures/gui/rings.png");
 	
 	public World world;
 	public int x;

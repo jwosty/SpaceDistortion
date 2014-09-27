@@ -20,6 +20,13 @@ public class EntityTransporterRingsPart extends Entity {
 		this.setPosition(segment, x, y, z);
 	}
 	
+	public ForgeDirection segment() {
+		return this.segment;
+	}
+	
+	public EntityTransporterRings parent() {
+		return this.parent;
+	}
 	
 	@Override
 	public void setPosition(double x, double y, double z) {

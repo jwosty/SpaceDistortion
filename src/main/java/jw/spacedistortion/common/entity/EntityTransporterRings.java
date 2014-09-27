@@ -88,7 +88,7 @@ public class EntityTransporterRings extends Entity {
 			if (this.dst != null) {
 				this.doTransport(this.dst.X, this.dst.Y, this.dst.Z);
 			}
-		} else if (this.animationTimer == 100) {
+		} else if (this.animationTimer >= 100) {
 			this.isDead = true;
 		}
 		this.animationTimer++;
