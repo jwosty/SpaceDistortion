@@ -7,6 +7,7 @@ import jw.spacedistortion.Pair;
 import jw.spacedistortion.StringGrid;
 import jw.spacedistortion.Triplet;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockAir;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.IBlockAccess;
@@ -177,9 +178,8 @@ public class Structure {
 				int bz = z + offsetFromFacing.Z;
 				Block worldBlock = world.getBlock(bx, by, bz);
 				
-				BlockInfo blockInfo;
-				
 				if (charToBlockAndHasDirection.containsKey(templateChar)) {
+					BlockInfo blockInfo;
 					int metadata = world.getBlockMetadata(bx, by, bz);
 					
 					Pair<Block, Boolean> blockAndHasDirection = charToBlockAndHasDirection.get(templateChar);
@@ -203,13 +203,13 @@ public class Structure {
 						result = null;
 						break templateLoop;
 					}
+					result.blocks.put(new Pair<Integer, Integer>(tx, ty), blockInfo);
 				} else {
 					// Wildcard
-					blockInfo = new BlockInfo(bx, by, bz, worldBlock);
+					//blockInfo = new BlockInfo(bx, by, bz, worldBlock);
+					// Getting this far means that the block matches the template
 				}
 				
-				// Getting this far means that the block matches the template
-				result.blocks.put(new Pair<Integer, Integer>(tx, ty), blockInfo);
 			}
 		}
 		
@@ -259,6 +259,14 @@ public class Structure {
 				world.setBlock(block.x, block.y, block.z, block.blockType, ((DirectionalBlockInfo)block).direction.ordinal(), 2);
 			} else {
 				world.setBlock(block.x, block.y, block.z, block.blockType);
+			}
+		}
+	}
+	
+	public void removeFromWorld(World world) {
+		for (BlockInfo block : this.blocks.values()) {
+			if (!(block.blockType instanceof BlockAir)) {
+				world.setBlockToAir(block.x, block.y, block.z);
 			}
 		}
 	}
