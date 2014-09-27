@@ -48,7 +48,7 @@ public class GuiRingPlatform extends GuiScreen {
 		boolean[][] hasFound = new boolean[64][64];
 		this.addRings(this.x, this.y, this.z, true);
 		for (int rx = -33; rx < 31; rx++) {
-			for (int rz = -33; rz < 32; rz++) {
+			for (int rz = -33; rz < 31; rz++) {
 				for (int y = 0; y < 256; y++) {
 					int x = this.x + rx;
 					int z = this.z + rz;
@@ -57,8 +57,8 @@ public class GuiRingPlatform extends GuiScreen {
 								world, x, y, z, SpaceDistortion.transporterRingsShape,
 								SpaceDistortion.templateBlockInfo, ForgeDirection.UP);
 						if (rings != null) {
-							int scaledX = MathHelper.clamp_int(this.x - rings.x + 64, -64, 64);
-							int scaledZ = MathHelper.clamp_int(this.z - rings.z + 64, -64, 64);
+							int scaledX = MathHelper.clamp_int(this.x - rings.x + 32, -32, 32);
+							int scaledZ = MathHelper.clamp_int(this.z - rings.z + 32, -32, 32);
 							if (!hasFound[scaledX][scaledZ] && !(rings.x == this.x && rings.z == this.z)) {
 								this.addRings(rings.x, rings.y, rings.z, rings.x == this.x && rings.y == this.y && rings.z == this.z);
 								hasFound[scaledX][scaledZ] = true;

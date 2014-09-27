@@ -3,8 +3,10 @@ package jw.spacedistortion.common.entity;
 import java.util.List;
 
 import jw.spacedistortion.Triplet;
+import jw.spacedistortion.common.EntitySpawnPreventer;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -116,6 +118,8 @@ public class EntityTransporterRings extends Entity {
 	}
 	
 	private void doTransportBlocks(int x, int y, int z) {
+		EntitySpawnPreventer spawnPreventer = new EntitySpawnPreventer(true);
+		spawnPreventer.filter = EntityItem.class;
 		// Move blocks
 		for (int xo = -1; xo < 1; xo++) {
 			for (int yo = 0; yo < 2; yo++) {
@@ -163,6 +167,7 @@ public class EntityTransporterRings extends Entity {
 				}
 			}
 		}
+		spawnPreventer.unregister();
 	}
 	
 	private void teleportEntityOrPlayer(Entity e, double x, double y, double z) {
