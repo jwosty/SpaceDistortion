@@ -203,11 +203,9 @@ public class Structure {
 						result = null;
 						break templateLoop;
 					}
+					
+					// Making it this far means the block matched the template
 					result.blocks.put(new Pair<Integer, Integer>(tx, ty), blockInfo);
-				} else {
-					// Wildcard
-					//blockInfo = new BlockInfo(bx, by, bz, worldBlock);
-					// Getting this far means that the block matches the template
 				}
 				
 			}
