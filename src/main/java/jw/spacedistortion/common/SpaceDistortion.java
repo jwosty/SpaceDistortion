@@ -63,7 +63,7 @@ public class SpaceDistortion {
 	
 	@EventHandler
 	public void serverLoad(FMLServerStartingEvent event) {
-		ChannelHandler.initChannels();
+		//ChannelHandler.initChannels();
 	}
 	
 	@EventHandler
@@ -96,6 +96,8 @@ public class SpaceDistortion {
 		NetworkRegistry.INSTANCE.registerGuiHandler(SpaceDistortion.instance, new SDGuiHandler());
 		// Entity renderers
 		proxy.registerRenderers();
+		// Packet handler
+		ChannelHandler.initChannels();
 	}
 	
 	@EventHandler
