@@ -19,6 +19,8 @@ public class SDItem extends Item {
 	public static Item depletedStaffWeapon;
 	public static Item staffWeapon;
 	
+	public static Item stargateRingFormer;
+	
 	public static void registerItems() {
 		naquadahIngot = new SDItem().setCreativeTab(CreativeTabs.tabMaterials).setUnlocalizedName("naquadahIngot");
 		naquadahCircuit = new SDItem().setCreativeTab(CreativeTabs.tabMaterials).setUnlocalizedName("naquadahCircuit");
@@ -26,12 +28,14 @@ public class SDItem extends Item {
 		liquefiedNaquadah = new SDItem().setCreativeTab(CreativeTabs.tabMaterials).setUnlocalizedName("liquefiedNaquadah");
 		depletedStaffWeapon = new SDItem().setCreativeTab(CreativeTabs.tabCombat).setUnlocalizedName("depletedStaffWeapon").setMaxStackSize(1);
 		staffWeapon = new ItemStaffWeapon().setCreativeTab(CreativeTabs.tabCombat).setUnlocalizedName("staffWeapon");
+		stargateRingFormer = new ItemStargateRingFormer().setCreativeTab(CreativeTabs.tabMisc).setUnlocalizedName("stargateRingFormer");
 		GameRegistry.registerItem(naquadahIngot, "naquadahIngot");
 		GameRegistry.registerItem(naquadahCircuit, "naquadahCircuit");
 		GameRegistry.registerItem(controlCrystal, "controlCrystal");
 		GameRegistry.registerItem(liquefiedNaquadah, "liquefiedNaquadah");
 		GameRegistry.registerItem(depletedStaffWeapon, "depletedStaffWeapon");
 		GameRegistry.registerItem(staffWeapon, "staffWeapon");
+		GameRegistry.registerItem(stargateRingFormer, "stargateRingFormer");
 	}
 	
 	public static void registerRecipes() {

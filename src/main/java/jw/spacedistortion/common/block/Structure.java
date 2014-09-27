@@ -10,6 +10,7 @@ import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
 public class Structure {
@@ -89,6 +90,30 @@ public class Structure {
 		this.z = z;
 		this.blocks = blocks;
 		this.facing = facing;
+	}
+	
+	public Structure(int x, int y, int z, ForgeDirection facing, StringGrid template, HashMap<Character, Pair<Block, Boolean>> charToBlockAndHasDirection, int templateXOffset, int templateYOffset) {
+		this.x = x;
+		this.y = y;
+		this.z = z;
+		this.facing = facing;
+		this.blocks = new HashMap<Pair<Integer, Integer>, BlockInfo>();
+		for (int tx = 0; tx < template.width; tx++) {
+			for (int ty = 0; ty < template.height; ty++) {
+				if (charToBlockAndHasDirection.containsKey(template.get(tx, ty))) {
+					Triplet<Integer, Integer, Integer> offsetFromFacing = Structure.templateToWorldCoordinates(tx + templateYOffset, ty + templateXOffset, facing);
+					BlockInfo blockInfo;
+					Pair<Block, Boolean> blockAndHasDirection = charToBlockAndHasDirection.get(template.get(tx, ty));
+					if (blockAndHasDirection.Y) {
+						blockInfo = new DirectionalBlockInfo(
+								x + offsetFromFacing.X, y + offsetFromFacing.Y, z + offsetFromFacing.Z, facing, blockAndHasDirection.X);
+					} else {
+						blockInfo = new BlockInfo(x + offsetFromFacing.X, y + offsetFromFacing.Y, z + offsetFromFacing.Z, blockAndHasDirection.X);
+					}
+					this.blocks.put(new Pair<Integer, Integer>(tx + templateXOffset, ty + templateYOffset), blockInfo);
+				}
+			}
+		}
 	}
 	
 	/** Attempt to find a structure attached to the given block */
@@ -227,7 +252,17 @@ public class Structure {
 		
 		return new Triplet<Integer, Integer, Integer>(x, y, z);
 	}
-
+	
+	public void addToWorld(World world) {
+		for (BlockInfo block : this.blocks.values()) {
+			if (block instanceof DirectionalBlockInfo) {
+				world.setBlock(block.x, block.y, block.z, block.blockType, ((DirectionalBlockInfo)block).direction.ordinal(), 2);
+			} else {
+				world.setBlock(block.x, block.y, block.z, block.blockType);
+			}
+		}
+	}
+	
 	public void writeToNBT(NBTTagCompound tag) {
 		tag.setInteger("x", this.x);
 		tag.setInteger("y", this.y);
