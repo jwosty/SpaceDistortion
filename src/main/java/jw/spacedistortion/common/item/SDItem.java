@@ -53,6 +53,10 @@ public class SDItem extends Item {
 				's', stone, 'c', circuit,
 				'r', new ItemStack(controlCrystal, 1, 1), 'y', new ItemStack(controlCrystal, 1, 2),
 				'g', new ItemStack(controlCrystal, 1, 3), 'b', new ItemStack(controlCrystal, 1, 4));
+		
+		// Transporter ring platform
+		GameRegistry.addRecipe(new ItemStack(SDBlock.ringPlatform), "isi", "ncn", "sss",
+				'i', iron, 'n', naquadah, 's', stone, 'c', new ItemStack(controlCrystal));
 	}
 	
 	@Override
