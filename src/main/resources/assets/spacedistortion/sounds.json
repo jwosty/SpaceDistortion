@@ -18,5 +18,9 @@
   "stargate.enter": {
     "catagory": "portal",
     "sounds": [{"name": "stargate/enter", "stream": false}]
+  },
+  "weapons.staff": {
+    "catagory": "item",
+    "sounds": [{"name": "weapons/staff", "stream": false}]
   }
 }
