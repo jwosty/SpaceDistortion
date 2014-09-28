@@ -7,7 +7,7 @@ import jw.spacedistortion.StringGrid;
 import jw.spacedistortion.client.gui.SDGuiHandler;
 import jw.spacedistortion.common.block.SDBlock;
 import jw.spacedistortion.common.entity.EntityTransporterRings;
-import jw.spacedistortion.common.entity.EntityTransporterRingsPart;
+import jw.spacedistortion.common.generator.GeneratorGoauldBase;
 import jw.spacedistortion.common.generator.GeneratorOre;
 import jw.spacedistortion.common.item.SDItem;
 import jw.spacedistortion.common.network.ChannelHandler;
@@ -36,6 +36,7 @@ public class SpaceDistortion {
 	public static CommonProxy proxy;
 	
 	public static GeneratorOre oreGen = new GeneratorOre();
+	public static GeneratorGoauldBase goauldBaseGen = new GeneratorGoauldBase();
 	
 	public static StringGrid stargateRingShape = new StringGrid(
 			"  RCR  ",
@@ -87,6 +88,7 @@ public class SpaceDistortion {
 		SDItem.registerRecipes();
 		// World gen
 		GameRegistry.registerWorldGenerator(this.oreGen, 5);
+		GameRegistry.registerWorldGenerator(this.goauldBaseGen, 8);
 		// Tile entities
 		GameRegistry.registerTileEntity(TileEntityEventHorizon.class, "tileEntityEventHorizon");
 		GameRegistry.registerTileEntity(TileEntityStargateController.class, "tileEntityStargateController");
