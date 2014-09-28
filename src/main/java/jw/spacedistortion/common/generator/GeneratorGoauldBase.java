@@ -72,14 +72,13 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 					world.setBlock(xo + x, yo, zo + z, Blocks.stained_hardened_clay, 1, 2);
 				}
 			}
-			world.setBlock(xo, yo - this.widthHeight() / 2 + 1, zo, Blocks.carpet);
+			world.setBlock(xo, yo - this.widthHeight() / 2 + 1, zo, Blocks.carpet, 4, 2);
 			// Inner corners
 			for (int x : new int[] {-2, 2}) {
 				for (int z : new int[] {-2, 2}) {
 					for (int y = -3; y < 0; y++) {
 						world.setBlock(xo + x, yo + y, zo + z, Blocks.stained_hardened_clay, 1, 2);
 					}
-					
 				}
 			}
 			// Torches
@@ -102,6 +101,7 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 							Blocks.stained_hardened_clay, 1, 2);
 				}
 			}
+			// Side wall
 			for (int a : new int[] {-2, 2}) {
 				for (int y = -3; y < 0; y++) {
 					for (int b : new int[] {3, 4}) {
@@ -118,19 +118,32 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 					}
 				}
 			}
+			// Remove any remaining blocks inside the corridor
+			for (int s = -1; s < 2; s++) {
+				for (int y = -3; y < 0; y++) {
+					world.setBlockToAir(xo + this.getbx(direction, s, 4), yo + y, zo + this.getbz(direction, s, 4));
+				}
+			}
+			// Add carpet
+			for (int f = 1; f < 5; f++) {
+				world.setBlock(xo + this.getbx(direction, 0, f), yo - 3, zo + this.getbz(direction, 0, f), Blocks.carpet, 4, 2);
+			}
 		}
 		
 		private void buildEnd(World world, int xo, int yo, int zo, ForgeDirection direction) {
 			for (int a = -1; a < 2; a++) {
+				// Floor and ceiling portion
 				for (int y : new int[] {-4, 0}) {
 					world.setBlock(xo + this.getbx(direction, a, 2), yo + y, zo + this.getbz(direction, a, 2),
 							Blocks.stained_hardened_clay, 1, 2);
 				}
+				// Back edge
 				for (int y = -3; y < 0; y++) {
 					world.setBlock(xo + this.getbx(direction, a, 3), yo + y, zo + this.getbz(direction, a, 3),
 							Blocks.stained_hardened_clay, 1, 2);
 				}
 			}
+			// Decoration blocks (walls are now completely sealed at this point)
 			int xo_0_2 = xo + this.getbx(direction, 0, 2);
 			int zo_0_2 = zo + this.getbz(direction, 0, 2);
 			world.setBlock(xo_0_2, yo - 3, zo_0_2, Blocks.stained_hardened_clay, 1, 2);
@@ -198,7 +211,7 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 		List<GoauldRoom> rooms = new ArrayList<GoauldRoom>();
 		HashMap<ForgeDirection, Boolean> connections = new HashMap<ForgeDirection, Boolean>();
 		connections.put(ForgeDirection.NORTH, true);
-		connections.put(ForgeDirection.SOUTH, true);
+		connections.put(ForgeDirection.EAST, true);
 		GoauldRoom start = new GoauldCorridor(0, 0, connections);
 		rooms.add(start);
 		return rooms;
