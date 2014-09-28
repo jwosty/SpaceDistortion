@@ -8,6 +8,7 @@ import jw.spacedistortion.client.gui.SDGuiHandler;
 import jw.spacedistortion.common.block.SDBlock;
 import jw.spacedistortion.common.entity.EntityTransporterRings;
 import jw.spacedistortion.common.entity.EntityTransporterRingsPart;
+import jw.spacedistortion.common.generator.OreGenerator;
 import jw.spacedistortion.common.item.SDItem;
 import jw.spacedistortion.common.network.ChannelHandler;
 import jw.spacedistortion.common.tileentity.TileEntityEventHorizon;

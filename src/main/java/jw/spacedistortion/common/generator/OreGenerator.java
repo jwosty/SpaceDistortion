@@ -1,4 +1,4 @@
-package jw.spacedistortion.common;
+package jw.spacedistortion.common.generator;
 
 import java.util.Random;
 
