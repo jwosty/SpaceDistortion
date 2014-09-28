@@ -42,6 +42,10 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 			int xo = blockOriginX + this.blockX();
 			int yo = blockOriginY;
 			int zo = blockOriginZ + this.blockZ();
+			buildCenter(world, xo, yo, zo);
+		}
+
+		private void buildCenter(World world, int xo, int yo, int zo) {
 			// Center floor and ceiling
 			for (int x = -1; x < 2; x++) {
 				for (int z = -1; z < 2; z++) {
