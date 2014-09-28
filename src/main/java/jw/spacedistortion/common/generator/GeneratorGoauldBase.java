@@ -5,7 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
-import jw.spacedistortion.Pair;
+import jw.spacedistortion.Triplet;
+import jw.spacedistortion.common.block.Structure;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkProvider;
@@ -22,6 +23,9 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 		public GoauldRoom(int x, int z, HashMap<ForgeDirection, Boolean> connections) {
 			this.x = x;
 			this.z = z;
+			for (ForgeDirection d : new ForgeDirection[] { ForgeDirection.NORTH, ForgeDirection.SOUTH, ForgeDirection.EAST, ForgeDirection.WEST }) {
+				if (!connections.containsKey(d)) connections.put(d, false);
+			}
 			this.connections = connections;
 		}
 		
@@ -42,7 +46,14 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 			int xo = blockOriginX + this.blockX();
 			int yo = blockOriginY;
 			int zo = blockOriginZ + this.blockZ();
-			buildCenter(world, xo, yo, zo);
+			this.buildCenter(world, xo, yo, zo);
+			for (ForgeDirection d : new ForgeDirection[] { ForgeDirection.NORTH, ForgeDirection.SOUTH, ForgeDirection.EAST, ForgeDirection.WEST }) {
+				if (this.connections.get(d)) {
+					this.buildConnection(world, xo, yo, zo, d);
+				} else {
+					this.buildEnd(world, xo, yo, zo, d);
+				}
+			}
 		}
 
 		private void buildCenter(World world, int xo, int yo, int zo) {
@@ -58,7 +69,7 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 			for (int x = -1; x < 2; x++) {
 				for (int z = -1; z < 2; z++) {
 					world.setBlock(xo + x, yo - 4, zo + z, Blocks.sandstone);
-					world.setBlock(xo + x, yo, zo + z, Blocks.stained_hardened_clay);
+					world.setBlock(xo + x, yo, zo + z, Blocks.stained_hardened_clay, 1, 2);
 				}
 			}
 			world.setBlock(xo, yo - this.widthHeight() / 2 + 1, zo, Blocks.carpet);
@@ -66,7 +77,7 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 			for (int x : new int[] {-2, 2}) {
 				for (int z : new int[] {-2, 2}) {
 					for (int y = -3; y < 0; y++) {
-						world.setBlock(xo + x, yo + y, zo + z, Blocks.stained_hardened_clay);
+						world.setBlock(xo + x, yo + y, zo + z, Blocks.stained_hardened_clay, 1, 2);
 					}
 					
 				}
@@ -79,6 +90,38 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 					}
 				}
 			}
+		}
+		
+		private void buildConnection(World world, int xo, int yo, int zo, ForgeDirection direction) {
+			// Floor and ceiling
+			for (int x = -1; x < 2; x++) {
+				for (int z = -1; z < 2; z++) {
+					world.setBlock(xo + x + (direction.offsetX * 3), yo - 4, zo + z + (direction.offsetZ * 3), Blocks.sandstone);
+					world.setBlock(
+							xo + x + (direction.offsetX * 3), yo, zo + z + (direction.offsetZ * 3),
+							Blocks.stained_hardened_clay, 1, 2);
+				}
+			}
+			for (int a : new int[] {-2, 2}) {
+				for (int y = -3; y < 0; y++) {
+					for (int b : new int[] {3, 4}) {
+						int x;
+						int z;
+						if (direction == ForgeDirection.NORTH || direction == ForgeDirection.SOUTH) {
+							x = a;
+							z = b * direction.offsetZ;
+						} else {
+							x = b * direction.offsetX;
+							z = a;
+						}
+						world.setBlock(xo + x, yo + y, zo + z, Blocks.stained_hardened_clay, 1, 2);
+					}
+				}
+			}
+		}
+		
+		private void buildEnd(World world, int xo, int yo, int zo, ForgeDirection direction) {
+			
 		}
 	}
 	
@@ -121,7 +164,7 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 		List<GoauldRoom> rooms = new ArrayList<GoauldRoom>();
 		HashMap<ForgeDirection, Boolean> connections = new HashMap<ForgeDirection, Boolean>();
 		connections.put(ForgeDirection.NORTH, true);
-		connections.put(ForgeDirection.SOUTH, true);
+		connections.put(ForgeDirection.EAST, true);
 		GoauldRoom start = new GoauldCorridor(0, 0, connections);
 		rooms.add(start);
 		return rooms;
