@@ -121,7 +121,34 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 		}
 		
 		private void buildEnd(World world, int xo, int yo, int zo, ForgeDirection direction) {
-			
+			for (int a = -1; a < 2; a++) {
+				for (int y : new int[] {-4, 0}) {
+					int x;
+					int z;
+					world.setBlock(xo + this.getbx(direction, a, 2), yo + y, zo + this.getbz(direction, a, 2),
+							Blocks.stained_hardened_clay, 1, 2);
+				}
+				for (int y = -3; y < 0; y++) {
+					world.setBlock(xo + this.getbx(direction, a, 3), yo + y, zo + this.getbz(direction, a, 3),
+							Blocks.stained_hardened_clay, 1, 2);
+				}
+			}
+		}
+		
+		private int getbx(ForgeDirection direction, int a, int factor) {
+			if (direction == ForgeDirection.NORTH || direction == ForgeDirection.SOUTH) {
+				return a;
+			} else {
+				return factor * direction.offsetX;
+			}
+		}
+		
+		private int getbz(ForgeDirection direction, int a, int factor) {
+			if (direction == ForgeDirection.NORTH || direction == ForgeDirection.SOUTH) {
+				return factor * direction.offsetZ;
+			} else {
+				return a;
+			}
 		}
 	}
 	
@@ -164,6 +191,7 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 		List<GoauldRoom> rooms = new ArrayList<GoauldRoom>();
 		HashMap<ForgeDirection, Boolean> connections = new HashMap<ForgeDirection, Boolean>();
 		connections.put(ForgeDirection.NORTH, true);
+		connections.put(ForgeDirection.SOUTH, true);
 		connections.put(ForgeDirection.EAST, true);
 		GoauldRoom start = new GoauldCorridor(0, 0, connections);
 		rooms.add(start);
