@@ -46,6 +46,14 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 		}
 
 		private void buildCenter(World world, int xo, int yo, int zo) {
+			// Remove some blocks so torches place in the right directions
+			for (int x = -3; x < 4; x++) {
+				for (int z = -3; z < 4; z++) {
+					for (int y = -3; y < 0; y++) {
+						world.setBlockToAir(xo + x, yo + y, zo + z);
+					}
+				}
+			}
 			// Center floor and ceiling
 			for (int x = -1; x < 2; x++) {
 				for (int z = -1; z < 2; z++) {
@@ -63,6 +71,7 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 					
 				}
 			}
+			// Torches
 			for (int x : new int[] {-2, -1, 1, 2}) {
 				for (int z : new int[] {-2, -1, 1, 2}) {
 					if (Math.abs(x) + Math.abs(z) == 3) {
