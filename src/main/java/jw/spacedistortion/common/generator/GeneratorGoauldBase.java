@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
+import jw.spacedistortion.Pair;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkProvider;
@@ -36,18 +37,32 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 
 		@Override
 		public void buildInWorld(World world, int blockOriginX, int blockOriginY, int blockOriginZ) {
-			int max = this.widthHeight() / 2;
+			int max = Math.round((float)this.widthHeight() / 2F);
 			int min = max - this.widthHeight();
-			for (int x = min; x < max; x++) {
-				for (int y = min; y < max; y++) {
-					for (int z = min; z < max; z++) {
-						if (x == min || x == max - 1 || y == min || y == max - 1 || z == min || z == max - 1) {
-							int bx = blockOriginX + this.blockX() + x;
-							int by = blockOriginY + y;
-							int bz = blockOriginZ + this.blockZ() + z;
-							world.setBlock(blockOriginX + this.blockX() + x, blockOriginY + y, blockOriginZ + this.blockZ() + z,
-									Blocks.iron_block);
-						}
+			int xo = blockOriginX + this.blockX();
+			int yo = blockOriginY;
+			int zo = blockOriginZ + this.blockZ();
+			// Center floor and ceiling
+			for (int x = -1; x < 2; x++) {
+				for (int z = -1; z < 2; z++) {
+					world.setBlock(xo + x, yo - 4, zo + z, Blocks.sandstone);
+					world.setBlock(xo + x, yo, zo + z, Blocks.stained_hardened_clay);
+				}
+			}
+			world.setBlock(xo, yo - this.widthHeight() / 2 + 1, zo, Blocks.carpet);
+			// Inner corners
+			for (int x : new int[] {-2, 2}) {
+				for (int z : new int[] {-2, 2}) {
+					for (int y = -3; y < 0; y++) {
+						world.setBlock(xo + x, yo + y, zo + z, Blocks.stained_hardened_clay);
+					}
+					
+				}
+			}
+			for (int x : new int[] {-2, -1, 1, 2}) {
+				for (int z : new int[] {-2, -1, 1, 2}) {
+					if (Math.abs(x) + Math.abs(z) == 3) {
+						world.setBlock(xo + x, yo - 2, zo + z, Blocks.torch);
 					}
 				}
 			}
@@ -78,12 +93,18 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 	public void generate(Random random, int chunkX, int chunkZ, World world,
 			IChunkProvider chunkGenerator, IChunkProvider chunkProvider) {
 		if (chunkX == 0 && chunkZ == 0) {
-			List<GoauldRoom> rooms = this.generateScematic();
-			this.buildSchematicInWorld(world, chunkX * 16, 100, chunkZ * 16, rooms);
+			this.generate(random, chunkX * 16, 100, chunkZ * 16, world);
+			//List<GoauldRoom> rooms = this.generateSchematic();
+			//this.buildSchematicInWorld(world, chunkX * 16, 100, chunkZ * 16, rooms);
 		}
 	}
+	
+	public void generate(Random random, int x, int y, int z, World world) {
+		List<GoauldRoom> rooms = this.generateSchematic();
+		this.buildSchematicInWorld(world, x, y, z, rooms);
+	}
 
-	public List<GoauldRoom> generateScematic() {
+	public List<GoauldRoom> generateSchematic() {
 		List<GoauldRoom> rooms = new ArrayList<GoauldRoom>();
 		HashMap<ForgeDirection, Boolean> connections = new HashMap<ForgeDirection, Boolean>();
 		connections.put(ForgeDirection.NORTH, true);

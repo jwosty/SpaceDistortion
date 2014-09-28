@@ -88,7 +88,7 @@ public class SpaceDistortion {
 		SDItem.registerRecipes();
 		// World gen
 		GameRegistry.registerWorldGenerator(this.oreGen, 5);
-		GameRegistry.registerWorldGenerator(this.goauldBaseGen, 8);
+		//GameRegistry.registerWorldGenerator(this.goauldBaseGen, 8);
 		// Tile entities
 		GameRegistry.registerTileEntity(TileEntityEventHorizon.class, "tileEntityEventHorizon");
 		GameRegistry.registerTileEntity(TileEntityStargateController.class, "tileEntityStargateController");
