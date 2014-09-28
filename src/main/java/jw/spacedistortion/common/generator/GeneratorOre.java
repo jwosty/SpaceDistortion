@@ -8,9 +8,9 @@ import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.feature.WorldGenMinable;
 import cpw.mods.fml.common.IWorldGenerator;
 
-public class OreGenerator implements IWorldGenerator {
+public class GeneratorOre implements IWorldGenerator {
 	
-	public OreGenerator() {}
+	public GeneratorOre() {}
 
 	@Override
 	public void generate(Random random, int chunkX, int chunkZ, World world,
