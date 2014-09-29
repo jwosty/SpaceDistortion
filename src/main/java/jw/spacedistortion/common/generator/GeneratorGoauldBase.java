@@ -74,7 +74,7 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 			// Remove some blocks so torches place in the right directions
 			for (int x = -3; x < 4; x++) {
 				for (int z = -3; z < 4; z++) {
-					for (int y = -3; y < 0; y++) {
+					for (int y = -2; y < 1; y++) {
 						world.setBlockToAir(xo + x, yo + y, zo + z);
 					}
 				}
@@ -82,15 +82,16 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 			// Center floor and ceiling
 			for (int x = -1; x < 2; x++) {
 				for (int z = -1; z < 2; z++) {
-					world.setBlock(xo + x, yo - 4, zo + z, Blocks.sandstone);
-					world.setBlock(xo + x, yo, zo + z, Blocks.stained_hardened_clay, 1, 2);
+					world.setBlock(xo + x, yo - 3, zo + z, Blocks.sandstone);
+					world.setBlock(xo + x, yo + 1, zo + z, Blocks.stained_hardened_clay, 1, 2);
 				}
 			}
-			world.setBlock(xo, yo - this.widthHeight() / 2 + 1, zo, Blocks.carpet, 4, 2);
+			// Inner carpet
+			world.setBlock(xo, yo - this.widthHeight() / 2 + 2, zo, Blocks.carpet, 4, 2);
 			// Inner corners
 			for (int x : new int[] {-2, 2}) {
 				for (int z : new int[] {-2, 2}) {
-					for (int y = -3; y < 0; y++) {
+					for (int y = -2; y < 1; y++) {
 						world.setBlock(xo + x, yo + y, zo + z, Blocks.stained_hardened_clay, 1, 2);
 					}
 				}
@@ -99,7 +100,7 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 			for (int x : new int[] {-2, -1, 1, 2}) {
 				for (int z : new int[] {-2, -1, 1, 2}) {
 					if (Math.abs(x) + Math.abs(z) == 3) {
-						world.setBlock(xo + x, yo - 2, zo + z, Blocks.torch);
+						world.setBlock(xo + x, yo - 1, zo + z, Blocks.torch);
 					}
 				}
 			}
@@ -109,15 +110,15 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 			// Floor and ceiling
 			for (int x = -1; x < 2; x++) {
 				for (int z = -1; z < 2; z++) {
-					world.setBlock(xo + x + (direction.offsetX * 3), yo - 4, zo + z + (direction.offsetZ * 3), Blocks.sandstone);
+					world.setBlock(xo + x + (direction.offsetX * 3), yo - 3, zo + z + (direction.offsetZ * 3), Blocks.sandstone);
 					world.setBlock(
-							xo + x + (direction.offsetX * 3), yo, zo + z + (direction.offsetZ * 3),
+							xo + x + (direction.offsetX * 3), yo + 1, zo + z + (direction.offsetZ * 3),
 							Blocks.stained_hardened_clay, 1, 2);
 				}
 			}
 			// Side wall
 			for (int a : new int[] {-2, 2}) {
-				for (int y = -3; y < 0; y++) {
+				for (int y = -2; y < 1; y++) {
 					for (int b : new int[] {3, 4}) {
 						int x;
 						int z;
@@ -134,25 +135,25 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 			}
 			// Remove any remaining blocks inside the corridor
 			for (int s = -1; s < 2; s++) {
-				for (int y = -3; y < 0; y++) {
+				for (int y = -2; y < 1; y++) {
 					world.setBlockToAir(xo + this.getbx(direction, s, 4), yo + y, zo + this.getbz(direction, s, 4));
 				}
 			}
 			// Add carpet
 			for (int f = 1; f < 5; f++) {
-				world.setBlock(xo + this.getbx(direction, 0, f), yo - 3, zo + this.getbz(direction, 0, f), Blocks.carpet, 4, 2);
+				world.setBlock(xo + this.getbx(direction, 0, f), yo - 2, zo + this.getbz(direction, 0, f), Blocks.carpet, 4, 2);
 			}
 		}
 		
 		private void buildEnd(World world, int xo, int yo, int zo, ForgeDirection direction) {
 			for (int a = -1; a < 2; a++) {
 				// Floor and ceiling portion
-				for (int y : new int[] {-4, 0}) {
+				for (int y : new int[] {-3, 1}) {
 					world.setBlock(xo + this.getbx(direction, a, 2), yo + y, zo + this.getbz(direction, a, 2),
 							Blocks.stained_hardened_clay, 1, 2);
 				}
 				// Back edge
-				for (int y = -3; y < 0; y++) {
+				for (int y = -2; y < 1; y++) {
 					world.setBlock(xo + this.getbx(direction, a, 3), yo + y, zo + this.getbz(direction, a, 3),
 							Blocks.stained_hardened_clay, 1, 2);
 				}
@@ -160,13 +161,13 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 			// Decoration blocks (walls are now completely sealed at this point)
 			int xo_0_2 = xo + this.getbx(direction, 0, 2);
 			int zo_0_2 = zo + this.getbz(direction, 0, 2);
-			world.setBlock(xo_0_2, yo - 3, zo_0_2, Blocks.stained_hardened_clay, 1, 2);
-			world.setBlock(xo_0_2, yo - 2, zo_0_2, Blocks.gold_block);
-			world.setBlock(xo_0_2, yo - 1, zo_0_2, Blocks.stained_hardened_clay, 1, 2);
+			world.setBlock(xo_0_2, yo - 2, zo_0_2, Blocks.stained_hardened_clay, 1, 2);
+			world.setBlock(xo_0_2, yo - 1, zo_0_2, Blocks.gold_block);
+			world.setBlock(xo_0_2, yo, zo_0_2, Blocks.stained_hardened_clay, 1, 2);
 			int xo_0_1 = xo + this.getbx(direction, 0, 1);
 			int zo_0_1 = zo + this.getbz(direction, 0, 1);
-			world.setBlock(xo_0_1, yo - 3, zo_0_1, Blocks.gold_block);
-			world.setBlock(xo_0_1, yo - 1, zo_0_1, Blocks.quartz_block);
+			world.setBlock(xo_0_1, yo - 2, zo_0_1, Blocks.gold_block);
+			world.setBlock(xo_0_1, yo, zo_0_1, Blocks.quartz_block);
 		}
 	}
 	
