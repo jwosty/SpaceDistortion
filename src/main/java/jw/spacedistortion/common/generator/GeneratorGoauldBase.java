@@ -184,9 +184,8 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 	}
 	
 	public class GoauldStargateRoom extends GoauldRoom {
-		public GoauldStargateRoom(int x, int z, ForgeDirection connection) {
-			super(x, z, new ForgeDirection[] { connection });
-		}
+		public GoauldStargateRoom(int x, int z, HashMap<ForgeDirection, Boolean> connections) { super(x, z, connections); }
+		public GoauldStargateRoom(int x, int z, ForgeDirection[] connections) { super(x, z, connections); }
 
 		@Override
 		public void buildInWorld(World world, int blockOriginX, int blockOriginY, int blockOriginZ) {
@@ -252,11 +251,10 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 	
 	public List<GoauldRoom> generateSchematic() {
 		List<GoauldRoom> rooms = new ArrayList<GoauldRoom>();
-		rooms.add(new GoauldStargateRoom(0, 0, ForgeDirection.NORTH));
+		rooms.add(new GoauldStargateRoom(0, 0, new ForgeDirection[] { ForgeDirection.NORTH, ForgeDirection.EAST }));
 		HashMap<ForgeDirection, Boolean> connections = new HashMap<ForgeDirection, Boolean>();
-		connections.put(ForgeDirection.WEST, true);
-		connections.put(ForgeDirection.SOUTH, true);
-		rooms.add(new GoauldCorridor(0, -1, connections));
+		rooms.add(new GoauldCorridor(0, -1, new ForgeDirection[] { ForgeDirection.SOUTH }));
+		rooms.add(new GoauldCorridor(1, 0, new ForgeDirection[] { ForgeDirection.WEST }));
 		return rooms;
 	}
 	
