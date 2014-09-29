@@ -291,14 +291,20 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 		}
 	}
 	
+	public void onBlockAdded(World world, int x, int y, int z) {
+		super.onBlockAdded(world, x, y, z);
+		TileEntityStargateController controllerTileEntity = (TileEntityStargateController) world.getTileEntity(x, y, z);
+		controllerTileEntity.state = BlockStargateController.getCurrentState(world, x, y, z);
+	}
+	
 	@Override
 	public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entity, ItemStack itemStack) {
+		super.onBlockPlacedBy(world, x, y, z, entity, itemStack);
 		// no need to figure out the right orientation again when the piston block can do it for us
 		int direction = BlockPistonBase.determineOrientation(world, x, y, z, entity);
 		world.setBlockMetadataWithNotify(x, y, z, direction, 2);
 		
-		TileEntityStargateController controllerTileEntity = (TileEntityStargateController) world.getTileEntity(x, y, z);
-		controllerTileEntity.state = BlockStargateController.getCurrentState(world, x, y, z);
+		this.onBlockAdded(world, x, y, z);
 	}
 	
 	@Override
