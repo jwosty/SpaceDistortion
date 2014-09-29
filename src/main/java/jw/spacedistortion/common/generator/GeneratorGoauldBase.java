@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
+import jw.spacedistortion.common.SpaceDistortion;
+import jw.spacedistortion.common.block.SDBlock;
+import jw.spacedistortion.common.block.Structure;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkProvider;
@@ -214,6 +217,11 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 				if (connections.get(d)) {
 					this.buildEntrance(world, xo, yo, zo, d);
 					if (!hasBuiltStargate) {
+						Structure s = new Structure(xo + this.getbx(d, 3, -2), yo + 2, zo + this.getbz(d, 3, -2), d,
+								SpaceDistortion.stargateRingShape, SpaceDistortion.templateBlockInfo, 0, 0);
+						s.addToWorld(world);
+						world.setBlock(xo + this.getbx(d, 1, -1), yo - 4, zo + this.getbz(d, 1, -1), SDBlock.stargateController,
+								ForgeDirection.UP.ordinal(), 3);
 						hasBuiltStargate = true;
 					}
 				}
@@ -251,9 +259,10 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 	
 	public List<GoauldRoom> generateSchematic() {
 		List<GoauldRoom> rooms = new ArrayList<GoauldRoom>();
-		rooms.add(new GoauldStargateRoom(0, 0, new ForgeDirection[] { ForgeDirection.NORTH, ForgeDirection.EAST }));
+		rooms.add(new GoauldStargateRoom(0, 0, new ForgeDirection[] { ForgeDirection.NORTH, ForgeDirection.SOUTH, ForgeDirection.EAST }));
 		HashMap<ForgeDirection, Boolean> connections = new HashMap<ForgeDirection, Boolean>();
 		rooms.add(new GoauldCorridor(0, -1, new ForgeDirection[] { ForgeDirection.SOUTH }));
+		rooms.add(new GoauldCorridor(0, 1, new ForgeDirection[] { ForgeDirection.NORTH }));
 		rooms.add(new GoauldCorridor(1, 0, new ForgeDirection[] { ForgeDirection.WEST }));
 		return rooms;
 	}
