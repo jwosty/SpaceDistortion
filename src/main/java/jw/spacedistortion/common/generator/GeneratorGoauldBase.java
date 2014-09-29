@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
-import jw.spacedistortion.Triplet;
-import jw.spacedistortion.common.block.Structure;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkProvider;
@@ -34,6 +32,22 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 		public int blockZ() { return this.z * this.widthHeight(); }
 		
 		public abstract void buildInWorld(World world, int blockOriginX, int blockOriginY, int blockOriginZ);
+		
+		protected int getbx(ForgeDirection direction, int sidewaysDistance, int forwardDistance) {
+			if (direction == ForgeDirection.NORTH || direction == ForgeDirection.SOUTH) {
+				return sidewaysDistance;
+			} else {
+				return forwardDistance * direction.offsetX;
+			}
+		}
+		
+		protected int getbz(ForgeDirection direction, int a, int factor) {
+			if (direction == ForgeDirection.NORTH || direction == ForgeDirection.SOUTH) {
+				return factor * direction.offsetZ;
+			} else {
+				return a;
+			}
+		}
 	}
 	
 	public class GoauldCorridor extends GoauldRoom {
@@ -154,29 +168,12 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 			world.setBlock(xo_0_1, yo - 3, zo_0_1, Blocks.gold_block);
 			world.setBlock(xo_0_1, yo - 1, zo_0_1, Blocks.quartz_block);
 		}
-		
-		private int getbx(ForgeDirection direction, int sidewaysDistance, int forwardDistance) {
-			if (direction == ForgeDirection.NORTH || direction == ForgeDirection.SOUTH) {
-				return sidewaysDistance;
-			} else {
-				return forwardDistance * direction.offsetX;
-			}
-		}
-		
-		private int getbz(ForgeDirection direction, int a, int factor) {
-			if (direction == ForgeDirection.NORTH || direction == ForgeDirection.SOUTH) {
-				return factor * direction.offsetZ;
-			} else {
-				return a;
-			}
-		}
 	}
 	
 	public class GoauldStargateRoom extends GoauldRoom {
 		public GoauldStargateRoom(int x, int z, ForgeDirection connection) {
-			super(x, z, null);
-			HashMap<ForgeDirection, Boolean> connections = new HashMap<ForgeDirection, Boolean>();
-			connections.put(connection, true);
+			super(x, z, new HashMap<ForgeDirection, Boolean>());
+			this.connections.put(connection, true);
 			for (ForgeDirection d : ForgeDirection.VALID_DIRECTIONS) {
 				if (d != connection) connections.put(d, false);
 			}
@@ -184,6 +181,41 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 
 		@Override
 		public void buildInWorld(World world, int blockOriginX, int blockOriginY, int blockOriginZ) {
+			int xo = this.x + blockOriginX;
+			int yo = blockOriginY;
+			int zo = this.z + blockOriginZ;
+			// First, build a big box and clear out the center
+			for (int x = -4; x < 5; x++) {
+				for (int y = -4; y < 5; y++) {
+					for (int z = -4; z < 5; z++) {
+						if (y == -4) {
+							// Floor
+							world.setBlock(xo + x, yo + y, zo + z, Blocks.sandstone);
+						} else if (y == 4 || Math.abs(x) == 4 || Math.abs(z) == 4) {
+							// Walls and ceiling
+							world.setBlock(xo + x, yo + y, zo + z, Blocks.stained_hardened_clay, 1, 2);
+						} else {
+							// Inside space
+							world.setBlockToAir(xo + x, yo + y, zo + z);
+						}
+					}
+				}
+			}
+			for (ForgeDirection d : new ForgeDirection[] { ForgeDirection.NORTH, ForgeDirection.SOUTH, ForgeDirection.EAST, ForgeDirection.WEST }) {
+				if (connections.get(d)) {
+					this.buildEntrance(world, xo, yo, zo, d);
+				}
+			}
+		}
+		
+		public void buildEntrance(World world, int xo, int yo, int zo, ForgeDirection direction) {
+			// Carve the entrance hole
+			for (int s = -1; s < 2; s++) {
+				for (int y = -2; y < 1; y++) {
+					world.setBlockToAir(xo + this.getbx(direction, s, 4), yo + y, zo + this.getbz(direction, s, 4));
+				}
+				world.setBlock(xo + this.getbx(direction, s, 4), yo - 3, zo + this.getbz(direction, s, 4), Blocks.stone_slab, 1, 2);
+			}
 		}
 	}
 	
@@ -209,11 +241,11 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 
 	public List<GoauldRoom> generateSchematic() {
 		List<GoauldRoom> rooms = new ArrayList<GoauldRoom>();
+		rooms.add(new GoauldStargateRoom(0, 0, ForgeDirection.NORTH));
 		HashMap<ForgeDirection, Boolean> connections = new HashMap<ForgeDirection, Boolean>();
-		connections.put(ForgeDirection.NORTH, true);
-		connections.put(ForgeDirection.EAST, true);
-		GoauldRoom start = new GoauldCorridor(0, 0, connections);
-		rooms.add(start);
+		connections.put(ForgeDirection.WEST, true);
+		connections.put(ForgeDirection.SOUTH, true);
+		rooms.add(new GoauldCorridor(0, -1, connections));
 		return rooms;
 	}
 	
