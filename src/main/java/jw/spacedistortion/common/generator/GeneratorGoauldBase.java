@@ -18,6 +18,7 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 		// Y position (in terms of rooms, not blocks)
 		public int z;
 		public HashMap<ForgeDirection, Boolean> connections;
+		
 		public GoauldRoom(int x, int z, HashMap<ForgeDirection, Boolean> connections) {
 			this.x = x;
 			this.z = z;
@@ -25,6 +26,16 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 				if (!connections.containsKey(d)) connections.put(d, false);
 			}
 			this.connections = connections;
+		}
+		
+		public GoauldRoom(int x, int z, ForgeDirection[] connections) {
+			this.x = x;
+			this.z = z;
+			
+			this.connections = new HashMap<ForgeDirection, Boolean>();
+			for (ForgeDirection d : connections) this.connections.put(d, true);
+			for (ForgeDirection d : new ForgeDirection[] { ForgeDirection.NORTH, ForgeDirection.SOUTH, ForgeDirection.EAST, ForgeDirection.WEST })
+				if (!this.connections.containsKey(d)) this.connections.put(d, false);
 		}
 		
 		public int widthHeight() { return 9; }
@@ -52,6 +63,7 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 	
 	public class GoauldCorridor extends GoauldRoom {
 		public GoauldCorridor(int x, int z, HashMap<ForgeDirection, Boolean> connections) { super(x, z, connections); }
+		public GoauldCorridor(int x, int z, ForgeDirection[] connections) { super(x, z, connections); }
 
 		@Override
 		public void buildInWorld(World world, int blockOriginX, int blockOriginY, int blockOriginZ) {
@@ -173,11 +185,7 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 	
 	public class GoauldStargateRoom extends GoauldRoom {
 		public GoauldStargateRoom(int x, int z, ForgeDirection connection) {
-			super(x, z, new HashMap<ForgeDirection, Boolean>());
-			this.connections.put(connection, true);
-			for (ForgeDirection d : ForgeDirection.VALID_DIRECTIONS) {
-				if (d != connection) connections.put(d, false);
-			}
+			super(x, z, new ForgeDirection[] { connection });
 		}
 
 		@Override
@@ -202,9 +210,13 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 					}
 				}
 			}
+			boolean hasBuiltStargate = false;
 			for (ForgeDirection d : new ForgeDirection[] { ForgeDirection.NORTH, ForgeDirection.SOUTH, ForgeDirection.EAST, ForgeDirection.WEST }) {
 				if (connections.get(d)) {
 					this.buildEntrance(world, xo, yo, zo, d);
+					if (!hasBuiltStargate) {
+						hasBuiltStargate = true;
+					}
 				}
 			}
 		}
@@ -230,8 +242,6 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 			IChunkProvider chunkGenerator, IChunkProvider chunkProvider) {
 		if (chunkX == 0 && chunkZ == 0) {
 			this.generate(random, chunkX * 16, 100, chunkZ * 16, world);
-			//List<GoauldRoom> rooms = this.generateSchematic();
-			//this.buildSchematicInWorld(world, chunkX * 16, 100, chunkZ * 16, rooms);
 		}
 	}
 	
@@ -239,7 +249,7 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 		List<GoauldRoom> rooms = this.generateSchematic();
 		this.buildSchematicInWorld(world, x, y, z, rooms);
 	}
-
+	
 	public List<GoauldRoom> generateSchematic() {
 		List<GoauldRoom> rooms = new ArrayList<GoauldRoom>();
 		rooms.add(new GoauldStargateRoom(0, 0, ForgeDirection.NORTH));
@@ -248,6 +258,14 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 		connections.put(ForgeDirection.SOUTH, true);
 		rooms.add(new GoauldCorridor(0, -1, connections));
 		return rooms;
+	}
+	
+	public HashMap<ForgeDirection, Boolean> presentKeysToMap(ForgeDirection[] keys) {
+		HashMap<ForgeDirection, Boolean> result = new HashMap<ForgeDirection, Boolean>();
+		for (ForgeDirection d : keys) result.put(d, true);
+		for (ForgeDirection d : new ForgeDirection[] { ForgeDirection.NORTH, ForgeDirection.SOUTH, ForgeDirection.EAST, ForgeDirection.WEST })
+			if (!result.containsKey(d)) result.put(d, false);
+		return result;
 	}
 	
 	public void generateSchematicBranch(Random random, int x, int y, int length, List<GoauldRoom> rooms) {
