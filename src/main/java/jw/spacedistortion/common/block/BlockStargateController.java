@@ -100,9 +100,6 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 		if (stargate == null) {
 			return new StargateControllerState.StargateControllerInvalid();
 		} else {
-			if (world instanceof World & !((World)world).isRemote) {
-				System.out.println("Found stargate facing " + stargate.facing + " at (" + stargate.x + ", " + stargate.y + ", " + stargate.z + ")");
-			}
 			return new StargateControllerReady(stargate, new byte[] { 40, 40, 40, 40, 40, 40, 40 }, 0);
 		}
 	}

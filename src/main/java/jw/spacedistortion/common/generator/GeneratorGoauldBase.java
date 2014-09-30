@@ -1,10 +1,12 @@
 package jw.spacedistortion.common.generator;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
+import jw.spacedistortion.Pair;
 import jw.spacedistortion.common.SpaceDistortion;
 import jw.spacedistortion.common.block.SDBlock;
 import jw.spacedistortion.common.block.Structure;
@@ -15,6 +17,9 @@ import net.minecraftforge.common.util.ForgeDirection;
 import cpw.mods.fml.common.IWorldGenerator;
 
 public class GeneratorGoauldBase implements IWorldGenerator {
+	public static ForgeDirection[] possibleConnections = new ForgeDirection[] {
+		ForgeDirection.NORTH, ForgeDirection.SOUTH, ForgeDirection.EAST, ForgeDirection.WEST };
+	
 	public abstract class GoauldRoom {
 		// X position (in terms of rooms, not blocks)
 		public int x;
@@ -25,7 +30,7 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 		public GoauldRoom(int x, int z, HashMap<ForgeDirection, Boolean> connections) {
 			this.x = x;
 			this.z = z;
-			for (ForgeDirection d : new ForgeDirection[] { ForgeDirection.NORTH, ForgeDirection.SOUTH, ForgeDirection.EAST, ForgeDirection.WEST }) {
+			for (ForgeDirection d : possibleConnections) {
 				if (!connections.containsKey(d)) connections.put(d, false);
 			}
 			this.connections = connections;
@@ -37,7 +42,7 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 			
 			this.connections = new HashMap<ForgeDirection, Boolean>();
 			for (ForgeDirection d : connections) this.connections.put(d, true);
-			for (ForgeDirection d : new ForgeDirection[] { ForgeDirection.NORTH, ForgeDirection.SOUTH, ForgeDirection.EAST, ForgeDirection.WEST })
+			for (ForgeDirection d : possibleConnections)
 				if (!this.connections.containsKey(d)) this.connections.put(d, false);
 		}
 		
@@ -76,7 +81,7 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 			int yo = blockOriginY;
 			int zo = blockOriginZ + this.blockZ();
 			this.buildCenter(world, xo, yo, zo);
-			for (ForgeDirection d : new ForgeDirection[] { ForgeDirection.NORTH, ForgeDirection.SOUTH, ForgeDirection.EAST, ForgeDirection.WEST }) {
+			for (ForgeDirection d : possibleConnections) {
 				if (this.connections.get(d)) {
 					this.buildConnection(world, xo, yo, zo, d);
 				} else {
@@ -213,16 +218,28 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 				}
 			}
 			boolean hasBuiltStargate = false;
-			for (ForgeDirection d : new ForgeDirection[] { ForgeDirection.NORTH, ForgeDirection.SOUTH, ForgeDirection.EAST, ForgeDirection.WEST }) {
+			for (ForgeDirection d : possibleConnections) {
 				if (connections.get(d)) {
+					// Cut out an entrance
 					this.buildEntrance(world, xo, yo, zo, d);
 					if (!hasBuiltStargate) {
-						Structure s = new Structure(xo + this.getbx(d, 3, -2), yo + 2, zo + this.getbz(d, 3, -2), d,
+						// Add the stargate
+						int sign = (d == ForgeDirection.NORTH || d == ForgeDirection.EAST) ? 1 : -1; 
+						Structure s = new Structure(
+								xo + this.getbx(d, 3 * sign, -2), yo + 2, zo + this.getbz(d, 3 * sign, -2), d,
 								SpaceDistortion.stargateRingShape, SpaceDistortion.templateBlockInfo, 0, 0);
 						s.addToWorld(world);
-						world.setBlock(xo + this.getbx(d, 1, -1), yo - 4, zo + this.getbz(d, 1, -1), SDBlock.stargateController,
+						world.setBlock(xo + this.getbx(d, sign, -1), yo - 4, zo + this.getbz(d, sign, -1), SDBlock.stargateController,
 								ForgeDirection.UP.ordinal(), 3);
 						hasBuiltStargate = true;
+					}
+				}
+			}
+			// Add torches
+			for (int x : new int[] {-3,-2,2,3}) {
+				for (int z : new int[] {-3,-2,2,3}) {
+					if (Math.abs(x) != Math.abs(z) && world.getBlock(xo + x, yo - 1, zo + z) == Blocks.air) {
+						world.setBlock(xo + x, yo - 1, zo + z, Blocks.torch);
 					}
 				}
 			}
@@ -239,7 +256,6 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 		}
 	}
 	
-	
 	public GoauldRoom[] rooms;
 	
 	public GeneratorGoauldBase() { }
@@ -248,23 +264,47 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 	public void generate(Random random, int chunkX, int chunkZ, World world,
 			IChunkProvider chunkGenerator, IChunkProvider chunkProvider) {
 		if (chunkX == 0 && chunkZ == 0) {
-			this.generate(random, chunkX * 16, 100, chunkZ * 16, world);
+			this.generate(random, chunkX * 16, 20, chunkZ * 16, world);
 		}
 	}
 	
 	public void generate(Random random, int x, int y, int z, World world) {
-		List<GoauldRoom> rooms = this.generateSchematic();
+		List<GoauldRoom> rooms = this.generateSchematic(random);
 		this.buildSchematicInWorld(world, x, y, z, rooms);
 	}
 	
-	public List<GoauldRoom> generateSchematic() {
+	public List<GoauldRoom> generateSchematic(Random random) {
 		List<GoauldRoom> rooms = new ArrayList<GoauldRoom>();
-		rooms.add(new GoauldStargateRoom(0, 0, new ForgeDirection[] { ForgeDirection.NORTH, ForgeDirection.SOUTH, ForgeDirection.EAST }));
-		HashMap<ForgeDirection, Boolean> connections = new HashMap<ForgeDirection, Boolean>();
-		rooms.add(new GoauldCorridor(0, -1, new ForgeDirection[] { ForgeDirection.SOUTH }));
-		rooms.add(new GoauldCorridor(0, 1, new ForgeDirection[] { ForgeDirection.NORTH }));
-		rooms.add(new GoauldCorridor(1, 0, new ForgeDirection[] { ForgeDirection.WEST }));
+		List<ForgeDirection> connections = this.generateConnections(random);
+		rooms.add(new GoauldStargateRoom(0, 0, connections.toArray(new ForgeDirection[connections.size()])));
 		return rooms;
+	}
+	
+	// Performs one schematic iteration, adding rooms and returning the new growth points
+	public List<Pair<Integer, Integer>> iterateSchematic(Random rand, Pair<Integer, Integer> growthPoints, List<GoauldRoom> rooms) {
+		List<Pair<Integer, Integer>> newGrowthPoints = new ArrayList<Pair<Integer, Integer>>();
+		
+		return newGrowthPoints;
+	}
+	
+	// Get an integer that is 1 every 1/6 times, 2 every 2/3 times, and 3 every 1/6 times
+	public int getWeightedInt(Random random) {
+		int n = random.nextInt(7);
+		if (n == 1) return 1;
+		else if (n >= 2 && n <= 5) return 2;
+		else return 3;
+	}
+	
+	public List<ForgeDirection> generateConnections(Random random) {
+		int nConnections = this.getWeightedInt(random);
+		List<ForgeDirection> connections = new ArrayList<ForgeDirection>();
+		List<ForgeDirection> possibleConnectionsL = new ArrayList<ForgeDirection>(Arrays.asList(possibleConnections));
+		for (int times = 0; times < nConnections; times++) {
+			int i = random.nextInt(possibleConnectionsL.size());
+			connections.add(possibleConnectionsL.get(i));
+			possibleConnectionsL.remove(i);
+		}
+		return connections;
 	}
 	
 	public HashMap<ForgeDirection, Boolean> presentKeysToMap(ForgeDirection[] keys) {
@@ -273,12 +313,6 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 		for (ForgeDirection d : new ForgeDirection[] { ForgeDirection.NORTH, ForgeDirection.SOUTH, ForgeDirection.EAST, ForgeDirection.WEST })
 			if (!result.containsKey(d)) result.put(d, false);
 		return result;
-	}
-	
-	public void generateSchematicBranch(Random random, int x, int y, int length, List<GoauldRoom> rooms) {
-		if (length > 0) {
-			
-		}
 	}
 	
 	public void buildSchematicInWorld(World world, int originX, int originY, int originZ, List<GoauldRoom> rooms) {
