@@ -272,10 +272,11 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 			Random random, List<Triplet<Integer, ForgeDirection, Integer>> growthPoints, HashMap<Pair<Integer, Integer>, GoauldRoom> rooms, boolean isLastIteration) {
 		List<Triplet<Integer, ForgeDirection, Integer>> newGrowthPoints = new ArrayList<Triplet<Integer, ForgeDirection, Integer>>();
 		for (Triplet<Integer, ForgeDirection, Integer> growth : growthPoints) {
+			GoauldRoom room = (growth.X == 0 && growth.Z == 0)
+					? new GoauldStargateRoom(new HashMap<ForgeDirection, Boolean>())
+					: new GoauldCorridor(new HashMap<ForgeDirection, Boolean>());
 			// Connect to the previous room
-			HashMap<ForgeDirection, Boolean> connections = new HashMap<ForgeDirection, Boolean>();
-			if (growth.Y != null) connections.put(growth.Y, true);
-			GoauldRoom room = (growth.X == 0 && growth.Z == 0) ? new GoauldStargateRoom(connections) : new GoauldCorridor(connections);
+			if (growth.Y != null) room.connections.put(growth.Y, true);
 			// Add more points for other rooms to generate from next iteration
 			for (ForgeDirection c : this.generateConnections(random)) {
 				if (!rooms.containsKey(new Pair<Integer, Integer>(growth.X + c.offsetX, growth.Z + c.offsetZ))) {
