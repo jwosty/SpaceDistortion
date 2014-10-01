@@ -1,8 +1,7 @@
 package jw.spacedistortion.common.item;
 
+
 import jw.spacedistortion.common.SpaceDistortion;
-import jw.spacedistortion.common.block.Structure;
-import net.minecraft.block.BlockPistonBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;

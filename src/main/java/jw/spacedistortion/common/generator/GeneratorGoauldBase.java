@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import jw.spacedistortion.Pair;
-import jw.spacedistortion.Triplet;
 import jw.spacedistortion.common.SpaceDistortion;
 import jw.spacedistortion.common.block.SDBlock;
 import jw.spacedistortion.common.block.Structure;
@@ -16,6 +14,8 @@ import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraftforge.common.util.ForgeDirection;
+import scala.Tuple2;
+import scala.Tuple3;
 import cpw.mods.fml.common.IWorldGenerator;
 
 public class GeneratorGoauldBase implements IWorldGenerator {
@@ -250,17 +250,17 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 	}
 	
 	public void generate(Random random, int x, int y, int z, World world) {
-		HashMap<Pair<Integer, Integer>, GoauldRoom> rooms = this.generateSchematic(random);
+		HashMap<Tuple2<Integer, Integer>, GoauldRoom> rooms = this.generateSchematic(random);
 		this.buildSchematicInWorld(world, x, y, z, rooms);
 	}
 	
-	public HashMap<Pair<Integer, Integer>, GoauldRoom> generateSchematic(Random random) {
-		HashMap<Pair<Integer, Integer>, GoauldRoom> rooms = new HashMap<Pair<Integer, Integer>, GoauldRoom>();
-		rooms.put(new Pair<Integer, Integer>(0, 0), new GoauldStargateRoom(new HashMap<ForgeDirection, Boolean>()));
+	public HashMap<Tuple2<Integer, Integer>, GoauldRoom> generateSchematic(Random random) {
+		HashMap<Tuple2<Integer, Integer>, GoauldRoom> rooms = new HashMap<Tuple2<Integer, Integer>, GoauldRoom>();
+		rooms.put(new Tuple2<Integer, Integer>(0, 0), new GoauldStargateRoom(new HashMap<ForgeDirection, Boolean>()));
 		
 		List<ForgeDirection> connections = this.generateConnections(random);
-		List<Triplet<Integer, ForgeDirection, Integer>> growthPoints = new ArrayList<Triplet<Integer, ForgeDirection, Integer>>();
-		growthPoints.add(new Triplet<Integer, ForgeDirection, Integer>(0, null, 0));
+		List<Tuple3<Integer, ForgeDirection, Integer>> growthPoints = new ArrayList<Tuple3<Integer, ForgeDirection, Integer>>();
+		growthPoints.add(new Tuple3<Integer, ForgeDirection, Integer>(0, null, 0));
 		for (int i = 0; i < 5; i++) {
 			growthPoints = this.doSingleSchematicIteration(random, growthPoints, rooms, i >= 5);
 		}
@@ -268,24 +268,26 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 	}
 	
 	// Performs one schematic iteration, adding rooms and returning the new growth points
-	public List<Triplet<Integer, ForgeDirection, Integer>> doSingleSchematicIteration(
-			Random random, List<Triplet<Integer, ForgeDirection, Integer>> growthPoints, HashMap<Pair<Integer, Integer>, GoauldRoom> rooms, boolean isLastIteration) {
-		List<Triplet<Integer, ForgeDirection, Integer>> newGrowthPoints = new ArrayList<Triplet<Integer, ForgeDirection, Integer>>();
-		for (Triplet<Integer, ForgeDirection, Integer> growth : growthPoints) {
-			GoauldRoom room = (growth.X == 0 && growth.Z == 0)
+	public List<Tuple3<Integer, ForgeDirection, Integer>> doSingleSchematicIteration(
+			Random random, List<Tuple3<Integer, ForgeDirection, Integer>> growthPoints, HashMap<Tuple2<Integer, Integer>, GoauldRoom> rooms, boolean isLastIteration) {
+		List<Tuple3<Integer, ForgeDirection, Integer>> newGrowthPoints = new ArrayList<Tuple3<Integer, ForgeDirection, Integer>>();
+		for (Tuple3<Integer, ForgeDirection, Integer> growth : growthPoints) {
+			GoauldRoom room = (growth._1() == 0 && growth._3() == 0)
 					? new GoauldStargateRoom(new HashMap<ForgeDirection, Boolean>())
 					: new GoauldCorridor(new HashMap<ForgeDirection, Boolean>());
 			// Connect to the previous room
-			if (growth.Y != null) room.connections.put(growth.Y, true);
+			if (growth._2() != null) room.connections.put(growth._2(), true);
 			// Add more points for other rooms to generate from next iteration
-			for (ForgeDirection c : this.generateConnections(random)) {
-				if (!rooms.containsKey(new Pair<Integer, Integer>(growth.X + c.offsetX, growth.Z + c.offsetZ))) {
-					room.connections.put(c, true);
-					newGrowthPoints.add(new Triplet<Integer, ForgeDirection, Integer>(growth.X + c.offsetX, c.getOpposite(), growth.Z + c.offsetZ));
+			if (!isLastIteration) {
+				for (ForgeDirection c : this.generateConnections(random)) {
+					if (!rooms.containsKey(new Tuple2<Integer, Integer>(growth._1() + c.offsetX, growth._3() + c.offsetZ))) {
+						room.connections.put(c, true);
+						newGrowthPoints.add(new Tuple3<Integer, ForgeDirection, Integer>(growth._1() + c.offsetX, c.getOpposite(), growth._3() + c.offsetZ));
+					}
 				}
 			}
 			// Finalize this room
-			rooms.put(new Pair<Integer, Integer>(growth.X, growth.Z), room);
+			rooms.put(new Tuple2<Integer, Integer>(growth._1(), growth._3()), room);
 		}
 		return newGrowthPoints;
 	}
@@ -318,10 +320,10 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 		return result;
 	}
 	
-	public void buildSchematicInWorld(World world, int originX, int originY, int originZ, HashMap<Pair<Integer, Integer>, GoauldRoom> rooms) {
-		for (Map.Entry<Pair<Integer, Integer>, GoauldRoom> entry : rooms.entrySet()) {
-			Pair<Integer, Integer> roomCoords = entry.getKey();
-			entry.getValue().buildInWorld(world, originX + (roomCoords.X * 9), originY, originZ + (roomCoords.Y * 9));
+	public void buildSchematicInWorld(World world, int originX, int originY, int originZ, HashMap<Tuple2<Integer, Integer>, GoauldRoom> rooms) {
+		for (Map.Entry<Tuple2<Integer, Integer>, GoauldRoom> entry : rooms.entrySet()) {
+			Tuple2<Integer, Integer> roomCoords = entry.getKey();
+			entry.getValue().buildInWorld(world, originX + (roomCoords._1 * 9), originY, originZ + (roomCoords._2 * 9));
 		}
 	}
 }
