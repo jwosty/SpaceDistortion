@@ -281,9 +281,13 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 			// Add more points for other rooms to generate from next iteration
 			if (!isLastIteration) {
 				for (ForgeDirection c : this.generateConnections(random)) {
-					if (!rooms.containsKey(new Tuple2<Integer, Integer>(growth._1() + c.offsetX, growth._3() + c.offsetZ))) {
+					if (growth._2() != null || growth._2() != c.getOpposite()) {
+						Tuple2<Integer, Integer> pos = new Tuple2<Integer, Integer>(growth._1() + c.offsetX, growth._3() + c.offsetZ);
+						// If there's already a room there, just connect to it to make it interesting
 						room.connections.put(c, true);
-						newGrowthPoints.add(new Tuple3<Integer, ForgeDirection, Integer>(growth._1() + c.offsetX, c.getOpposite(), growth._3() + c.offsetZ));
+						if (rooms.containsKey(pos)) rooms.get(pos).connections.put(c.getOpposite(), true);
+						// Otherwise, add another growth point
+						else newGrowthPoints.add(new Tuple3<Integer, ForgeDirection, Integer>(pos._1(), c.getOpposite(), pos._2()));
 					}
 				}
 			}
