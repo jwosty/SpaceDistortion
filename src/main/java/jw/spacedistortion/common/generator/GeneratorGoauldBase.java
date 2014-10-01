@@ -261,8 +261,9 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 		List<ForgeDirection> connections = this.generateConnections(random);
 		List<Tuple3<Integer, ForgeDirection, Integer>> growthPoints = new ArrayList<Tuple3<Integer, ForgeDirection, Integer>>();
 		growthPoints.add(new Tuple3<Integer, ForgeDirection, Integer>(0, null, 0));
-		for (int i = 0; i < 5; i++) {
-			growthPoints = this.doSingleSchematicIteration(random, growthPoints, rooms, i >= 5);
+		int depth = 8;
+		for (int i = 0; i < depth; i++) {
+			growthPoints = this.doSingleSchematicIteration(random, growthPoints, rooms, i >= (depth - 1));
 		}
 		return rooms;
 	}
