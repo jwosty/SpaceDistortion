@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Random;
 
 import jw.spacedistortion.Pair;
+import jw.spacedistortion.Triplet;
 import jw.spacedistortion.common.SpaceDistortion;
 import jw.spacedistortion.common.block.SDBlock;
 import jw.spacedistortion.common.block.Structure;
@@ -275,15 +276,46 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 	
 	public List<GoauldRoom> generateSchematic(Random random) {
 		List<GoauldRoom> rooms = new ArrayList<GoauldRoom>();
+		rooms.add(new GoauldStargateRoom(0, 0, new HashMap<ForgeDirection, Boolean>()));
+		
 		List<ForgeDirection> connections = this.generateConnections(random);
-		rooms.add(new GoauldStargateRoom(0, 0, connections.toArray(new ForgeDirection[connections.size()])));
+		List<Triplet<Integer, ForgeDirection, Integer>> growthPoints = new ArrayList<Triplet<Integer, ForgeDirection, Integer>>();
+		growthPoints.add(new Triplet<Integer, ForgeDirection, Integer>(0, null, 0));
+		for (int i = 0; i < 5; i++) {
+			growthPoints = this.doSingleSchematicIteration(random, growthPoints, rooms);
+		}
 		return rooms;
 	}
 	
 	// Performs one schematic iteration, adding rooms and returning the new growth points
-	public List<Pair<Integer, Integer>> iterateSchematic(Random rand, Pair<Integer, Integer> growthPoints, List<GoauldRoom> rooms) {
-		List<Pair<Integer, Integer>> newGrowthPoints = new ArrayList<Pair<Integer, Integer>>();
-		
+	public List<Triplet<Integer, ForgeDirection, Integer>> doSingleSchematicIteration(Random random, List<Triplet<Integer, ForgeDirection, Integer>> growthPoints, List<GoauldRoom> rooms) {
+		List<Triplet<Integer, ForgeDirection, Integer>> newGrowthPoints = new ArrayList<Triplet<Integer, ForgeDirection, Integer>>();
+		for (Triplet<Integer, ForgeDirection, Integer> growth : growthPoints) {
+			// Connect to the previous room
+			HashMap<ForgeDirection, Boolean> connections = new HashMap<ForgeDirection, Boolean>();
+			if (growth.Y != null) connections.put(growth.Y, true);
+			GoauldRoom room = (growth.X == 0 && growth.Z == 0) ?
+					new GoauldStargateRoom(growth.X, growth.Z, connections) : new GoauldCorridor(growth.X, growth.Z, connections);
+			// Add more points for other rooms to generate from next iteration
+			for (ForgeDirection c : this.generateConnections(random)) {
+				int rx = room.x + c.offsetX;
+				int rz = room.z + c.offsetZ;
+				// Make sure there isn't already a room there
+				boolean isValid = true;
+				for (GoauldRoom r : rooms) { 
+					if (rx == r.x && rz == r.z) {
+						isValid = false;
+						break;
+					}
+				}
+				if (isValid) {
+					room.connections.put(c, true);
+					newGrowthPoints.add(new Triplet<Integer, ForgeDirection, Integer>(rx, c.getOpposite(), rz));
+				}
+			}
+			// Finalize this room
+			rooms.add(room);
+		}
 		return newGrowthPoints;
 	}
 	
