@@ -23,20 +23,17 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 		ForgeDirection.NORTH, ForgeDirection.SOUTH, ForgeDirection.EAST, ForgeDirection.WEST };
 	
 	public abstract class GoauldRoom {
-		public HashMap<ForgeDirection, Boolean> connections;
+		public boolean[] connections = new boolean[4];
 		
-		public GoauldRoom(HashMap<ForgeDirection, Boolean> connections) {
-			for (ForgeDirection d : possibleConnections) {
-				if (!connections.containsKey(d)) connections.put(d, false);
-			}
+		public GoauldRoom() { }
+		
+		public GoauldRoom(boolean[] connections) {
 			this.connections = connections;
 		}
 		
-		public GoauldRoom(ForgeDirection[] connections) {
-			this.connections = new HashMap<ForgeDirection, Boolean>();
-			for (ForgeDirection d : connections) this.connections.put(d, true);
-			for (ForgeDirection d : possibleConnections)
-				if (!this.connections.containsKey(d)) this.connections.put(d, false);
+		public GoauldRoom setConnection(ForgeDirection direction, boolean isConnected) {
+			this.connections[direction.ordinal() - 2] = isConnected;
+			return this;
 		}
 		
 		public abstract void buildInWorld(World world, int blockOriginX, int blockOriginY, int blockOriginZ);
@@ -59,17 +56,17 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 	}
 	
 	public class GoauldCorridor extends GoauldRoom {
-		public GoauldCorridor(HashMap<ForgeDirection, Boolean> connections) { super(connections); }
-		public GoauldCorridor(ForgeDirection[] connections) { super(connections); }
+		public GoauldCorridor() { super(); }
+		public GoauldCorridor(boolean[] connections) { super(connections); }
 
 		@Override
 		public void buildInWorld(World world, int x, int y, int z) {
 			this.buildCenter(world, x, y, z);
-			for (ForgeDirection d : possibleConnections) {
-				if (this.connections.get(d)) {
-					this.buildConnection(world, x, y, z, d);
+			for (int i = 0; i < this.connections.length; i++) {
+				if (this.connections[i]) {
+					this.buildConnection(world, x, y, z, ForgeDirection.getOrientation(i + 2));
 				} else {
-					this.buildEnd(world, x, y, z, d);
+					this.buildEnd(world, x, y, z, ForgeDirection.getOrientation(i + 2));
 				}
 			}
 		}
@@ -176,8 +173,8 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 	}
 	
 	public class GoauldStargateRoom extends GoauldRoom {
-		public GoauldStargateRoom(HashMap<ForgeDirection, Boolean> connections) { super(connections); }
-		public GoauldStargateRoom(ForgeDirection[] connections) { super(connections); }
+		public GoauldStargateRoom() { super(); }
+		public GoauldStargateRoom(boolean[] connections) { super(connections); }
 
 		@Override
 		public void buildInWorld(World world, int x, int y, int z) {
@@ -199,8 +196,9 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 				}
 			}
 			boolean hasBuiltStargate = false;
-			for (ForgeDirection d : possibleConnections) {
-				if (connections.get(d)) {
+			for (int i = 0; i < this.connections.length; i++) {
+				if (connections[i]) {
+					ForgeDirection d = ForgeDirection.getOrientation(i + 2);
 					// Cut out an entrance
 					this.buildEntrance(world, x, y, z, d);
 					if (!hasBuiltStargate) {
@@ -256,7 +254,7 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 	
 	public HashMap<Tuple2<Integer, Integer>, GoauldRoom> generateSchematic(Random random) {
 		HashMap<Tuple2<Integer, Integer>, GoauldRoom> rooms = new HashMap<Tuple2<Integer, Integer>, GoauldRoom>();
-		rooms.put(new Tuple2<Integer, Integer>(0, 0), new GoauldStargateRoom(new HashMap<ForgeDirection, Boolean>()));
+		rooms.put(new Tuple2<Integer, Integer>(0, 0), new GoauldStargateRoom());
 		
 		List<ForgeDirection> connections = this.generateConnections(random);
 		List<Tuple3<Integer, ForgeDirection, Integer>> growthPoints = new ArrayList<Tuple3<Integer, ForgeDirection, Integer>>();
@@ -274,18 +272,18 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 		List<Tuple3<Integer, ForgeDirection, Integer>> newGrowthPoints = new ArrayList<Tuple3<Integer, ForgeDirection, Integer>>();
 		for (Tuple3<Integer, ForgeDirection, Integer> growth : growthPoints) {
 			GoauldRoom room = (growth._1() == 0 && growth._3() == 0)
-					? new GoauldStargateRoom(new HashMap<ForgeDirection, Boolean>())
-					: new GoauldCorridor(new HashMap<ForgeDirection, Boolean>());
+					? new GoauldStargateRoom()
+					: new GoauldCorridor();
 			// Connect to the previous room
-			if (growth._2() != null) room.connections.put(growth._2(), true);
+			if (growth._2() != null) room.setConnection(growth._2(), true);
 			// Add more points for other rooms to generate from next iteration
 			if (!isLastIteration) {
 				for (ForgeDirection c : this.generateConnections(random)) {
 					if (growth._2() != null || growth._2() != c.getOpposite()) {
 						Tuple2<Integer, Integer> pos = new Tuple2<Integer, Integer>(growth._1() + c.offsetX, growth._3() + c.offsetZ);
 						// If there's already a room there, just connect to it to make it interesting
-						room.connections.put(c, true);
-						if (rooms.containsKey(pos)) rooms.get(pos).connections.put(c.getOpposite(), true);
+						room.setConnection(c, true);
+						if (rooms.containsKey(pos)) rooms.get(pos).setConnection(c.getOpposite(), true);
 						// Otherwise, add another growth point
 						else newGrowthPoints.add(new Tuple3<Integer, ForgeDirection, Integer>(pos._1(), c.getOpposite(), pos._2()));
 					}
