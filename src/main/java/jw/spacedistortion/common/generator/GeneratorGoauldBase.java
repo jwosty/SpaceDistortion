@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import jw.spacedistortion.Pair;
@@ -22,34 +23,21 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 		ForgeDirection.NORTH, ForgeDirection.SOUTH, ForgeDirection.EAST, ForgeDirection.WEST };
 	
 	public abstract class GoauldRoom {
-		// X position (in terms of rooms, not blocks)
-		public int x;
-		// Y position (in terms of rooms, not blocks)
-		public int z;
 		public HashMap<ForgeDirection, Boolean> connections;
 		
-		public GoauldRoom(int x, int z, HashMap<ForgeDirection, Boolean> connections) {
-			this.x = x;
-			this.z = z;
+		public GoauldRoom(HashMap<ForgeDirection, Boolean> connections) {
 			for (ForgeDirection d : possibleConnections) {
 				if (!connections.containsKey(d)) connections.put(d, false);
 			}
 			this.connections = connections;
 		}
 		
-		public GoauldRoom(int x, int z, ForgeDirection[] connections) {
-			this.x = x;
-			this.z = z;
-			
+		public GoauldRoom(ForgeDirection[] connections) {
 			this.connections = new HashMap<ForgeDirection, Boolean>();
 			for (ForgeDirection d : connections) this.connections.put(d, true);
 			for (ForgeDirection d : possibleConnections)
 				if (!this.connections.containsKey(d)) this.connections.put(d, false);
 		}
-		
-		public int widthHeight() { return 9; }
-		public int blockX() { return this.x * this.widthHeight(); }
-		public int blockZ() { return this.z * this.widthHeight(); }
 		
 		public abstract void buildInWorld(World world, int blockOriginX, int blockOriginY, int blockOriginZ);
 		
@@ -71,149 +59,141 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 	}
 	
 	public class GoauldCorridor extends GoauldRoom {
-		public GoauldCorridor(int x, int z, HashMap<ForgeDirection, Boolean> connections) { super(x, z, connections); }
-		public GoauldCorridor(int x, int z, ForgeDirection[] connections) { super(x, z, connections); }
+		public GoauldCorridor(HashMap<ForgeDirection, Boolean> connections) { super(connections); }
+		public GoauldCorridor(ForgeDirection[] connections) { super(connections); }
 
 		@Override
-		public void buildInWorld(World world, int blockOriginX, int blockOriginY, int blockOriginZ) {
-			int max = Math.round((float)this.widthHeight() / 2F);
-			int min = max - this.widthHeight();
-			int xo = blockOriginX + this.blockX();
-			int yo = blockOriginY;
-			int zo = blockOriginZ + this.blockZ();
-			this.buildCenter(world, xo, yo, zo);
+		public void buildInWorld(World world, int x, int y, int z) {
+			this.buildCenter(world, x, y, z);
 			for (ForgeDirection d : possibleConnections) {
 				if (this.connections.get(d)) {
-					this.buildConnection(world, xo, yo, zo, d);
+					this.buildConnection(world, x, y, z, d);
 				} else {
-					this.buildEnd(world, xo, yo, zo, d);
+					this.buildEnd(world, x, y, z, d);
 				}
 			}
 		}
 
-		private void buildCenter(World world, int xo, int yo, int zo) {
+		private void buildCenter(World world, int x, int y, int z) {
 			// Remove some blocks so torches place in the right directions
-			for (int x = -3; x < 4; x++) {
-				for (int z = -3; z < 4; z++) {
-					for (int y = -2; y < 1; y++) {
-						world.setBlockToAir(xo + x, yo + y, zo + z);
+			for (int xo = -3; xo < 4; xo++) {
+				for (int zo = -3; zo < 4; zo++) {
+					for (int yo = -2; yo < 1; yo++) {
+						world.setBlockToAir(x + xo, y + yo, z + zo);
 					}
 				}
 			}
 			// Center floor and ceiling
-			for (int x = -1; x < 2; x++) {
-				for (int z = -1; z < 2; z++) {
-					world.setBlock(xo + x, yo - 3, zo + z, Blocks.sandstone);
-					world.setBlock(xo + x, yo + 1, zo + z, Blocks.stained_hardened_clay, 1, 2);
+			for (int xo = -1; xo < 2; xo++) {
+				for (int zo = -1; zo < 2; zo++) {
+					world.setBlock(x + xo, y - 3, z + zo, Blocks.sandstone);
+					world.setBlock(x + xo, y + 1, z + zo, Blocks.stained_hardened_clay, 1, 2);
 				}
 			}
 			// Inner carpet
-			world.setBlock(xo, yo - this.widthHeight() / 2 + 2, zo, Blocks.carpet, 4, 2);
+			world.setBlock(x, y - 9 / 2 + 2, z, Blocks.carpet, 4, 2);
 			// Inner corners
-			for (int x : new int[] {-2, 2}) {
-				for (int z : new int[] {-2, 2}) {
-					for (int y = -2; y < 1; y++) {
-						world.setBlock(xo + x, yo + y, zo + z, Blocks.stained_hardened_clay, 1, 2);
+			for (int xo : new int[] {-2, 2}) {
+				for (int zo : new int[] {-2, 2}) {
+					for (int yo = -2; yo < 1; yo++) {
+						world.setBlock(x + xo, y + yo, z + zo, Blocks.stained_hardened_clay, 1, 2);
 					}
 				}
 			}
 			// Torches
-			for (int x : new int[] {-2, -1, 1, 2}) {
-				for (int z : new int[] {-2, -1, 1, 2}) {
-					if (Math.abs(x) + Math.abs(z) == 3) {
-						world.setBlock(xo + x, yo - 1, zo + z, Blocks.torch);
+			for (int xo : new int[] {-2, -1, 1, 2}) {
+				for (int zo : new int[] {-2, -1, 1, 2}) {
+					if (Math.abs(xo) + Math.abs(zo) == 3) {
+						world.setBlock(x + xo, y - 1, z + zo, Blocks.torch);
 					}
 				}
 			}
 		}
 		
-		private void buildConnection(World world, int xo, int yo, int zo, ForgeDirection direction) {
+		private void buildConnection(World world, int x, int y, int z, ForgeDirection direction) {
 			// Floor and ceiling
-			for (int x = -1; x < 2; x++) {
-				for (int z = -1; z < 2; z++) {
-					world.setBlock(xo + x + (direction.offsetX * 3), yo - 3, zo + z + (direction.offsetZ * 3), Blocks.sandstone);
+			for (int xo = -1; xo < 2; xo++) {
+				for (int zo = -1; zo < 2; zo++) {
+					world.setBlock(x + xo + (direction.offsetX * 3), y - 3, z + zo + (direction.offsetZ * 3), Blocks.sandstone);
 					world.setBlock(
-							xo + x + (direction.offsetX * 3), yo + 1, zo + z + (direction.offsetZ * 3),
+							x + xo + (direction.offsetX * 3), y + 1, z + zo + (direction.offsetZ * 3),
 							Blocks.stained_hardened_clay, 1, 2);
 				}
 			}
 			// Side wall
 			for (int a : new int[] {-2, 2}) {
-				for (int y = -2; y < 1; y++) {
+				for (int yo = -2; yo < 1; yo++) {
 					for (int b : new int[] {3, 4}) {
-						int x;
-						int z;
+						int xo;
+						int zo;
 						if (direction == ForgeDirection.NORTH || direction == ForgeDirection.SOUTH) {
-							x = a;
-							z = b * direction.offsetZ;
+							xo = a;
+							zo = b * direction.offsetZ;
 						} else {
-							x = b * direction.offsetX;
-							z = a;
+							xo = b * direction.offsetX;
+							zo = a;
 						}
-						world.setBlock(xo + x, yo + y, zo + z, Blocks.stained_hardened_clay, 1, 2);
+						world.setBlock(x + xo, y + yo, z + zo, Blocks.stained_hardened_clay, 1, 2);
 					}
 				}
 			}
 			// Remove any remaining blocks inside the corridor
 			for (int s = -1; s < 2; s++) {
-				for (int y = -2; y < 1; y++) {
-					world.setBlockToAir(xo + this.getbx(direction, s, 4), yo + y, zo + this.getbz(direction, s, 4));
+				for (int yo = -2; yo < 1; yo++) {
+					world.setBlockToAir(x + this.getbx(direction, s, 4), y + yo, z + this.getbz(direction, s, 4));
 				}
 			}
 			// Add carpet
 			for (int f = 1; f < 5; f++) {
-				world.setBlock(xo + this.getbx(direction, 0, f), yo - 2, zo + this.getbz(direction, 0, f), Blocks.carpet, 4, 2);
+				world.setBlock(x + this.getbx(direction, 0, f), y - 2, z + this.getbz(direction, 0, f), Blocks.carpet, 4, 2);
 			}
 		}
 		
-		private void buildEnd(World world, int xo, int yo, int zo, ForgeDirection direction) {
+		private void buildEnd(World world, int x, int y, int z, ForgeDirection direction) {
 			for (int a = -1; a < 2; a++) {
 				// Floor and ceiling portion
-				for (int y : new int[] {-3, 1}) {
-					world.setBlock(xo + this.getbx(direction, a, 2), yo + y, zo + this.getbz(direction, a, 2),
+				for (int yo : new int[] {-3, 1}) {
+					world.setBlock(x + this.getbx(direction, a, 2), y + yo, z + this.getbz(direction, a, 2),
 							Blocks.stained_hardened_clay, 1, 2);
 				}
 				// Back edge
-				for (int y = -2; y < 1; y++) {
-					world.setBlock(xo + this.getbx(direction, a, 3), yo + y, zo + this.getbz(direction, a, 3),
+				for (int yo = -2; yo < 1; yo++) {
+					world.setBlock(x + this.getbx(direction, a, 3), y + yo, z + this.getbz(direction, a, 3),
 							Blocks.stained_hardened_clay, 1, 2);
 				}
 			}
 			// Decoration blocks (walls are now completely sealed at this point)
-			int xo_0_2 = xo + this.getbx(direction, 0, 2);
-			int zo_0_2 = zo + this.getbz(direction, 0, 2);
-			world.setBlock(xo_0_2, yo - 2, zo_0_2, Blocks.stained_hardened_clay, 1, 2);
-			world.setBlock(xo_0_2, yo - 1, zo_0_2, Blocks.gold_block);
-			world.setBlock(xo_0_2, yo, zo_0_2, Blocks.stained_hardened_clay, 1, 2);
-			int xo_0_1 = xo + this.getbx(direction, 0, 1);
-			int zo_0_1 = zo + this.getbz(direction, 0, 1);
-			world.setBlock(xo_0_1, yo - 2, zo_0_1, Blocks.gold_block);
-			world.setBlock(xo_0_1, yo, zo_0_1, Blocks.quartz_block);
+			int xo_0_2 = x + this.getbx(direction, 0, 2);
+			int zo_0_2 = z + this.getbz(direction, 0, 2);
+			world.setBlock(xo_0_2, y - 2, zo_0_2, Blocks.stained_hardened_clay, 1, 2);
+			world.setBlock(xo_0_2, y - 1, zo_0_2, Blocks.gold_block);
+			world.setBlock(xo_0_2, y, zo_0_2, Blocks.stained_hardened_clay, 1, 2);
+			int xo_0_1 = x + this.getbx(direction, 0, 1);
+			int zo_0_1 = z + this.getbz(direction, 0, 1);
+			world.setBlock(xo_0_1, y - 2, zo_0_1, Blocks.gold_block);
+			world.setBlock(xo_0_1, y, zo_0_1, Blocks.quartz_block);
 		}
 	}
 	
 	public class GoauldStargateRoom extends GoauldRoom {
-		public GoauldStargateRoom(int x, int z, HashMap<ForgeDirection, Boolean> connections) { super(x, z, connections); }
-		public GoauldStargateRoom(int x, int z, ForgeDirection[] connections) { super(x, z, connections); }
+		public GoauldStargateRoom(HashMap<ForgeDirection, Boolean> connections) { super(connections); }
+		public GoauldStargateRoom(ForgeDirection[] connections) { super(connections); }
 
 		@Override
-		public void buildInWorld(World world, int blockOriginX, int blockOriginY, int blockOriginZ) {
-			int xo = this.x + blockOriginX;
-			int yo = blockOriginY;
-			int zo = this.z + blockOriginZ;
+		public void buildInWorld(World world, int x, int y, int z) {
 			// First, build a big box and clear out the center
-			for (int x = -4; x < 5; x++) {
-				for (int y = -4; y < 5; y++) {
-					for (int z = -4; z < 5; z++) {
-						if (y == -4) {
+			for (int xo = -4; xo < 5; xo++) {
+				for (int yo = -4; yo < 5; yo++) {
+					for (int zo = -4; zo < 5; zo++) {
+						if (yo == -4) {
 							// Floor
-							world.setBlock(xo + x, yo + y, zo + z, Blocks.sandstone);
-						} else if (y == 4 || Math.abs(x) == 4 || Math.abs(z) == 4) {
+							world.setBlock(x + xo, y + yo, z + zo, Blocks.sandstone);
+						} else if (yo == 4 || Math.abs(xo) == 4 || Math.abs(zo) == 4) {
 							// Walls and ceiling
-							world.setBlock(xo + x, yo + y, zo + z, Blocks.stained_hardened_clay, 1, 2);
+							world.setBlock(x + xo, y + yo, z + zo, Blocks.stained_hardened_clay, 1, 2);
 						} else {
 							// Inside space
-							world.setBlockToAir(xo + x, yo + y, zo + z);
+							world.setBlockToAir(x + xo, y + yo, z + zo);
 						}
 					}
 				}
@@ -222,37 +202,37 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 			for (ForgeDirection d : possibleConnections) {
 				if (connections.get(d)) {
 					// Cut out an entrance
-					this.buildEntrance(world, xo, yo, zo, d);
+					this.buildEntrance(world, x, y, z, d);
 					if (!hasBuiltStargate) {
 						// Add the stargate
 						int sign = (d == ForgeDirection.NORTH || d == ForgeDirection.EAST) ? 1 : -1; 
 						Structure s = new Structure(
-								xo + this.getbx(d, 3 * sign, -2), yo + 2, zo + this.getbz(d, 3 * sign, -2), d,
+								x + this.getbx(d, 3 * sign, -2), y + 2, z + this.getbz(d, 3 * sign, -2), d,
 								SpaceDistortion.stargateRingShape, SpaceDistortion.templateBlockInfo, 0, 0);
 						s.addToWorld(world);
-						world.setBlock(xo + this.getbx(d, sign, -1), yo - 4, zo + this.getbz(d, sign, -1), SDBlock.stargateController,
+						world.setBlock(x + this.getbx(d, sign, -1), y - 4, z + this.getbz(d, sign, -1), SDBlock.stargateController,
 								ForgeDirection.UP.ordinal(), 3);
 						hasBuiltStargate = true;
 					}
 				}
 			}
 			// Add torches
-			for (int x : new int[] {-3,-2,2,3}) {
-				for (int z : new int[] {-3,-2,2,3}) {
-					if (Math.abs(x) != Math.abs(z) && world.getBlock(xo + x, yo - 1, zo + z) == Blocks.air) {
-						world.setBlock(xo + x, yo - 1, zo + z, Blocks.torch);
+			for (int xo : new int[] {-3,-2,2,3}) {
+				for (int zo : new int[] {-3,-2,2,3}) {
+					if (Math.abs(xo) != Math.abs(zo) && world.getBlock(x + xo, y - 1, z + zo) == Blocks.air) {
+						world.setBlock(x + xo, y - 1, z + zo, Blocks.torch);
 					}
 				}
 			}
 		}
 		
-		public void buildEntrance(World world, int xo, int yo, int zo, ForgeDirection direction) {
+		public void buildEntrance(World world, int x, int y, int z, ForgeDirection direction) {
 			// Carve the entrance hole
 			for (int s = -1; s < 2; s++) {
-				for (int y = -2; y < 1; y++) {
-					world.setBlockToAir(xo + this.getbx(direction, s, 4), yo + y, zo + this.getbz(direction, s, 4));
+				for (int yo = -2; yo < 1; yo++) {
+					world.setBlockToAir(x + this.getbx(direction, s, 4), y + yo, z + this.getbz(direction, s, 4));
 				}
-				world.setBlock(xo + this.getbx(direction, s, 4), yo - 3, zo + this.getbz(direction, s, 4), Blocks.stone_slab, 1, 2);
+				world.setBlock(x + this.getbx(direction, s, 4), y - 3, z + this.getbz(direction, s, 4), Blocks.stone_slab, 1, 2);
 			}
 		}
 	}
@@ -270,51 +250,41 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 	}
 	
 	public void generate(Random random, int x, int y, int z, World world) {
-		List<GoauldRoom> rooms = this.generateSchematic(random);
+		HashMap<Pair<Integer, Integer>, GoauldRoom> rooms = this.generateSchematic(random);
 		this.buildSchematicInWorld(world, x, y, z, rooms);
 	}
 	
-	public List<GoauldRoom> generateSchematic(Random random) {
-		List<GoauldRoom> rooms = new ArrayList<GoauldRoom>();
-		rooms.add(new GoauldStargateRoom(0, 0, new HashMap<ForgeDirection, Boolean>()));
+	public HashMap<Pair<Integer, Integer>, GoauldRoom> generateSchematic(Random random) {
+		HashMap<Pair<Integer, Integer>, GoauldRoom> rooms = new HashMap<Pair<Integer, Integer>, GoauldRoom>();
+		rooms.put(new Pair<Integer, Integer>(0, 0), new GoauldStargateRoom(new HashMap<ForgeDirection, Boolean>()));
 		
 		List<ForgeDirection> connections = this.generateConnections(random);
 		List<Triplet<Integer, ForgeDirection, Integer>> growthPoints = new ArrayList<Triplet<Integer, ForgeDirection, Integer>>();
 		growthPoints.add(new Triplet<Integer, ForgeDirection, Integer>(0, null, 0));
 		for (int i = 0; i < 5; i++) {
-			growthPoints = this.doSingleSchematicIteration(random, growthPoints, rooms);
+			growthPoints = this.doSingleSchematicIteration(random, growthPoints, rooms, i >= 5);
 		}
 		return rooms;
 	}
 	
 	// Performs one schematic iteration, adding rooms and returning the new growth points
-	public List<Triplet<Integer, ForgeDirection, Integer>> doSingleSchematicIteration(Random random, List<Triplet<Integer, ForgeDirection, Integer>> growthPoints, List<GoauldRoom> rooms) {
+	public List<Triplet<Integer, ForgeDirection, Integer>> doSingleSchematicIteration(
+			Random random, List<Triplet<Integer, ForgeDirection, Integer>> growthPoints, HashMap<Pair<Integer, Integer>, GoauldRoom> rooms, boolean isLastIteration) {
 		List<Triplet<Integer, ForgeDirection, Integer>> newGrowthPoints = new ArrayList<Triplet<Integer, ForgeDirection, Integer>>();
 		for (Triplet<Integer, ForgeDirection, Integer> growth : growthPoints) {
 			// Connect to the previous room
 			HashMap<ForgeDirection, Boolean> connections = new HashMap<ForgeDirection, Boolean>();
 			if (growth.Y != null) connections.put(growth.Y, true);
-			GoauldRoom room = (growth.X == 0 && growth.Z == 0) ?
-					new GoauldStargateRoom(growth.X, growth.Z, connections) : new GoauldCorridor(growth.X, growth.Z, connections);
+			GoauldRoom room = (growth.X == 0 && growth.Z == 0) ? new GoauldStargateRoom(connections) : new GoauldCorridor(connections);
 			// Add more points for other rooms to generate from next iteration
 			for (ForgeDirection c : this.generateConnections(random)) {
-				int rx = room.x + c.offsetX;
-				int rz = room.z + c.offsetZ;
-				// Make sure there isn't already a room there
-				boolean isValid = true;
-				for (GoauldRoom r : rooms) { 
-					if (rx == r.x && rz == r.z) {
-						isValid = false;
-						break;
-					}
-				}
-				if (isValid) {
+				if (!rooms.containsKey(new Pair<Integer, Integer>(growth.X + c.offsetX, growth.Z + c.offsetZ))) {
 					room.connections.put(c, true);
-					newGrowthPoints.add(new Triplet<Integer, ForgeDirection, Integer>(rx, c.getOpposite(), rz));
+					newGrowthPoints.add(new Triplet<Integer, ForgeDirection, Integer>(growth.X + c.offsetX, c.getOpposite(), growth.Z + c.offsetZ));
 				}
 			}
 			// Finalize this room
-			rooms.add(room);
+			rooms.put(new Pair<Integer, Integer>(growth.X, growth.Z), room);
 		}
 		return newGrowthPoints;
 	}
@@ -347,9 +317,10 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 		return result;
 	}
 	
-	public void buildSchematicInWorld(World world, int originX, int originY, int originZ, List<GoauldRoom> rooms) {
-		for (GoauldRoom room : rooms) {
-			room.buildInWorld(world, originX, originY, originZ);
+	public void buildSchematicInWorld(World world, int originX, int originY, int originZ, HashMap<Pair<Integer, Integer>, GoauldRoom> rooms) {
+		for (Map.Entry<Pair<Integer, Integer>, GoauldRoom> entry : rooms.entrySet()) {
+			Pair<Integer, Integer> roomCoords = entry.getKey();
+			entry.getValue().buildInWorld(world, originX + (roomCoords.X * 9), originY, originZ + (roomCoords.Y * 9));
 		}
 	}
 }
