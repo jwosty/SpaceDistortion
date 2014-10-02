@@ -256,7 +256,6 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 		HashMap<Tuple2<Integer, Integer>, GoauldRoom> rooms = new HashMap<Tuple2<Integer, Integer>, GoauldRoom>();
 		rooms.put(new Tuple2<Integer, Integer>(0, 0), new GoauldStargateRoom());
 		
-		List<ForgeDirection> connections = this.generateConnections(random);
 		List<Tuple3<Integer, ForgeDirection, Integer>> growthPoints = new ArrayList<Tuple3<Integer, ForgeDirection, Integer>>();
 		growthPoints.add(new Tuple3<Integer, ForgeDirection, Integer>(0, null, 0));
 		int depth = 8;
@@ -278,14 +277,18 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 			if (growth._2() != null) room.setConnection(growth._2(), true);
 			// Add more points for other rooms to generate from next iteration
 			if (!isLastIteration) {
-				for (ForgeDirection c : this.generateConnections(random)) {
-					if (growth._2() != null || growth._2() != c.getOpposite()) {
-						Tuple2<Integer, Integer> pos = new Tuple2<Integer, Integer>(growth._1() + c.offsetX, growth._3() + c.offsetZ);
-						// If there's already a room there, just connect to it to make it interesting
-						room.setConnection(c, true);
-						if (rooms.containsKey(pos)) rooms.get(pos).setConnection(c.getOpposite(), true);
-						// Otherwise, add another growth point
-						else newGrowthPoints.add(new Tuple3<Integer, ForgeDirection, Integer>(pos._1(), c.getOpposite(), pos._2()));
+				boolean[] connections = this.generateConnections(random);
+				for (int i = 0; i < connections.length; i++) {
+					if (connections[i]) {
+						ForgeDirection c = ForgeDirection.getOrientation(i + 2);
+						if (growth._2() != null || growth._2() != c.getOpposite()) {
+							Tuple2<Integer, Integer> pos = new Tuple2<Integer, Integer>(growth._1() + c.offsetX, growth._3() + c.offsetZ);
+							// If there's already a room there, just connect to it to make it interesting
+							room.setConnection(c, true);
+							if (rooms.containsKey(pos)) rooms.get(pos).setConnection(c.getOpposite(), true);
+							// Otherwise, add another growth point
+							else newGrowthPoints.add(new Tuple3<Integer, ForgeDirection, Integer>(pos._1(), c.getOpposite(), pos._2()));
+						}
 					}
 				}
 			}
@@ -303,13 +306,13 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 		else return 3;
 	}
 	
-	public List<ForgeDirection> generateConnections(Random random) {
+	public boolean[] generateConnections(Random random) {
 		int nConnections = this.getWeightedInt(random);
-		List<ForgeDirection> connections = new ArrayList<ForgeDirection>();
+		boolean[] connections = new boolean[4];
 		List<ForgeDirection> possibleConnectionsL = new ArrayList<ForgeDirection>(Arrays.asList(possibleConnections));
 		for (int times = 0; times < nConnections; times++) {
 			int i = random.nextInt(possibleConnectionsL.size());
-			connections.add(possibleConnectionsL.get(i));
+			connections[possibleConnectionsL.get(i).ordinal() - 2] = true;
 			possibleConnectionsL.remove(i);
 		}
 		return connections;
