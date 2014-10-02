@@ -254,7 +254,6 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 	
 	public HashMap<Tuple2<Integer, Integer>, GoauldRoom> generateSchematic(Random random) {
 		HashMap<Tuple2<Integer, Integer>, GoauldRoom> rooms = new HashMap<Tuple2<Integer, Integer>, GoauldRoom>();
-		rooms.put(new Tuple2<Integer, Integer>(0, 0), new GoauldStargateRoom());
 		
 		List<Tuple3<Integer, ForgeDirection, Integer>> growthPoints = new ArrayList<Tuple3<Integer, ForgeDirection, Integer>>();
 		growthPoints.add(new Tuple3<Integer, ForgeDirection, Integer>(0, null, 0));
@@ -270,30 +269,41 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 			Random random, List<Tuple3<Integer, ForgeDirection, Integer>> growthPoints, HashMap<Tuple2<Integer, Integer>, GoauldRoom> rooms, boolean isLastIteration) {
 		List<Tuple3<Integer, ForgeDirection, Integer>> newGrowthPoints = new ArrayList<Tuple3<Integer, ForgeDirection, Integer>>();
 		for (Tuple3<Integer, ForgeDirection, Integer> growth : growthPoints) {
-			GoauldRoom room = (growth._1() == 0 && growth._3() == 0)
-					? new GoauldStargateRoom()
-					: new GoauldCorridor();
+			Tuple2<Integer, Integer> roomPos = new Tuple2<Integer, Integer>(growth._1(), growth._3());
+			boolean[] connections;
+			GoauldRoom room;
+			if (rooms.containsKey(roomPos)) {
+				room = rooms.get(roomPos);
+				connections = new boolean[0];
+			} else {
+				room = (growth._1() == 0 && growth._3() == 0) ? new GoauldStargateRoom() : new GoauldCorridor();
+				rooms.put(roomPos, room);
+				connections = this.generateConnections(random);
+			}
 			// Connect to the previous room
 			if (growth._2() != null) room.setConnection(growth._2(), true);
 			// Add more points for other rooms to generate from next iteration
 			if (!isLastIteration) {
-				boolean[] connections = this.generateConnections(random);
 				for (int i = 0; i < connections.length; i++) {
 					if (connections[i]) {
 						ForgeDirection c = ForgeDirection.getOrientation(i + 2);
 						if (growth._2() != null || growth._2() != c.getOpposite()) {
 							Tuple2<Integer, Integer> pos = new Tuple2<Integer, Integer>(growth._1() + c.offsetX, growth._3() + c.offsetZ);
-							// If there's already a room there, just connect to it to make it interesting
-							room.setConnection(c, true);
-							if (rooms.containsKey(pos)) rooms.get(pos).setConnection(c.getOpposite(), true);
+							// If there's already a room there, connect it 50% of the time
+							if (rooms.containsKey(pos)) {
+								if (random.nextInt() % 4 == 0) {
+									rooms.get(pos).setConnection(c.getOpposite(), true);
+									room.setConnection(c, true);
+								}
+							} else { 
 							// Otherwise, add another growth point
-							else newGrowthPoints.add(new Tuple3<Integer, ForgeDirection, Integer>(pos._1(), c.getOpposite(), pos._2()));
+								newGrowthPoints.add(new Tuple3<Integer, ForgeDirection, Integer>(pos._1(), c.getOpposite(), pos._2()));
+								room.setConnection(c, true);
+							}
 						}
 					}
 				}
 			}
-			// Finalize this room
-			rooms.put(new Tuple2<Integer, Integer>(growth._1(), growth._3()), room);
 		}
 		return newGrowthPoints;
 	}
