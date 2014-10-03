@@ -40,17 +40,17 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 		
 		protected int getbx(ForgeDirection direction, int sidewaysDistance, int forwardDistance) {
 			if (direction == ForgeDirection.NORTH || direction == ForgeDirection.SOUTH) {
-				return sidewaysDistance;
+				return sidewaysDistance * -direction.offsetZ;
 			} else {
 				return forwardDistance * direction.offsetX;
 			}
 		}
 		
-		protected int getbz(ForgeDirection direction, int a, int factor) {
-			if (direction == ForgeDirection.NORTH || direction == ForgeDirection.SOUTH) {
-				return factor * direction.offsetZ;
+		protected int getbz(ForgeDirection direction, int sidewaysDistance, int forwardDistance) {
+			if (direction == ForgeDirection.WEST || direction == ForgeDirection.EAST) {
+				return sidewaysDistance * direction.offsetX;
 			} else {
-				return a;
+				return forwardDistance * direction.offsetZ;
 			}
 		}
 	}
@@ -311,7 +311,7 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 			}
 			// Walls
 			for (int yo = -2; yo < 1; yo++) {
-				world.setBlock(x + this.getbx(d, -2, 4), y + yo, z + this.getbz(d, -2, 4), Blocks.stained_hardened_clay, 1, 2);
+				world.setBlock(x + this.getbx(d, -2, 4), y + yo, z + this.getbz(d, -2, 4), Blocks.stained_hardened_clay, 2, 2);
 				world.setBlock(x + this.getbx(d, 2, 4), y + yo, z + this.getbz(d, 2, 4), Blocks.stained_hardened_clay, 1, 2);
 			}
 		}
