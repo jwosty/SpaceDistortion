@@ -15,7 +15,7 @@ public class ItemStargateRingFormer extends SDItem {
 			int bx = x + fside.offsetX;
 			int by = y + fside.offsetY + 4;
 			int bz = z + fside.offsetZ;
-			SpaceDistortion.goauldBaseGen.generate(this.itemRand, x, y + 4, z, world);
+			SpaceDistortion.goauldBaseGen.generate(this.itemRand, x, y + 3, z, world);
 			/*
 			new Structure(bx, by, bz, ForgeDirection.getOrientation(BlockPistonBase.determineOrientation(world, bx, by, bz, player)),
 					SpaceDistortion.stargateRingShape, SpaceDistortion.templateBlockInfo, -6, -3).addToWorld(world);;

@@ -23,9 +23,9 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 		ForgeDirection.NORTH, ForgeDirection.SOUTH, ForgeDirection.EAST, ForgeDirection.WEST };
 	
 	public abstract class GoauldRoom {
-		public boolean[] connections = new boolean[4];
+		public boolean[] connections;
 		
-		public GoauldRoom() { }
+		public GoauldRoom() { connections = new boolean[4]; }
 		
 		public GoauldRoom(boolean[] connections) {
 			this.connections = connections;
@@ -235,6 +235,58 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 		}
 	}
 	
+	public class GoauldRingRoom extends GoauldRoom {
+		public GoauldRingRoom() { super(); }
+		public GoauldRingRoom(boolean[] connections) { super(connections); }
+		
+		@Override
+		public void buildInWorld(World world, int x, int y, int z) {
+			this.buildCorridor(world, x, y, z);
+			this.buildRingArea(world, x, y, z);
+		}
+		
+		public void buildCorridor(World world, int x, int y, int z) {
+			// Floor and ceiling
+			for (int xo = -3; xo < 4; xo++) {
+				for (int zo = -3; zo < 4; zo++) {
+					if (Math.abs(xo) + Math.abs(zo) != 6) {
+						world.setBlock(x + xo, y - 3, z + zo, Blocks.sandstone);
+						world.setBlock(x + xo, y + 1, z + zo, Blocks.stained_hardened_clay, 1, 2);
+					}
+				}
+			}
+			// Corners
+			for (int xo : new int[] { -3, -2, 2, 3 }) {
+				for (int yo = -2; yo < 1; yo++) {
+					for (int zo : new int[] { -3, -2, 2, 3 }) {
+						if (Math.abs(xo) + Math.abs(zo) == 5) {
+							world.setBlock(x + xo, y + yo, zo + z, Blocks.stained_hardened_clay, 1, 2);
+						}
+					}
+				}
+			}
+			// Torches
+			for (int xo : new int[] { -3, -1, 1, 3 })
+				for (int zo : new int[] { -3, -1, 1, 3 }) {
+					if (Math.abs(xo) + Math.abs(zo) == 4) {
+						world.setBlock(x + xo, y - 1, z + zo, Blocks.torch);
+					}
+				}
+		}
+		
+		public void buildEnd(World world, int x, int y, int z) {
+			
+		}
+		
+		public void buildConnection(World world, int x, int y, int z) {
+			
+		}
+		
+		public void buildRingArea(World world, int x, int y, int z) {
+			
+		}
+	}
+	
 	public GoauldRoom[] rooms;
 	
 	public GeneratorGoauldBase() { }
@@ -255,12 +307,16 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 	public HashMap<Tuple2<Integer, Integer>, GoauldRoom> generateSchematic(Random random) {
 		HashMap<Tuple2<Integer, Integer>, GoauldRoom> rooms = new HashMap<Tuple2<Integer, Integer>, GoauldRoom>();
 		
+		rooms.put(new Tuple2<Integer, Integer>(0, 0), new GoauldRingRoom(new boolean[]{ true, false, true, false }));
+		
+		/*
 		List<Tuple3<Integer, ForgeDirection, Integer>> growthPoints = new ArrayList<Tuple3<Integer, ForgeDirection, Integer>>();
 		growthPoints.add(new Tuple3<Integer, ForgeDirection, Integer>(0, null, 0));
 		int depth = 8;
 		for (int i = 0; i < depth; i++) {
 			growthPoints = this.doSingleSchematicIteration(random, growthPoints, rooms, i >= (depth - 1));
 		}
+		*/
 		return rooms;
 	}
 	
