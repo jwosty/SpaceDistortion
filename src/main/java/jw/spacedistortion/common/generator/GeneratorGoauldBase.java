@@ -7,9 +7,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import jw.spacedistortion.common.EntitySpawnPreventer;
 import jw.spacedistortion.common.SpaceDistortion;
 import jw.spacedistortion.common.block.SDBlock;
 import jw.spacedistortion.common.block.Structure;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkProvider;
@@ -427,9 +429,12 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 	}
 	
 	public void buildSchematicInWorld(World world, int originX, int originY, int originZ, HashMap<Tuple2<Integer, Integer>, GoauldRoom> rooms) {
+		EntitySpawnPreventer preventer = new EntitySpawnPreventer(true);
+		preventer.filter = EntityItem.class;
 		for (Map.Entry<Tuple2<Integer, Integer>, GoauldRoom> entry : rooms.entrySet()) {
 			Tuple2<Integer, Integer> roomCoords = entry.getKey();
 			entry.getValue().buildInWorld(world, originX + (roomCoords._1 * 9), originY, originZ + (roomCoords._2 * 9));
 		}
+		preventer.unregister();
 	}
 }
