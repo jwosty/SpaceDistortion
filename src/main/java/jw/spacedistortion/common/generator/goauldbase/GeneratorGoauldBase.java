@@ -40,16 +40,13 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 	public HashMap<Tuple2<Integer, Integer>, GoauldRoom> generateSchematic(Random random) {
 		HashMap<Tuple2<Integer, Integer>, GoauldRoom> rooms = new HashMap<Tuple2<Integer, Integer>, GoauldRoom>();
 		
-		rooms.put(new Tuple2<Integer, Integer>(0, 0), new GoauldRingRoom(new boolean[]{ true, true, true, true }));
-		
-		/*
 		List<Tuple3<Integer, ForgeDirection, Integer>> growthPoints = new ArrayList<Tuple3<Integer, ForgeDirection, Integer>>();
 		growthPoints.add(new Tuple3<Integer, ForgeDirection, Integer>(0, null, 0));
 		int depth = 8;
 		for (int i = 0; i < depth; i++) {
 			growthPoints = this.doSingleSchematicIteration(random, growthPoints, rooms, i >= (depth - 1));
 		}
-		*/
+		
 		return rooms;
 	}
 	
@@ -65,7 +62,8 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 				room = rooms.get(roomPos);
 				connections = new boolean[0];
 			} else {
-				room = (growth._1() == 0 && growth._3() == 0) ? new GoauldStargateRoom() : new GoauldCorridor();
+				room = (growth._1() == 0 && growth._3() == 0) ? new GoauldStargateRoom()
+					: (random.nextInt() % 8 == 0) ? new GoauldRingRoom() : new GoauldCorridor();
 				rooms.put(roomPos, room);
 				connections = this.generateConnections(random);
 			}

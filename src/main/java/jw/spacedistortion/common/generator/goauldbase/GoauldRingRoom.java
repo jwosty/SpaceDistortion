@@ -54,6 +54,8 @@ public class GoauldRingRoom extends GoauldRoom {
 				}
 			}
 		}
+		// Inner carpet
+		world.setBlock(x, y - 9 / 2 + 2, z, Blocks.carpet, 4, 2);
 		// Torches
 		for (int xo : new int[] { -3, -1, 1, 3 }) {
 			for (int zo : new int[] { -3, -1, 1, 3 }) {
@@ -82,8 +84,12 @@ public class GoauldRingRoom extends GoauldRoom {
 		}
 		// Walls
 		for (int yo = -2; yo < 1; yo++) {
-			world.setBlock(x + this.getbx(d, -2, 4), y + yo, z + this.getbz(d, -2, 4), Blocks.stained_hardened_clay, 2, 2);
+			world.setBlock(x + this.getbx(d, -2, 4), y + yo, z + this.getbz(d, -2, 4), Blocks.stained_hardened_clay, 1, 2);
 			world.setBlock(x + this.getbx(d, 2, 4), y + yo, z + this.getbz(d, 2, 4), Blocks.stained_hardened_clay, 1, 2);
+		}
+		// Add carpet
+		for (int f = 1; f < 5; f++) {
+			world.setBlock(x + this.getbx(d, 0, f), y - 2, z + this.getbz(d, 0, f), Blocks.carpet, 4, 2);
 		}
 	}
 	
