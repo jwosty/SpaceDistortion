@@ -1,5 +1,7 @@
 package jw.spacedistortion.common.generator.goauldbase;
 
+import jw.spacedistortion.common.block.SDBlock;
+import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -86,6 +88,55 @@ public class GoauldRingRoom extends GoauldRoom {
 	}
 	
 	public void buildRingArea(World world, int x, int y, int z) {
-		
+		// Ladder-bounding blocks
+		world.setBlock(x + 2, y + 2, z + 3, Blocks.stained_hardened_clay, 1, 2);
+		world.setBlock(x + 3, y + 2, z + 2, Blocks.stained_hardened_clay, 1, 2);
+		// Ladders
+		for (int yo = -2; yo < 3; yo++) {
+			world.setBlock(x + 2, y + yo, z + 2, Blocks.ladder, 4, 2);
+		}
+		for (int xo = -2; xo < 3; xo++) {
+			for (int yo = 2; yo < 7; yo++) {
+				for (int zo = -1; zo < 3; zo++) {
+					if (yo == 2) {
+						// Floor and ring
+						if (!(xo == 2 && zo == 2)) {
+							Block b;
+							int meta = 0;
+							if (xo == 1 || xo == -2 || (xo != 2 && (zo == -1 || zo == 2))) {
+								b = SDBlock.ringPlatform;
+							} else {
+								b = Blocks.stained_hardened_clay;
+								meta = 1;
+							}
+							world.setBlock(x + xo, y + yo, z + zo, b, meta, 2);
+						}
+					} else if (yo == 6) {
+						// Ceiling
+						world.setBlock(x + xo, y + yo, z + zo, Blocks.stained_hardened_clay, 1, 2);
+					} else {
+						world.setBlockToAir(x + xo, y + yo, z + zo);
+					}
+				}
+			}
+		}
+		for (int yo = 3; yo < 6; yo++) {
+			for (int zo = -1; zo < 3; zo++) {
+					world.setBlock(x + 3, y + yo, z + zo, Blocks.stained_hardened_clay, 1, 2);
+					world.setBlock(x - 3, y + yo, z + zo, Blocks.stained_hardened_clay, 1, 2);
+			}
+			for (int xo = -2; xo < 3; xo++) {
+				// Redstone lamp
+				if (xo == 0 && yo == 4) {
+					world.setBlock(x + xo, y + yo, z - 2, Blocks.redstone_lamp);
+					world.setBlock(x + xo, y + yo, z - 3, Blocks.lever, 12, 3);
+					world.setBlock(x - xo, y + yo, z + 3, Blocks.redstone_lamp);
+					world.setBlock(x - xo, y + yo, z + 4, Blocks.lever, 11, 3);
+				} else {
+					world.setBlock(x + xo, y + yo, z - 2, Blocks.stained_hardened_clay, 1, 2);
+					world.setBlock(x + xo, y + yo, z + 3, Blocks.stained_hardened_clay, 1, 2);
+				}
+			}
+		}
 	}
 }
