@@ -321,10 +321,9 @@ public class BlockStargateController extends SDBlock implements ITileEntityProvi
 			TileEntityStargateController tileEntity = (TileEntityStargateController) world.getTileEntity(x, y, z);
 			if (tileEntity.state instanceof StargateControllerState.StargateControllerValid) {
 				player.openGui(SpaceDistortion.instance, 0, world, x, y, z);
-				return true;
 			}
 		}
-		return false;
+		return true;
 	}
 	
 	@SideOnly(Side.CLIENT)

@@ -2,6 +2,8 @@ package jw.spacedistortion.common.item;
 
 
 import jw.spacedistortion.common.SpaceDistortion;
+import jw.spacedistortion.common.block.Structure;
+import net.minecraft.block.BlockPistonBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
@@ -13,13 +15,10 @@ public class ItemStargateRingFormer extends SDItem {
 		if (!world.isRemote) {
 			ForgeDirection fside = ForgeDirection.getOrientation(side);
 			int bx = x + fside.offsetX;
-			int by = y + fside.offsetY + 4;
+			int by = y + fside.offsetY;
 			int bz = z + fside.offsetZ;
-			SpaceDistortion.goauldBaseGen.generate(this.itemRand, x, y + 3, z, world);
-			/*
 			new Structure(bx, by, bz, ForgeDirection.getOrientation(BlockPistonBase.determineOrientation(world, bx, by, bz, player)),
 					SpaceDistortion.stargateRingShape, SpaceDistortion.templateBlockInfo, -6, -3).addToWorld(world);;
-			*/
 		}
 		return true;
 	}
