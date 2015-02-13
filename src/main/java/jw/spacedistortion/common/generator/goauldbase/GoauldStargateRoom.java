@@ -1,5 +1,7 @@
 package jw.spacedistortion.common.generator.goauldbase;
 
+import java.util.Random;
+
 import jw.spacedistortion.common.SpaceDistortion;
 import jw.spacedistortion.common.block.SDBlock;
 import jw.spacedistortion.common.block.Structure;
@@ -12,7 +14,7 @@ public class GoauldStargateRoom extends GoauldRoom {
 	public GoauldStargateRoom(boolean[] connections) { super(connections); }
 
 	@Override
-	public void buildInWorld(World world, int x, int y, int z) {
+	public void buildInWorld(Random rand, World world, int x, int y, int z) {
 		// First, build a big box and clear out the center
 		for (int xo = -4; xo < 5; xo++) {
 			for (int yo = -4; yo < 5; yo++) {

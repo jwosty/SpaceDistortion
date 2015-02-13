@@ -8,9 +8,11 @@ import java.util.Map;
 import java.util.Random;
 
 import jw.spacedistortion.common.EntitySpawnPreventer;
+import jw.spacedistortion.common.SpaceDistortion;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkProvider;
+import net.minecraftforge.common.ChestGenHooks;
 import net.minecraftforge.common.util.ForgeDirection;
 import scala.Tuple2;
 import scala.Tuple3;
@@ -27,14 +29,18 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 	@Override
 	public void generate(Random random, int chunkX, int chunkZ, World world,
 			IChunkProvider chunkGenerator, IChunkProvider chunkProvider) {
-		if (chunkX == 0 && chunkZ == 0) {
-			this.generate(random, chunkX * 16, 20, chunkZ * 16, world);
+		// 0.5% origin occurrence per chunk -- note that this is the central room, not overall likelihood of stumbling into a base per chunk
+		if (world.provider.dimensionId == 0 && random.nextInt(200) == 0) {
+			int xOffset = (chunkX << 4) + random.nextInt(16);
+			int yOffset = random.nextInt(32) + 8;
+			int zOffset = (chunkZ << 4) + random.nextInt(16);
+			this.generate(random, xOffset, yOffset, zOffset, world);
 		}
 	}
 	
-	public void generate(Random random, int x, int y, int z, World world) {
-		HashMap<Tuple2<Integer, Integer>, GoauldRoom> rooms = this.generateSchematic(random);
-		this.buildSchematicInWorld(world, x, y, z, rooms);
+	public void generate(Random rand, int x, int y, int z, World world) {
+		HashMap<Tuple2<Integer, Integer>, GoauldRoom> rooms = this.generateSchematic(rand);
+		this.buildSchematicInWorld(rand, world, x, y, z, rooms);
 	}
 	
 	public HashMap<Tuple2<Integer, Integer>, GoauldRoom> generateSchematic(Random random) {
@@ -123,12 +129,13 @@ public class GeneratorGoauldBase implements IWorldGenerator {
 		return result;
 	}
 	
-	public void buildSchematicInWorld(World world, int originX, int originY, int originZ, HashMap<Tuple2<Integer, Integer>, GoauldRoom> rooms) {
+	public void buildSchematicInWorld(Random rand, World world, int originX, int originY, int originZ, HashMap<Tuple2<Integer, Integer>, GoauldRoom> rooms) {
 		EntitySpawnPreventer preventer = new EntitySpawnPreventer(true);
 		preventer.filter = EntityItem.class;
+		ChestGenHooks info = ChestGenHooks.getInfo(SpaceDistortion.genGoauldCorridor);
 		for (Map.Entry<Tuple2<Integer, Integer>, GoauldRoom> entry : rooms.entrySet()) {
 			Tuple2<Integer, Integer> roomCoords = entry.getKey();
-			entry.getValue().buildInWorld(world, originX + (roomCoords._1 * 9), originY, originZ + (roomCoords._2 * 9));
+			entry.getValue().buildInWorld(rand, world, originX + (roomCoords._1 * 9), originY, originZ + (roomCoords._2 * 9));
 		}
 		preventer.unregister();
 	}

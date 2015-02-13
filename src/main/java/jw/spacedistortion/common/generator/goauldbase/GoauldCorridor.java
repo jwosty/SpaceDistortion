@@ -1,7 +1,13 @@
 package jw.spacedistortion.common.generator.goauldbase;
 
+import java.util.Random;
+
+import jw.spacedistortion.common.SpaceDistortion;
 import net.minecraft.init.Blocks;
+import net.minecraft.tileentity.TileEntityChest;
+import net.minecraft.util.WeightedRandomChestContent;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ChestGenHooks;
 import net.minecraftforge.common.util.ForgeDirection;
 
 public class GoauldCorridor extends GoauldRoom {
@@ -9,18 +15,18 @@ public class GoauldCorridor extends GoauldRoom {
 	public GoauldCorridor(boolean[] connections) { super(connections); }
 
 	@Override
-	public void buildInWorld(World world, int x, int y, int z) {
-		this.buildCenter(world, x, y, z);
+	public void buildInWorld(Random rand, World world, int x, int y, int z) {
+		this.buildCenter(rand, world, x, y, z);
 		for (int i = 0; i < this.connections.length; i++) {
 			if (this.connections[i]) {
-				this.buildConnection(world, x, y, z, ForgeDirection.getOrientation(i + 2));
+				this.buildConnection(rand, world, x, y, z, ForgeDirection.getOrientation(i + 2));
 			} else {
-				this.buildEnd(world, x, y, z, ForgeDirection.getOrientation(i + 2));
+				this.buildEnd(rand, world, x, y, z, ForgeDirection.getOrientation(i + 2));
 			}
 		}
 	}
 
-	private void buildCenter(World world, int x, int y, int z) {
+	private void buildCenter(Random rand, World world, int x, int y, int z) {
 		// Remove some blocks so torches place in the right directions
 		for (int xo = -3; xo < 4; xo++) {
 			for (int zo = -3; zo < 4; zo++) {
@@ -56,7 +62,7 @@ public class GoauldCorridor extends GoauldRoom {
 		}
 	}
 	
-	private void buildConnection(World world, int x, int y, int z, ForgeDirection direction) {
+	private void buildConnection(Random rand, World world, int x, int y, int z, ForgeDirection direction) {
 		// Floor and ceiling
 		for (int xo = -1; xo < 2; xo++) {
 			for (int zo = -1; zo < 2; zo++) {
@@ -95,7 +101,7 @@ public class GoauldCorridor extends GoauldRoom {
 		}
 	}
 	
-	private void buildEnd(World world, int x, int y, int z, ForgeDirection direction) {
+	private void buildEnd(Random rand, World world, int x, int y, int z, ForgeDirection direction) {
 		for (int a = -1; a < 2; a++) {
 			// Floor and ceiling portion
 			for (int yo : new int[] {-3, 1}) {
@@ -116,7 +122,15 @@ public class GoauldCorridor extends GoauldRoom {
 		world.setBlock(xo_0_2, y, zo_0_2, Blocks.stained_hardened_clay, 1, 2);
 		int xo_0_1 = x + this.getbx(direction, 0, 1);
 		int zo_0_1 = z + this.getbz(direction, 0, 1);
-		world.setBlock(xo_0_1, y - 2, zo_0_1, Blocks.gold_block);
+		if (rand.nextInt(16) == 0) {
+			world.setBlock(xo_0_1, y - 2, zo_0_1, Blocks.chest, 0, 2);
+			TileEntityChest chest = (TileEntityChest)world.getTileEntity(xo_0_1, y - 2, zo_0_1);
+			ChestGenHooks info = ChestGenHooks.getInfo(SpaceDistortion.genGoauldCorridor);
+			WeightedRandomChestContent.generateChestContents(rand, info.getItems(rand), chest, info.getCount(rand));
+			int foo = 42;
+		} else {
+			world.setBlock(xo_0_1, y - 2, zo_0_1, Blocks.gold_block);
+		}
 		world.setBlock(xo_0_1, y, zo_0_1, Blocks.quartz_block);
 	}
 }

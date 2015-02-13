@@ -1,5 +1,7 @@
 package jw.spacedistortion.common.generator.goauldbase;
 
+import java.util.Random;
+
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -17,7 +19,7 @@ public abstract class GoauldRoom {
 		return this;
 	}
 	
-	public abstract void buildInWorld(World world, int blockOriginX, int blockOriginY, int blockOriginZ);
+	public abstract void buildInWorld(Random rand, World world, int blockOriginX, int blockOriginY, int blockOriginZ);
 	
 	protected int getbx(ForgeDirection direction, int sidewaysDistance, int forwardDistance) {
 		if (direction == ForgeDirection.NORTH || direction == ForgeDirection.SOUTH) {

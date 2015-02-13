@@ -1,5 +1,7 @@
 package jw.spacedistortion.common.generator.goauldbase;
 
+import java.util.Random;
+
 import jw.spacedistortion.common.block.SDBlock;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
@@ -11,7 +13,7 @@ public class GoauldRingRoom extends GoauldRoom {
 	public GoauldRingRoom(boolean[] connections) { super(connections); }
 	
 	@Override
-	public void buildInWorld(World world, int x, int y, int z) {
+	public void buildInWorld(Random rand, World world, int x, int y, int z) {
 		this.buildCorridor(world, x, y, z);
 		this.buildRingArea(world, x, y, z);
 		for (int i = 0; i < connections.length; i++) {

@@ -14,6 +14,9 @@ import jw.spacedistortion.common.network.ChannelHandler;
 import jw.spacedistortion.common.tileentity.TileEntityEventHorizon;
 import jw.spacedistortion.common.tileentity.TileEntityStargateController;
 import net.minecraft.block.Block;
+import net.minecraft.init.Items;
+import net.minecraft.util.WeightedRandomChestContent;
+import net.minecraftforge.common.ChestGenHooks;
 import net.minecraftforge.common.config.Configuration;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -35,8 +38,9 @@ public class SpaceDistortion {
 	@SidedProxy(clientSide="jw.spacedistortion.client.ClientProxy", serverSide="jw.spacedistortion.common.CommonProxy")
 	public static CommonProxy proxy;
 	
-	public static GeneratorOre oreGen = new GeneratorOre();
-	public static GeneratorGoauldBase goauldBaseGen = new GeneratorGoauldBase();
+	public static GeneratorOre oreGen;
+	public static GeneratorGoauldBase goauldBaseGen;
+	public static String genGoauldCorridor = "SpaceDistortion_GoauldCorridor";
 	
 	public static StringGrid stargateRingShape = new StringGrid(
 			"  RCR  ",
@@ -86,6 +90,20 @@ public class SpaceDistortion {
 	@EventHandler
 	public void init(FMLInitializationEvent event) {
 		SDItem.registerRecipes();
+		ChestGenHooks.addItem(SpaceDistortion.genGoauldCorridor, new WeightedRandomChestContent(SDItem.naquadahIngot, 0, 1, 4, 50));
+		ChestGenHooks.addItem(SpaceDistortion.genGoauldCorridor, new WeightedRandomChestContent(SDItem.depletedStaffWeapon, 0, 1, 1, 50));
+		ChestGenHooks.addItem(SpaceDistortion.genGoauldCorridor, new WeightedRandomChestContent(SDItem.controlCrystal, 0, 1, 1, 10));
+		ChestGenHooks.addItem(SpaceDistortion.genGoauldCorridor, new WeightedRandomChestContent(SDItem.controlCrystal, 1, 1, 1, 10));
+		ChestGenHooks.addItem(SpaceDistortion.genGoauldCorridor, new WeightedRandomChestContent(SDItem.controlCrystal, 2, 1, 1, 10));
+		ChestGenHooks.addItem(SpaceDistortion.genGoauldCorridor, new WeightedRandomChestContent(SDItem.controlCrystal, 3, 1, 1, 10));
+		ChestGenHooks.addItem(SpaceDistortion.genGoauldCorridor, new WeightedRandomChestContent(SDItem.controlCrystal, 4, 1, 1, 10));
+		ChestGenHooks.addItem(SpaceDistortion.genGoauldCorridor, new WeightedRandomChestContent(SDItem.naquadahCircuit, 0, 1, 2, 50));
+		ChestGenHooks.addItem(SpaceDistortion.genGoauldCorridor, new WeightedRandomChestContent(Items.bread, 0, 1, 4, 50));
+		ChestGenHooks.addItem(SpaceDistortion.genGoauldCorridor, new WeightedRandomChestContent(Items.redstone, 0, 1, 4, 50));
+		ChestGenHooks.addItem(SpaceDistortion.genGoauldCorridor, new WeightedRandomChestContent(Items.golden_helmet, 0, 1, 1, 50));
+		ChestGenHooks.addItem(SpaceDistortion.genGoauldCorridor, new WeightedRandomChestContent(Items.melon_seeds, 0, 1, 4, 50));
+		this.oreGen = new GeneratorOre();
+		this.goauldBaseGen = new GeneratorGoauldBase();
 		// World gen
 		GameRegistry.registerWorldGenerator(this.oreGen, 5);
 		GameRegistry.registerWorldGenerator(this.goauldBaseGen, 8);

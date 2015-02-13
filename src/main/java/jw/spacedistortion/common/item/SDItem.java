@@ -50,8 +50,8 @@ public class SDItem extends Item {
 		ItemStack circuit = new ItemStack(naquadahCircuit);
 		
 		// Control crystals
-		GameRegistry.addRecipe(new ItemStack(controlCrystal, 1, 0), " d ", "gdg", "gdg",
-				'g', new ItemStack(Blocks.glass), 'd', new ItemStack(Items.diamond));
+		GameRegistry.addRecipe(new ItemStack(controlCrystal, 1, 0), " r ", "gdg", "ggg",
+				'g', new ItemStack(Blocks.glass), 'd', new ItemStack(Items.diamond), 'r', new ItemStack(Items.redstone));
 		GameRegistry.addShapelessRecipe(new ItemStack(controlCrystal, 1, 1), new ItemStack(controlCrystal), new ItemStack(Items.dye, 1, 1));
 		GameRegistry.addShapelessRecipe(new ItemStack(controlCrystal, 1, 2), new ItemStack(controlCrystal), new ItemStack(Items.dye, 1, 11));
 		GameRegistry.addShapelessRecipe(new ItemStack(controlCrystal, 1, 3), new ItemStack(controlCrystal), new ItemStack(Items.dye, 1, 2));
