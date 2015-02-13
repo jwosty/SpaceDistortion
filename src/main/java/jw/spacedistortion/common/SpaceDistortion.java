@@ -66,7 +66,7 @@ public class SpaceDistortion {
 			"TTTT");
 	/** The mapping from template chars to the blocks they represent, and whether or not
 	 * it has a direction (e.g. pistons, furnaces, etc) */
-	public static HashMap<Character, Pair<Block, Boolean>> templateBlockInfo = null;
+	public static HashMap<Character, Pair<Block, Boolean>> templateBlockInfo;
 	
 	@EventHandler
 	public void serverLoad(FMLServerStartingEvent event) {
@@ -94,15 +94,14 @@ public class SpaceDistortion {
 		ChestGenHooks info = ChestGenHooks.getInfo(SpaceDistortion.genGoauldCorridor);
 		info.setMin(4);
 		info.setMax(10);
-		for (Object item : Arrays
-				.asList(new Object[] {
-						new WeightedRandomChestContent(SDItem.naquadahIngot, 0, 1, 4, 50), new WeightedRandomChestContent( SDItem.depletedStaffWeapon, 0, 1, 1, 50),
-						new WeightedRandomChestContent(SDItem.controlCrystal, 0, 1, 1, 10), new WeightedRandomChestContent(SDItem.controlCrystal, 1, 1, 1, 10),
-						new WeightedRandomChestContent(SDItem.controlCrystal, 2, 1, 1, 10), new WeightedRandomChestContent(SDItem.controlCrystal, 3, 1, 1, 10),
-						new WeightedRandomChestContent(SDItem.controlCrystal, 4, 1, 1, 10), new WeightedRandomChestContent(SDItem.naquadahCircuit, 0, 1, 2, 50),
-						new WeightedRandomChestContent(Items.bread, 0, 1, 4, 50), new WeightedRandomChestContent(Items.redstone, 0, 1, 4, 50),
-						new WeightedRandomChestContent(Items.golden_helmet, 0, 1, 1, 50), new WeightedRandomChestContent(Items.melon_seeds, 0, 1, 4, 50) })) {
-			info.addItem((WeightedRandomChestContent)item);
+		for (WeightedRandomChestContent item : new WeightedRandomChestContent[] {
+				new WeightedRandomChestContent(SDItem.naquadahIngot, 0, 1, 4, 50), new WeightedRandomChestContent( SDItem.depletedStaffWeapon, 0, 1, 1, 50),
+				new WeightedRandomChestContent(SDItem.controlCrystal, 0, 1, 1, 10), new WeightedRandomChestContent(SDItem.controlCrystal, 1, 1, 1, 10),
+				new WeightedRandomChestContent(SDItem.controlCrystal, 2, 1, 1, 10), new WeightedRandomChestContent(SDItem.controlCrystal, 3, 1, 1, 10),
+				new WeightedRandomChestContent(SDItem.controlCrystal, 4, 1, 1, 10), new WeightedRandomChestContent(SDItem.naquadahCircuit, 0, 1, 2, 50),
+				new WeightedRandomChestContent(Items.bread, 0, 1, 4, 50), new WeightedRandomChestContent(Items.redstone, 0, 1, 4, 50),
+				new WeightedRandomChestContent(Items.golden_helmet, 0, 1, 1, 50), new WeightedRandomChestContent(Items.melon_seeds, 0, 1, 4, 50) }) {
+			info.addItem(item);
 		}
 		this.oreGen = new GeneratorOre();
 		this.goauldBaseGen = new GeneratorGoauldBase();
