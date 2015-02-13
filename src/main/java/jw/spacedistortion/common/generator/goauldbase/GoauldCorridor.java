@@ -126,7 +126,8 @@ public class GoauldCorridor extends GoauldRoom {
 			world.setBlock(xo_0_1, y - 2, zo_0_1, Blocks.chest, 0, 2);
 			TileEntityChest chest = (TileEntityChest)world.getTileEntity(xo_0_1, y - 2, zo_0_1);
 			ChestGenHooks info = ChestGenHooks.getInfo(SpaceDistortion.genGoauldCorridor);
-			WeightedRandomChestContent.generateChestContents(rand, info.getItems(rand), chest, info.getCount(rand));
+			int count = info.getCount(rand);
+			WeightedRandomChestContent.generateChestContents(rand, info.getItems(rand), chest, count);
 			int foo = 42;
 		} else {
 			world.setBlock(xo_0_1, y - 2, zo_0_1, Blocks.gold_block);
